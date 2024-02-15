@@ -32,9 +32,8 @@ public class UserResource {
          return new TokenDto(token);
     }
 
-//    @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT')or hasRole('CLIENT')" )
-//    @SecurityRequirement(name = "bearerAuth")
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT')or hasRole('CLIENT')" )
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping(TELEPHONE)
     public User read(@PathVariable String telephone){
             return this.userService.read(telephone);
