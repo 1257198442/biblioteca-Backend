@@ -1,6 +1,6 @@
 package com.example.demo.adapters.config;
 
-import com.example.demo.domain.models.Admin;
+import com.example.demo.domain.models.Role;
 import com.example.demo.domain.service.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,7 +33,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             throws IOException, ServletException {
         String token = jwtService.extractToken(request.getHeader(AUTHORIZATION));
         if (!token.isEmpty()) {
-            GrantedAuthority authority = new SimpleGrantedAuthority(Admin.PREFIX + jwtService.role(token));
+            GrantedAuthority authority = new SimpleGrantedAuthority(Role.PREFIX + jwtService.role(token));
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(jwtService.user(token), token, List.of(authority));
             SecurityContextHolder.getContext().setAuthentication(authentication);

@@ -1,15 +1,20 @@
 package com.example.demo.adapters.rest;
 
 
-import com.example.demo.adapters.rest.Dto.TokenDto;
+import com.example.demo.adapters.rest.dto.TokenDto;
+import com.example.demo.adapters.rest.dto.UserUploadDto;
 import com.example.demo.domain.models.User;
 import com.example.demo.domain.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping(UserResource.USER)
@@ -37,6 +42,19 @@ public class UserResource {
     @GetMapping(TELEPHONE)
     public User read(@PathVariable String telephone){
             return this.userService.read(telephone);
+    }
+
+    @PreAuthorize("permitAll()")
+    @PostMapping
+    public ResponseEntity<?> create(@RequestBody UserUploadDto userUpload){
+        User newUser = this.userService.create(userUpload);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(newUser.getTelephone())
+                .toUri();
+
+        return ResponseEntity.created(location).build();
     }
 
 }

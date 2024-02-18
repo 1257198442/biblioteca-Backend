@@ -6,5 +6,7 @@ import java.util.List;
 
 public interface UserPersistence {
     User read(String telephone);
+    Boolean existTelephone(String telephone);
+    User create(User user);
 
 }

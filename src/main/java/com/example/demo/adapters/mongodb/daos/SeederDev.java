@@ -33,10 +33,11 @@ public class SeederDev {
         LogManager.getLogger(this.getClass()).warn("-------      Initial User      -----------");
         String pass = new BCryptPasswordEncoder().encode("6");
         UserEntity[] userEntities = {
-                UserEntity.builder().admin(Admin.ROOT).createTime(LocalDateTime.now()).email("1257198442@qq.com").name("root").password(pass).telephone("666666666").active(true).build(),
-                UserEntity.builder().admin(Admin.ADMINISTRATOR).createTime(LocalDateTime.now()).email("1257198442@qq.com").name("Administrator").password(pass).telephone("666000001").active(true).build(),
-                UserEntity.builder().admin(Admin.CLIENT).createTime(LocalDateTime.now()).email("1257198442@qq.com").name("User").password(pass).telephone("666000002").active(true).build(),
-                UserEntity.builder().admin(Admin.BAN).createTime(LocalDateTime.now()).email("1257198442@qq.com").name("BAN").password(pass).telephone("666").active(true).build(),
+                UserEntity.builder().role(Role.ROOT).createTime(LocalDateTime.now()).email("1257198442@qq.com").name("root").password(pass).telephone("666666666").active(true).build(),
+                UserEntity.builder().role(Role.ADMINISTRATOR).createTime(LocalDateTime.now()).email("1257198442@qq.com").name("Administrator").password(pass).telephone("666000001").active(true).build(),
+                UserEntity.builder().role(Role.CLIENT).createTime(LocalDateTime.now()).email("1257198442@qq.com").name("User").password(pass).telephone("666000002").active(true).build(),
+                UserEntity.builder().role(Role.BAN).createTime(LocalDateTime.now()).email("test1@test.com").name("BAN").password(pass).telephone("666").active(true).build(),
+                UserEntity.builder().role(Role.CLIENT).createTime(LocalDateTime.now()).email("test2@test.com").name("User").password(pass).telephone("+34645321068").active(true).build(),
         };
         userDao.saveAll(Arrays.asList(userEntities));
     }
