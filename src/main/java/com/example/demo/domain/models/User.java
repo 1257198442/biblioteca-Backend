@@ -22,7 +22,7 @@ public class User {
     private LocalDateTime createTime;
     private String telephone;
     private String email;
-    private Admin admin;
+    private Role role;
     private Boolean active;
 
     public User toShow(){

@@ -1,6 +1,6 @@
 package com.example.demo.adapters.mongodb.entities;
 
-import com.example.demo.domain.models.Admin;
+import com.example.demo.domain.models.Role;
 import com.example.demo.domain.models.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -26,9 +26,12 @@ public class UserEntity {
     @Id
     private String telephone;
     private String email;
-    private Admin admin;
+    private Role role;
     private Boolean active;
 
+    public UserEntity(User user){
+        BeanUtils.copyProperties(user,this);
+    }
     public User toUser(){
         User user = new User();
         BeanUtils.copyProperties(this,user);

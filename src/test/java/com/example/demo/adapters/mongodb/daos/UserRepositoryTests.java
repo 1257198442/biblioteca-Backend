@@ -3,7 +3,7 @@ package com.example.demo.adapters.mongodb.daos;
 import com.example.demo.TestConfig;
 import com.example.demo.adapters.mongodb.entities.UserEntity;
 import com.example.demo.domain.exceptions.NotFoundException;
-import com.example.demo.domain.models.Admin;
+import com.example.demo.domain.models.Role;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestConfig
-class UserRepositoryIT {
+class UserRepositoryTests {
     @Autowired
     private  UserRepository userRepository;
 
@@ -30,7 +30,7 @@ class UserRepositoryIT {
                 .password("6")
                 .telephone("+34000000000")
                 .createTime(LocalDateTime.of(2024,2,15, 0, 0, 0))
-                .admin(Admin.CLIENT)
+                .role(Role.CLIENT)
                 .active(true)
                 .build();this.userRepository.save(userEntity);
         UserEntity userEntity1 = userRepository.readByTelephone(userEntity.getTelephone()).orElseThrow(()->new NotFoundException("User telephone: "+userEntity.getTelephone()+" is not Fount"));

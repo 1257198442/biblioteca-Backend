@@ -1,7 +1,7 @@
 package com.example.demo.domain.service;
 
 import com.example.demo.adapters.mongodb.daos.UserRepository;
-import com.example.demo.domain.models.Admin;
+import com.example.demo.domain.models.Role;
 import com.example.demo.domain.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,13 +31,13 @@ public class UserDetailsService implements org.springframework.security.core.use
     public UserDetails loadUserByUsername(final String mobile) {
         User user = userRepository.readByTelephone(mobile)
                 .orElseThrow(() -> new UsernameNotFoundException("mobile not found. " + mobile)).toUser();
-        return this.userBuilder(user.getTelephone(), user.getPassword(), new Admin[]{Admin.AUTHENTICATED}, user.getActive());
+        return this.userBuilder(user.getTelephone(), user.getPassword(), new Role[]{Role.AUTHENTICATED}, user.getActive());
     }
 
-    private org.springframework.security.core.userdetails.User userBuilder(String mobile, String password, Admin[] roles,
+    private org.springframework.security.core.userdetails.User userBuilder(String mobile, String password, Role[] roles,
                                                                            boolean active) {
         List< GrantedAuthority > authorities = new ArrayList<>();
-        for (Admin role : roles) {
+        for (Role role : roles) {
             authorities.add(new SimpleGrantedAuthority(role.withPrefix()));
         }
         return new org.springframework.security.core.userdetails.User(mobile, password, active, true,
