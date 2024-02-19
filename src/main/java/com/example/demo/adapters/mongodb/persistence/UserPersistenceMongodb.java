@@ -5,8 +5,12 @@ import com.example.demo.adapters.mongodb.entities.UserEntity;
 import com.example.demo.domain.exceptions.NotFoundException;
 import com.example.demo.domain.models.User;
 import com.example.demo.domain.persistence.UserPersistence;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Repository
@@ -36,6 +40,22 @@ public class UserPersistenceMongodb implements UserPersistence {
         return this.userRepository
                 .save(new UserEntity(user))
                 .toUser();
+    }
+
+    @Override
+    public User update(User user) {
+        UserEntity userEntity = this.userRepository.readByTelephone(user.getTelephone())
+                .orElseThrow(()->new NotFoundException("User telephone: "+user.getTelephone()+" is not Fount"));
+        BeanUtils.copyProperties(user,userEntity);
+
+        return this.userRepository
+                .save(userEntity)
+                .toUser();
+    }
+
+    @Override
+    public List<User> readAll() {
+        return this.userRepository.findAll().stream().map(UserEntity::toUser).collect(Collectors.toList());
     }
 
 }

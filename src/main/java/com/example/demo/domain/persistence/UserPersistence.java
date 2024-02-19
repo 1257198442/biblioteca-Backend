@@ -8,5 +8,6 @@ public interface UserPersistence {
     User read(String telephone);
     Boolean existTelephone(String telephone);
     User create(User user);
-
+    User update(User user);
+    List<User> readAll();
 }

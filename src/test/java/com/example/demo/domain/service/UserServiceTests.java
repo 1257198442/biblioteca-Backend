@@ -21,10 +21,10 @@ public class UserServiceTests {
     void testLogin(){
         assertNotNull(userService.login("+34645321068"));
         assertThrows(NotFoundException.class, () -> {
-            userService.login("+34666000002");
+            userService.login("66600002");
         });
         assertThrows(ForbiddenException.class, () -> {
-            userService.login("666");
+            userService.login("+34666");
         });
     }
     @Test
@@ -49,5 +49,17 @@ public class UserServiceTests {
         assertThrows(ConflictException.class, () -> {
             userService.create(userUploadDto);
         });
+    }
+    @Test
+    void testUpdateAdminROOT(){
+        assertThrows(ForbiddenException.class,()->userService.updateAdminROOT("+34666000020","ROOT"));
+        assertThat(userService.updateAdminROOT("+34666000020","ADMINISTRATOR")).isNotNull();
+    }
+    @Test
+    void testUpdateAdminADMINISTRATOR(){
+        assertThrows(ForbiddenException.class,()->userService.updateAdminADMINISTRATOR("+34666000020","ROOT"));
+        assertThat(userService.updateAdminADMINISTRATOR("+34666000020","ADMINISTRATOR")).isNotNull();
+        assertThrows(ForbiddenException.class,()->userService.updateAdminADMINISTRATOR("+34666000020","BAN"));
+        assertThrows(ForbiddenException.class,()->userService.updateAdminADMINISTRATOR("+34666000020","CLIENT"));
     }
 }
