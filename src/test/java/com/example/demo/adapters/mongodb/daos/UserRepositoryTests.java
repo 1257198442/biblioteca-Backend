@@ -32,8 +32,10 @@ class UserRepositoryTests {
                 .createTime(LocalDateTime.of(2024,2,15, 0, 0, 0))
                 .role(Role.CLIENT)
                 .active(true)
-                .build();this.userRepository.save(userEntity);
+                .build();
+        this.userRepository.save(userEntity);
         UserEntity userEntity1 = userRepository.readByTelephone(userEntity.getTelephone()).orElseThrow(()->new NotFoundException("User telephone: "+userEntity.getTelephone()+" is not Fount"));
         assertEquals(userEntity,userEntity1);
     }
+
 }

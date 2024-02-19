@@ -1,6 +1,9 @@
 package com.example.demo.adapters.rest;
 
 import com.example.demo.adapters.rest.dto.UserUploadDto;
+import com.example.demo.domain.exceptions.NotFoundException;
+import com.example.demo.domain.models.Role;
+import com.example.demo.domain.models.User;
 import com.example.demo.domain.service.JwtService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,12 +14,12 @@ import org.springframework.test.web.reactive.server.StatusAssertions;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 
+import java.util.ArrayList;
 import java.util.Base64;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.hibernate.validator.internal.util.Contracts.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @RestTestConfig
 @ActiveProfiles("test")
@@ -28,13 +31,13 @@ public class UserResourceTests {
 
     @Test
     void testLogin(){
-        String CorrectAccount = "666666666:6";
+        String CorrectAccount = "+34666666666:6";
         //200
         testLoginClient(toBase64(CorrectAccount)).isOk();
         //401
         testLoginClient(toBase64("123456789:1")).isEqualTo(HttpStatus.UNAUTHORIZED);
         //403
-        testLoginClient(toBase64("666:6")).isEqualTo(HttpStatus.FORBIDDEN);
+        testLoginClient(toBase64("+34666:6")).isEqualTo(HttpStatus.FORBIDDEN);
     }
     String toBase64(String str){
        return "Basic "+Base64.getEncoder().encodeToString(str.getBytes());
@@ -50,7 +53,7 @@ public class UserResourceTests {
     @Test
     void testRead(){
         //200
-        testReadClient("666666666").isOk().expectBody(String.class).consumeWith(response -> {
+        testReadClient("+34666666666").isOk().expectBody(String.class).consumeWith(response -> {
             String responseBody = response.getResponseBody();
             assertNotNull(responseBody);
         });
@@ -58,23 +61,12 @@ public class UserResourceTests {
         testReadClient("test").isEqualTo(HttpStatus.NOT_FOUND);
         //403
         webTestClient.get()
-                .uri("/user/{ID}","666666666")
+                .uri("/user/{ID}","+34666666666")
                 .exchange()
                 .expectStatus().isEqualTo(HttpStatus.UNAUTHORIZED);
 
     }
-    StatusAssertions testReadClient(String telephone){
-        String user = "666666666";
-        String name = "root";
-        String role = "ROOT";
-        String token ="Bearer "+jwtService.createToken(user, name, role);
-        return webTestClient.get()
-                .uri("/user/{ID}",telephone)
-                .header("Authorization",token)
-                .accept(MediaType.ALL)
-                .exchange()
-                .expectStatus();
-    }
+
     @Test
     void testCreate(){
         String phoneNumberFormatNotLegal =
@@ -99,6 +91,61 @@ public class UserResourceTests {
         //201
         postCreateClient(formatLegal).isCreated();
     }
+    @Test
+    void testUpdateAdmin(){
+        this.testReadClient("+34123").isOk()
+                .expectBody(User.class)
+                .consumeWith(response -> {
+                    User user = response.getResponseBody();
+                    assertEquals(Role.CLIENT, user.getRole());
+                });
+        putUpdateClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"+34123","BAN").isOk();
+        this.testReadClient("+34123").isOk()
+                .expectBody(User.class)
+                .consumeWith(response -> {
+                    User user = response.getResponseBody();
+                    assertEquals(Role.BAN, user.getRole());
+                });
+        //404
+        putUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"test","CLIENT").isEqualTo(HttpStatus.NOT_FOUND);
+        //400
+        putUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"+34123","TEST").isEqualTo(HttpStatus.BAD_REQUEST);
+        //403
+        putUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"+34123","ROOT").isEqualTo(HttpStatus.FORBIDDEN);
+        //403
+        putUpdateClient("Bearer "+jwtService.createToken("+34666000002","user","CLIENT"),"+34123","ADMINISTRATOR").isEqualTo(HttpStatus.FORBIDDEN);
+
+    }
+    @Test
+    void testReadAll(){
+        String user = "+34666666666";
+        String name = "root";
+        String role = "ROOT";
+        String token ="Bearer "+jwtService.createToken(user, name, role);
+        webTestClient.get()
+                .uri("/user")
+                .header("Authorization",token)
+                .accept(MediaType.ALL)
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody(ArrayList.class)
+                .consumeWith(response ->{
+                    assertNotNull(response.getResponseBody());
+                });
+    }
+    StatusAssertions testReadClient(String telephone){
+        String user = "+34666666666";
+        String name = "root";
+        String role = "ROOT";
+        String token ="Bearer "+jwtService.createToken(user, name, role);
+        return webTestClient.get()
+                .uri("/user/{ID}",telephone)
+                .header("Authorization",token)
+                .accept(MediaType.ALL)
+                .exchange()
+                .expectStatus();
+    }
     StatusAssertions postCreateClient(String requestBody){
         return webTestClient.post()
                 .uri("/user")
@@ -109,5 +156,16 @@ public class UserResourceTests {
                 .expectStatus();
     }
 
+    StatusAssertions putUpdateClient(String token,String telephone,String body) {
+        return this.webTestClient
+                .put()
+                .uri("/user/"+telephone + "/role")
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.ALL)
+                .bodyValue(body)
+                .exchange()
+                .expectStatus();
+    }
 }
 

@@ -12,6 +12,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -51,5 +53,42 @@ public class UserService {
         user.setActive(true);
         return this.userPersistence.create(user).toShow();
     }
+
+    public User updateAdminROOT(String telephone,String admin){
+        User user = this.userPersistence.read(telephone);
+        if(user.getRole().equals(Role.ROOT)||admin.equals("ROOT")){
+            throw new ForbiddenException("Root cannot be changed.");
+        }
+        //TODO
+        //check if user has a record of borrowed books that have not been returned.
+//        if(){
+//            throw new ForbiddenException("User "+telephone+" has a record of borrowed books that have not been returned.");
+//        }
+        user.setActive(!admin.equals("BAN"));
+        user.setRole(Role.fromString(admin));
+        return this.userPersistence.update(user).toShow();
+    }
+
+    public User updateAdminADMINISTRATOR(String telephone,String admin){
+        User user = this.userPersistence.read(telephone);
+        if(user.getRole().equals(Role.ROOT)||admin.equals("ROOT")){
+            throw new ForbiddenException("Root cannot be changed.");
+        }
+        //TODO
+        //check if user has a record of borrowed books that have not been returned.
+//        if(){
+//            throw new ForbiddenException("User "+telephone+" has a record of borrowed books that have not been returned.");
+//        }
+        if (!admin.equals("ADMINISTRATOR")) {
+            throw new ForbiddenException("You don't have permission to make this request.");
+        }
+        user.setRole(Role.fromString(admin));
+        return this.userPersistence.update(user).toShow();
+    }
+
+    public List<User> readAll(){
+        return this.userPersistence.readAll().stream().map(User::toShow).collect(Collectors.toList());
+    }
+
 
 }
