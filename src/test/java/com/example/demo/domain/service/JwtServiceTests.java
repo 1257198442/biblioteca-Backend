@@ -68,7 +68,6 @@ class JwtServiceTests {
         String name = "Test Name";
         String role = "USER";
         String token = jwtService.createToken(user, name, role);
-
         assertEquals(name, jwtService.name(token));
     }
 
@@ -78,7 +77,6 @@ class JwtServiceTests {
         String name = "Test Name";
         String role = "USER";
         String token = jwtService.createToken(user, name, role);
-
         assertEquals(role, jwtService.role(token));
     }
 

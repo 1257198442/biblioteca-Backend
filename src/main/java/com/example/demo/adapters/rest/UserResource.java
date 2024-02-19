@@ -67,7 +67,6 @@ public class UserResource {
                 .path("/{id}")
                 .buildAndExpand(newUser.getTelephone())
                 .toUri();
-
         return ResponseEntity.created(location).build();
     }
 
@@ -98,7 +97,7 @@ public class UserResource {
     private Role extractRoleClaims() {
         List< String > roleClaims = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority).collect(Collectors.toList());
-        return Role.of(roleClaims.get(0));  // it must only be a role
+        return Role.of(roleClaims.get(0));
     }
 
 }

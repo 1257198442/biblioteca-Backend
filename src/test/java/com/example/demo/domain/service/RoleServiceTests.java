@@ -17,7 +17,6 @@ public class RoleServiceTests {
     private RoleService roleService;
     @Test
     public void testIsCompetentReturnsTrueWhenRoleIsPresent() {
-
         Role role1 = Role.ROOT;
         Role role2 = Role.ADMINISTRATOR;
         Role role3 = Role.CLIENT;

@@ -90,5 +90,4 @@ public class UserService {
         return this.userPersistence.readAll().stream().map(User::toShow).collect(Collectors.toList());
     }
 
-
 }

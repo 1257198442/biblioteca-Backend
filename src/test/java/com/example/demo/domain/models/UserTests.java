@@ -59,8 +59,8 @@ public class UserTests {
                 .createTime(LocalDateTime.of(2025,2,15,0,0,0))
                 .build();
 
-        assertEquals(user1, user2, "user1 should be equal to user2");
-        assertNotEquals(user1, user3, "user1 should not be equal to user3");
+        assertEquals(user1, user2);
+        assertNotEquals(user1, user3);
     }
 
     @Test

@@ -16,5 +16,4 @@ public class UserUploadDto {
     private String password;
     private String telephone;
     private String email;
-
 }

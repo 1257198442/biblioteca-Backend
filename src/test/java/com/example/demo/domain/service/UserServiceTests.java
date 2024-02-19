@@ -41,11 +41,9 @@ public class UserServiceTests {
         assertEquals(user.getTelephone(),userUploadDto.getTelephone());
         assertNull(user.getPassword());
         assertEquals(Role.CLIENT,user.getRole());
-
         assertThrows(NotFoundException.class, () -> {
             userService.read("null");
         });
-
         assertThrows(ConflictException.class, () -> {
             userService.create(userUploadDto);
         });
@@ -55,6 +53,7 @@ public class UserServiceTests {
         assertThrows(ForbiddenException.class,()->userService.updateAdminROOT("+34666000020","ROOT"));
         assertThat(userService.updateAdminROOT("+34666000020","ADMINISTRATOR")).isNotNull();
     }
+
     @Test
     void testUpdateAdminADMINISTRATOR(){
         assertThrows(ForbiddenException.class,()->userService.updateAdminADMINISTRATOR("+34666000020","ROOT"));

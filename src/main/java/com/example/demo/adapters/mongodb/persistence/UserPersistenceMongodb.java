@@ -47,7 +47,6 @@ public class UserPersistenceMongodb implements UserPersistence {
         UserEntity userEntity = this.userRepository.readByTelephone(user.getTelephone())
                 .orElseThrow(()->new NotFoundException("User telephone: "+user.getTelephone()+" is not Fount"));
         BeanUtils.copyProperties(user,userEntity);
-
         return this.userRepository
                 .save(userEntity)
                 .toUser();

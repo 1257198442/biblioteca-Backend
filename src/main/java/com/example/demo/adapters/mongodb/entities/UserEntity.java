@@ -28,7 +28,6 @@ public class UserEntity {
     private String email;
     private Role role;
     private Boolean active;
-
     public UserEntity(User user){
         BeanUtils.copyProperties(user,this);
     }

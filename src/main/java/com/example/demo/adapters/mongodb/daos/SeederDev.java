@@ -29,7 +29,6 @@ public class SeederDev {
     }
     private void seedDataBase() {
         LogManager.getLogger(this.getClass()).warn("------- Initial Load from JAVA -----------");
-
         LogManager.getLogger(this.getClass()).warn("-------      Initial User      -----------");
         String pass = new BCryptPasswordEncoder().encode("6");
         UserEntity[] userEntities = {
