@@ -13,10 +13,12 @@ import java.util.Arrays;
 @Service
 public class SeederDev {
     private final UserRepository userDao;
+    private final LibraryRepository libraryDao;
 
     @Autowired
-    public SeederDev(UserRepository userDao){
+    public SeederDev(UserRepository userDao,LibraryRepository libraryDao){
         this.userDao = userDao;
+        this.libraryDao = libraryDao;
         this.deleteAllAndInitializeAndSeedDataBase();
     }
     public void deleteAllAndInitializeAndSeedDataBase() {
@@ -40,5 +42,23 @@ public class SeederDev {
                 UserEntity.builder().role(Role.CLIENT).createTime(LocalDateTime.now()).email("test2@test.com").name("User").password(pass).telephone("+34123").active(true).build(),
         };
         userDao.saveAll(Arrays.asList(userEntities));
+
+        LogManager.getLogger(this.getClass()).warn("-------      Initial Library      -----------");
+        LibraryEntity[] libraryEntities = {
+                LibraryEntity.builder()
+                        .address("X.º XX XXXXXXX, XX, 28001, XXXXXX, Madrid")
+                        .telephone("6669996669")
+                        .name("BIBLIOTECA")
+                        .email("bibliotecaMadrid@email.com")
+                        .postalCode("28001")
+                        .businessHours("Monday to Friday 10:00 to 22:00 Saturday and Sunday 10:00 to 16:00")
+                        .introduction("this is test introduction")
+                        .twitter("https://www.twitter.com/")
+                        .googleMail("https://mail.google.com/")
+                        .instagram("https://www.instagram.com/")
+                        .facebook("https://www.facebook.com/")
+                        .discord("https://www.discord.com/").build()
+        };
+        this.libraryDao.saveAll(Arrays.asList(libraryEntities));
     }
 }

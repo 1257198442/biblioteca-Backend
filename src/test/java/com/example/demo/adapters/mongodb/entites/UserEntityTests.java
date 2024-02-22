@@ -108,4 +108,5 @@ public class UserEntityTests {
         assertEquals(user1.hashCode(), user2.hashCode());
         assertNotEquals(user1.hashCode(), user3.hashCode());
     }
+
 }

@@ -24,7 +24,6 @@ public class UserPersistenceMongodbTests {
         assertEquals("root", user.getName());
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         assertTrue(passwordEncoder.matches("6",user.getPassword()));
-
         assertEquals("1257198442@qq.com",user.getEmail());
         assertEquals(Role.ROOT,user.getRole());
         assertEquals(true,user.getActive());
