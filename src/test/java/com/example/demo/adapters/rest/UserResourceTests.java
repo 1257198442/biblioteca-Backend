@@ -53,12 +53,12 @@ public class UserResourceTests {
     @Test
     void testRead(){
         //200
-        testReadClient("+34666666666").isOk().expectBody(String.class).consumeWith(response -> {
+        getReadClient("+34666666666").isOk().expectBody(String.class).consumeWith(response -> {
             String responseBody = response.getResponseBody();
             assertNotNull(responseBody);
         });
         //404
-        testReadClient("test").isEqualTo(HttpStatus.NOT_FOUND);
+        getReadClient("test").isEqualTo(HttpStatus.NOT_FOUND);
         //403
         webTestClient.get()
                 .uri("/user/{ID}","+34666666666")
@@ -93,14 +93,14 @@ public class UserResourceTests {
     }
     @Test
     void testUpdateAdmin(){
-        this.testReadClient("+34123").isOk()
+        this.getReadClient("+34123").isOk()
                 .expectBody(User.class)
                 .consumeWith(response -> {
                     User user = response.getResponseBody();
                     assertEquals(Role.CLIENT, user.getRole());
                 });
         putUpdateClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"+34123","BAN").isOk();
-        this.testReadClient("+34123").isOk()
+        this.getReadClient("+34123").isOk()
                 .expectBody(User.class)
                 .consumeWith(response -> {
                     User user = response.getResponseBody();
@@ -134,7 +134,7 @@ public class UserResourceTests {
                     assertNotNull(response.getResponseBody());
                 });
     }
-    StatusAssertions testReadClient(String telephone){
+    StatusAssertions getReadClient(String telephone){
         String user = "+34666666666";
         String name = "root";
         String role = "ROOT";
@@ -146,6 +146,7 @@ public class UserResourceTests {
                 .exchange()
                 .expectStatus();
     }
+
     StatusAssertions postCreateClient(String requestBody){
         return webTestClient.post()
                 .uri("/user")
