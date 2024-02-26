@@ -1,6 +1,7 @@
 package com.example.demo.domain.models;
 
 import com.example.demo.domain.exceptions.BadRequestException;
+import com.example.demo.domain.exceptions.UnprocessableEntityException;
 
 public enum Role {
     ROOT, ADMINISTRATOR, CLIENT, AUTHENTICATED, BAN;
@@ -18,7 +19,7 @@ public enum Role {
         try {
             return Role.valueOf(normalizedInput);
         } catch (IllegalArgumentException e) {
-            throw new BadRequestException("The role "+role+" is error");
+            throw new UnprocessableEntityException("The role "+role+" is error");
         }
     }
 }
