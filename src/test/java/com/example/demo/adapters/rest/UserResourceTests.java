@@ -108,8 +108,8 @@ public class UserResourceTests {
                 });
         //404
         putUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"test","CLIENT").isEqualTo(HttpStatus.NOT_FOUND);
-        //400
-        putUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"+34123","TEST").isEqualTo(HttpStatus.BAD_REQUEST);
+        //422
+        putUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"+34123","TEST").isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
         //403
         putUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"+34123","ROOT").isEqualTo(HttpStatus.FORBIDDEN);
         //403
