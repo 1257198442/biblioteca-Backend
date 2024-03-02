@@ -35,19 +35,19 @@ public class LibraryResource {
     //PUT
     @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT')  or hasRole('CLIENT')" )
     @SecurityRequirement(name = "bearerAuth")
-    @PutMapping(NAME)
-    public Library update(@RequestBody LibraryUpdateDto libraryUpdate, @PathVariable String name){
+    @PutMapping()
+    public Library update(@RequestBody LibraryUpdateDto libraryUpdate){
         if(roleService.isCompetent(rootRole,this.extractRoleClaims())){
-            return this.libraryService.update(libraryUpdate,name);
+            return this.libraryService.update(libraryUpdate,"BIBLIOTECA");
         }else {
             throw new ForbiddenException("You don't have permission to make this request.");
         }
     }
 
     //GET
-    @GetMapping(NAME)
-    public Library read(@PathVariable String name){
-        return this.libraryService.read(name);
+    @GetMapping()
+    public Library read(){
+        return this.libraryService.read("BIBLIOTECA");
     }
 
     private Role extractRoleClaims() {

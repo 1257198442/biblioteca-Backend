@@ -3,6 +3,7 @@ package com.example.demo.domain.models;
 import com.example.demo.TestConfig;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,19 +13,23 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 public class UserTests {
     @Test
     void testToShow(){
+        LocalDateTime createTimeTest = LocalDateTime.of(2024,2,16,0,0,0);
+        LocalDate birthdaysTimeTest = LocalDate.of(2025, 2, 15);
         User user = User.builder()
                 .name("test")
                 .password("6")
-                .createTime(LocalDateTime.of(2024,2,16,0,0,0))
+                .createTime(createTimeTest)
                 .telephone("+349996666666")
                 .email("test@test.com")
                 .role(Role.CLIENT)
                 .active(true)
+                .description("test")
+                .birthdays(birthdaysTimeTest)
                 .build();
         User userToShow = user.toShow();
         assertEquals("test",userToShow.getName());
         assertNotEquals("6",userToShow.getPassword());
-        assertEquals(LocalDateTime.of(2024,2,16,0,0,0),userToShow.getCreateTime());
+        assertEquals(createTimeTest,userToShow.getCreateTime());
 
     }
     @Test
@@ -37,6 +42,8 @@ public class UserTests {
                 .password("6")
                 .active(true)
                 .createTime(LocalDateTime.of(2025,2,15,0,0,0))
+                .description("test")
+                .birthdays(LocalDate.of(2025, 2, 15))
                 .build();
 
         User user2 = User.builder()
@@ -47,6 +54,8 @@ public class UserTests {
                 .password("6")
                 .active(true)
                 .createTime(LocalDateTime.of(2025,2,15,0,0,0))
+                .description("test")
+                .birthdays(LocalDate.of(2025, 2, 15))
                 .build();
 
         User user3 = User.builder()
@@ -57,6 +66,8 @@ public class UserTests {
                 .password("6")
                 .active(true)
                 .createTime(LocalDateTime.of(2025,2,15,0,0,0))
+                .description("test")
+                .birthdays(LocalDate.of(2025, 2, 15))
                 .build();
 
         assertEquals(user1, user2);
@@ -73,6 +84,8 @@ public class UserTests {
                 .password("6")
                 .active(true)
                 .createTime(LocalDateTime.of(2025,2,15,0,0,0))
+                .description("test")
+                .birthdays(LocalDate.of(2025, 2, 15))
                 .build();
 
         User user2 = User.builder()
@@ -83,6 +96,8 @@ public class UserTests {
                 .password("6")
                 .active(true)
                 .createTime(LocalDateTime.of(2025,2,15,0,0,0))
+                .description("test")
+                .birthdays(LocalDate.of(2025, 2, 15))
                 .build();
 
         User user3 = User.builder()
@@ -93,6 +108,8 @@ public class UserTests {
                 .password("6")
                 .active(true)
                 .createTime(LocalDateTime.of(2025,2,15,0,0,0))
+                .description("test")
+                .birthdays(LocalDate.of(2025, 2, 15))
                 .build();
 
         assertEquals(user1.hashCode(), user2.hashCode());
