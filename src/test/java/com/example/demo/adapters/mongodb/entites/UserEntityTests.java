@@ -6,6 +6,7 @@ import com.example.demo.domain.models.Role;
 import com.example.demo.domain.models.User;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,7 +23,10 @@ public class UserEntityTests {
                 .role(Role.CLIENT)
                 .password("6")
                 .active(true)
-                .createTime(LocalDateTime.of(2025,2,15,0,0,0)).build();
+                .createTime(LocalDateTime.of(2025,2,15,0,0,0))
+                .description("test")
+                .birthdays(LocalDate.of(2025, 2, 15))
+                .build();
         User user = User.builder()
                 .name("test")
                 .telephone("+341111111111")
@@ -31,6 +35,8 @@ public class UserEntityTests {
                 .password("6")
                 .active(true)
                 .createTime(LocalDateTime.of(2025,2,15,0,0,0))
+                .description("test")
+                .birthdays(LocalDate.of(2025, 2, 15))
                 .build();
 
         assertEquals(userEntity.toUser(),user);
@@ -47,6 +53,8 @@ public class UserEntityTests {
                 .password("6")
                 .active(true)
                 .createTime(LocalDateTime.of(2025,2,15,0,0,0))
+                .description("test")
+                .birthdays(LocalDate.of(2025, 2, 15))
                 .build();
 
         UserEntity user2 = UserEntity.builder()
@@ -57,6 +65,8 @@ public class UserEntityTests {
                 .password("6")
                 .active(true)
                 .createTime(LocalDateTime.of(2025,2,15,0,0,0))
+                .description("test")
+                .birthdays(LocalDate.of(2025, 2, 15))
                 .build();
 
         UserEntity user3 = UserEntity.builder()
@@ -67,6 +77,8 @@ public class UserEntityTests {
                 .password("6")
                 .active(true)
                 .createTime(LocalDateTime.of(2025,2,15,0,0,0))
+                .description("test")
+                .birthdays(LocalDate.of(2025, 2, 15))
                 .build();
 
         assertEquals(user1, user2, "user1 should be equal to user2");
@@ -83,6 +95,8 @@ public class UserEntityTests {
                 .password("6")
                 .active(true)
                 .createTime(LocalDateTime.of(2025,2,15,0,0,0))
+                .description("test")
+                .birthdays(LocalDate.of(2025, 2, 15))
                 .build();
 
         UserEntity user2 = UserEntity.builder()
@@ -93,6 +107,8 @@ public class UserEntityTests {
                 .password("6")
                 .active(true)
                 .createTime(LocalDateTime.of(2025,2,15,0,0,0))
+                .description("test")
+                .birthdays(LocalDate.of(2025, 2, 15))
                 .build();
 
         UserEntity user3 = UserEntity.builder()
@@ -103,6 +119,8 @@ public class UserEntityTests {
                 .password("6")
                 .active(true)
                 .createTime(LocalDateTime.of(2025,2,15,0,0,0))
+                .description("test")
+                .birthdays(LocalDate.of(2025, 2, 15))
                 .build();
 
         assertEquals(user1.hashCode(), user2.hashCode());

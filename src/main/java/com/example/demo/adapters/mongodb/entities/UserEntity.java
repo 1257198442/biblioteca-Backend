@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.annotation.Id;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -28,6 +29,9 @@ public class UserEntity {
     private String email;
     private Role role;
     private Boolean active;
+    private String description;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate birthdays;
     public UserEntity(User user){
         BeanUtils.copyProperties(user,this);
     }

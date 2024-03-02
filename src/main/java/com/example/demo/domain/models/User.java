@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -24,7 +25,9 @@ public class User {
     private String email;
     private Role role;
     private Boolean active;
-
+    private String description;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate birthdays;
     public User toShow(){
         User user = new User();
         BeanUtils.copyProperties(this,user);
