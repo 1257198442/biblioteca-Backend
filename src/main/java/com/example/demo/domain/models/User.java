@@ -32,6 +32,7 @@ public class User {
         User user = new User();
         BeanUtils.copyProperties(this,user);
         user.setPassword(null);
+        user.setActive(null);
         return user;
     }
 }

@@ -1,5 +1,6 @@
 package com.example.demo.domain.service;
 
+import com.example.demo.adapters.rest.dto.UserUpdateDto;
 import com.example.demo.adapters.rest.dto.UserUploadDto;
 import com.example.demo.domain.exceptions.ConflictException;
 import com.example.demo.domain.exceptions.ForbiddenException;
@@ -91,6 +92,12 @@ public class UserService {
 
     public List<User> readAll(){
         return this.userPersistence.readAll().stream().map(User::toShow).collect(Collectors.toList());
+    }
+
+    public User update(String telephone, UserUpdateDto userUpdate){
+        User user = this.userPersistence.read(telephone);
+        BeanUtils.copyProperties(userUpdate,user);
+        return this.userPersistence.update(user).toShow();
     }
 
 }
