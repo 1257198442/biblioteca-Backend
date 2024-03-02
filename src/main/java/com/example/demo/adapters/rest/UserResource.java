@@ -2,6 +2,7 @@ package com.example.demo.adapters.rest;
 
 
 import com.example.demo.adapters.rest.dto.TokenDto;
+import com.example.demo.adapters.rest.dto.UserUpdateDto;
 import com.example.demo.adapters.rest.dto.UserUploadDto;
 import com.example.demo.domain.exceptions.ForbiddenException;
 import com.example.demo.domain.models.Role;
@@ -94,10 +95,24 @@ public class UserResource {
         }
     }
 
+    @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT') or hasRole('CLIENT')" )
+    @SecurityRequirement(name = "bearerAuth")
+    @PutMapping(TELEPHONE)
+    public User update(@PathVariable String telephone, @RequestBody UserUpdateDto userUpdate){
+        if(Role.isCompetent(adminRole,this.extractRoleClaims())||extractUserName().equals(telephone)){
+            return this.userService.update(telephone,userUpdate);
+        } else {
+            throw new ForbiddenException("You don't have permission to make this request.");
+        }
+    }
+
     private Role extractRoleClaims() {
         List< String > roleClaims = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority).collect(Collectors.toList());
         return Role.of(roleClaims.get(0));
+    }
+    private String extractUserName() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 
 }

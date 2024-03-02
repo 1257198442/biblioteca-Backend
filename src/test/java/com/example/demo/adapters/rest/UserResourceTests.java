@@ -1,7 +1,6 @@
 package com.example.demo.adapters.rest;
 
-import com.example.demo.adapters.rest.dto.UserUploadDto;
-import com.example.demo.domain.exceptions.NotFoundException;
+import com.example.demo.adapters.rest.dto.UserUpdateDto;
 import com.example.demo.domain.models.Role;
 import com.example.demo.domain.models.User;
 import com.example.demo.domain.service.JwtService;
@@ -14,6 +13,7 @@ import org.springframework.test.web.reactive.server.StatusAssertions;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Base64;
 
@@ -99,7 +99,7 @@ public class UserResourceTests {
                     User user = response.getResponseBody();
                     assertEquals(Role.CLIENT, user.getRole());
                 });
-        putUpdateClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"+34123","BAN").isOk();
+        putRoleUpdateClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"+34123","BAN").isOk();
         this.getReadClient("+34123").isOk()
                 .expectBody(User.class)
                 .consumeWith(response -> {
@@ -107,13 +107,13 @@ public class UserResourceTests {
                     assertEquals(Role.BAN, user.getRole());
                 });
         //404
-        putUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"test","CLIENT").isEqualTo(HttpStatus.NOT_FOUND);
+        putRoleUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"test","CLIENT").isEqualTo(HttpStatus.NOT_FOUND);
         //422
-        putUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"+34123","TEST").isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+        putRoleUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"+34123","TEST").isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
         //403
-        putUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"+34123","ROOT").isEqualTo(HttpStatus.FORBIDDEN);
+        putRoleUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"+34123","ROOT").isEqualTo(HttpStatus.FORBIDDEN);
         //403
-        putUpdateClient("Bearer "+jwtService.createToken("+34666000002","user","CLIENT"),"+34123","ADMINISTRATOR").isEqualTo(HttpStatus.FORBIDDEN);
+        putRoleUpdateClient("Bearer "+jwtService.createToken("+34666000002","user","CLIENT"),"+34123","ADMINISTRATOR").isEqualTo(HttpStatus.FORBIDDEN);
 
     }
     @Test
@@ -134,6 +134,23 @@ public class UserResourceTests {
                     assertNotNull(response.getResponseBody());
                 });
     }
+    @Test
+    void testUpdate(){
+        UserUpdateDto userUpdateDto = UserUpdateDto.builder()
+                .description("t")
+                .birthdays(LocalDate.of(2020,1,1))
+                .email("test@testtest.com")
+                .name("123").build();
+        //401
+        putUpdateClient("","+34123",userUpdateDto).isEqualTo(HttpStatus.UNAUTHORIZED);
+        //404
+        putUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"null",userUpdateDto).isEqualTo(HttpStatus.NOT_FOUND);
+        //403
+        putUpdateClient("Bearer "+jwtService.createToken("+34645321068","client","CLIENT"),"+34123",userUpdateDto).isEqualTo(HttpStatus.FORBIDDEN);
+        //200
+        putUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"+34123",userUpdateDto).isEqualTo(HttpStatus.OK);
+    }
+
     StatusAssertions getReadClient(String telephone){
         String user = "+34666666666";
         String name = "root";
@@ -157,7 +174,7 @@ public class UserResourceTests {
                 .expectStatus();
     }
 
-    StatusAssertions putUpdateClient(String token,String telephone,String body) {
+    StatusAssertions putRoleUpdateClient(String token, String telephone, String body) {
         return this.webTestClient
                 .put()
                 .uri("/user/"+telephone + "/role")
@@ -167,6 +184,19 @@ public class UserResourceTests {
                 .bodyValue(body)
                 .exchange()
                 .expectStatus();
+    }
+
+    StatusAssertions putUpdateClient(String token, String telephone, UserUpdateDto body) {
+        return this.webTestClient
+                .put()
+                .uri("/user/"+telephone)
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.ALL)
+                .bodyValue(body)
+                .exchange()
+                .expectStatus();
+
     }
 }
 
