@@ -1,6 +1,8 @@
 package com.example.demo.adapters.mongodb.persistence;
 
+import com.example.demo.adapters.mongodb.daos.AvatarRepository;
 import com.example.demo.adapters.mongodb.daos.UserRepository;
+import com.example.demo.adapters.mongodb.entities.AvatarEntity;
 import com.example.demo.adapters.mongodb.entities.UserEntity;
 import com.example.demo.domain.exceptions.NotFoundException;
 import com.example.demo.domain.models.User;
@@ -9,6 +11,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,10 +19,13 @@ import java.util.stream.Collectors;
 @Repository
 public class UserPersistenceMongodb implements UserPersistence {
     private final UserRepository userRepository;
+    private final AvatarRepository avatarRepository;
 
     @Autowired
-    public UserPersistenceMongodb(UserRepository userRepository){
+    public UserPersistenceMongodb(UserRepository userRepository,
+                                  AvatarRepository avatarRepository){
         this.userRepository = userRepository;
+        this.avatarRepository = avatarRepository;
     }
 
     @Override
@@ -37,9 +43,14 @@ public class UserPersistenceMongodb implements UserPersistence {
 
     @Override
     public User create(User user) {
+        createNeedToBe(user);
         return this.userRepository
                 .save(new UserEntity(user))
                 .toUser();
+    }
+
+    private void createNeedToBe(User user){
+        this.avatarRepository.save(new AvatarEntity("user.png","https://localhost/images/avatar/user.png",user.getTelephone(), LocalDateTime.now()));
     }
 
     @Override
