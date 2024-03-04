@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -15,14 +16,18 @@ import java.util.Arrays;
 public class SeederDev {
     private final UserRepository userDao;
     private final LibraryRepository libraryDao;
-
     private final AvatarRepository avatarDao;
+    private final WalletRepository walletDao;
 
     @Autowired
-    public SeederDev(UserRepository userDao,LibraryRepository libraryDao,AvatarRepository avatarDao){
+    public SeederDev(UserRepository userDao,
+                     LibraryRepository libraryDao,
+                     AvatarRepository avatarDao,
+                     WalletRepository walletDao){
         this.userDao = userDao;
         this.libraryDao = libraryDao;
         this.avatarDao = avatarDao;
+        this.walletDao = walletDao;
         this.deleteAllAndInitializeAndSeedDataBase();
     }
     public void deleteAllAndInitializeAndSeedDataBase() {
@@ -78,5 +83,17 @@ public class SeederDev {
                 AvatarEntity.builder().fileName("user.png").url("https://localhost/images/avatar/user.png").telephone("+34123").uploadTime(LocalDateTime.now()).build(),
         };
         this.avatarDao.saveAll(Arrays.asList(avatarEntities));
+
+        LogManager.getLogger(this.getClass()).warn("-------      Initial Wallet      -----------");
+        WalletEntity[] walletEntities = {
+                WalletEntity.builder().telephone("+34666666666").balance(new BigDecimal("999")).build(),
+                WalletEntity.builder().telephone("+34666000001").balance(new BigDecimal("0")).build(),
+                WalletEntity.builder().telephone("+34666000002").balance(new BigDecimal("0")).build(),
+                WalletEntity.builder().telephone("+34666").balance(new BigDecimal("0")).build(),
+                WalletEntity.builder().telephone("+34645321068").balance(new BigDecimal("0")).build(),
+                WalletEntity.builder().telephone("+34123").balance(new BigDecimal("235")).build()
+        };
+        this.walletDao.saveAll(Arrays.asList(walletEntities));
     }
+
 }
