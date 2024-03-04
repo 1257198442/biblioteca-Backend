@@ -1,6 +1,7 @@
 package com.example.demo.adapters.mongodb.entities;
 
 import com.example.demo.domain.models.Role;
+import com.example.demo.domain.models.Setting;
 import com.example.demo.domain.models.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -32,6 +33,7 @@ public class UserEntity {
     private String description;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthdays;
+    private Setting setting;
     public UserEntity(User user){
         BeanUtils.copyProperties(user,this);
     }

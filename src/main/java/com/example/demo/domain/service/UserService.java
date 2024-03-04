@@ -1,10 +1,12 @@
 package com.example.demo.domain.service;
 
+import com.example.demo.adapters.rest.dto.SettingUpdateDto;
 import com.example.demo.adapters.rest.dto.UserUpdateDto;
 import com.example.demo.adapters.rest.dto.UserUploadDto;
 import com.example.demo.domain.exceptions.ConflictException;
 import com.example.demo.domain.exceptions.ForbiddenException;
 import com.example.demo.domain.models.Role;
+import com.example.demo.domain.models.Setting;
 import com.example.demo.domain.models.User;
 import com.example.demo.domain.persistence.UserPersistence;
 import org.springframework.beans.BeanUtils;
@@ -55,12 +57,14 @@ public class UserService {
         user.setActive(true);
         user.setDescription("This user has not modified his profile");
         user.setBirthdays(LocalDate.of(1990,1,1));
+        Setting setting = Setting.builder().hideMyProfile(true).build();
+        user.setSetting(setting);
         return this.userPersistence.create(user).toShow();
     }
 
-    public User updateAdminROOT(String telephone,String admin){
+    public User updateRoleROOT(String telephone, String role){
         User user = this.userPersistence.read(telephone);
-        if(user.getRole().equals(Role.ROOT)||admin.equals("ROOT")){
+        if(user.getRole().equals(Role.ROOT)||role.equals("ROOT")){
             throw new ForbiddenException("Root cannot be changed.");
         }
         //TODO
@@ -68,14 +72,14 @@ public class UserService {
 //        if(){
 //            throw new ForbiddenException("User "+telephone+" has a record of borrowed books that have not been returned.");
 //        }
-        user.setActive(!admin.equals("BAN"));
-        user.setRole(Role.fromString(admin));
+        user.setActive(!role.equals("BAN"));
+        user.setRole(Role.fromString(role));
         return this.userPersistence.update(user).toShow();
     }
 
-    public User updateAdminADMINISTRATOR(String telephone,String admin){
+    public User updateRoleADMINISTRATOR(String telephone, String role){
         User user = this.userPersistence.read(telephone);
-        if(user.getRole().equals(Role.ROOT)||admin.equals("ROOT")){
+        if(user.getRole().equals(Role.ROOT)||role.equals("ROOT")){
             throw new ForbiddenException("Root cannot be changed.");
         }
         //TODO
@@ -83,10 +87,10 @@ public class UserService {
 //        if(){
 //            throw new ForbiddenException("User "+telephone+" has a record of borrowed books that have not been returned.");
 //        }
-        if (!admin.equals("ADMINISTRATOR")) {
+        if (!role.equals("ADMINISTRATOR")) {
             throw new ForbiddenException("You don't have permission to make this request.");
         }
-        user.setRole(Role.fromString(admin));
+        user.setRole(Role.fromString(role));
         return this.userPersistence.update(user).toShow();
     }
 
@@ -99,5 +103,11 @@ public class UserService {
         BeanUtils.copyProperties(userUpdate,user);
         return this.userPersistence.update(user).toShow();
     }
-
+    public User updateSetting(String telephone, SettingUpdateDto settingUpdateDto){
+        User user = this.userPersistence.read(telephone);
+        Setting setting = new Setting();
+        BeanUtils.copyProperties(settingUpdateDto,setting);
+        user.setSetting(setting);
+        return this.userPersistence.update(user).toShow();
+    }
 }

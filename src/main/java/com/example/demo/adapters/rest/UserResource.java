@@ -1,6 +1,7 @@
 package com.example.demo.adapters.rest;
 
 
+import com.example.demo.adapters.rest.dto.SettingUpdateDto;
 import com.example.demo.adapters.rest.dto.TokenDto;
 import com.example.demo.adapters.rest.dto.UserUpdateDto;
 import com.example.demo.adapters.rest.dto.UserUploadDto;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 public class UserResource {
     public static final String USER = "/user";
     public static final String LOGIN = "/login";
+    public static final String SETTING = "/setting";
     public static final String TELEPHONE = "/{telephone}";
     public static final String ROLE = "/role";
     public final UserService userService;
@@ -76,9 +78,9 @@ public class UserResource {
     @PutMapping(TELEPHONE+ ROLE)
     public User updateRole(@PathVariable String telephone, @RequestBody String role){
         if(roleService.isCompetent(rootRole,this.extractRoleClaims())){
-            return this.userService.updateAdminROOT(telephone,role);
+            return this.userService.updateRoleROOT(telephone,role);
         }else if(roleService.isCompetent(adminRole,this.extractRoleClaims())){
-            return this.userService.updateAdminADMINISTRATOR(telephone,role);
+            return this.userService.updateRoleADMINISTRATOR(telephone,role);
         }else {
             throw new ForbiddenException("You don't have permission to make this request.");
         }
@@ -101,6 +103,16 @@ public class UserResource {
     public User update(@PathVariable String telephone, @RequestBody UserUpdateDto userUpdate){
         if(Role.isCompetent(adminRole,this.extractRoleClaims())||extractUserName().equals(telephone)){
             return this.userService.update(telephone,userUpdate);
+        } else {
+            throw new ForbiddenException("You don't have permission to make this request.");
+        }
+    }
+    @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT') or hasRole('CLIENT')" )
+    @SecurityRequirement(name = "bearerAuth")
+    @PutMapping(TELEPHONE+SETTING)
+    public User updateSetting(@PathVariable String telephone, @RequestBody SettingUpdateDto settingUpdateDto){
+        if(Role.isCompetent(adminRole,this.extractRoleClaims())||extractUserName().equals(telephone)){
+            return this.userService.updateSetting(telephone,settingUpdateDto);
         } else {
             throw new ForbiddenException("You don't have permission to make this request.");
         }
