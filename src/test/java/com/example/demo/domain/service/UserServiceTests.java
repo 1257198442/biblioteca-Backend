@@ -1,6 +1,7 @@
 package com.example.demo.domain.service;
 
 import com.example.demo.TestConfig;
+import com.example.demo.adapters.rest.dto.SettingUpdateDto;
 import com.example.demo.adapters.rest.dto.UserUpdateDto;
 import com.example.demo.adapters.rest.dto.UserUploadDto;
 import com.example.demo.domain.exceptions.ConflictException;
@@ -44,6 +45,9 @@ public class UserServiceTests {
         assertEquals(user.getTelephone(),userUploadDto.getTelephone());
         assertNull(user.getPassword());
         assertEquals(Role.CLIENT,user.getRole());
+        assertEquals(true,user.getSetting().getHideMyProfile());
+        assertEquals("This user has not modified his profile",user.getDescription());
+        assertEquals(LocalDate.of(1990,1,1),user.getBirthdays());
         assertThrows(NotFoundException.class, () -> {
             userService.read("null");
         });
@@ -53,16 +57,16 @@ public class UserServiceTests {
     }
     @Test
     void testUpdateAdminROOT(){
-        assertThrows(ForbiddenException.class,()->userService.updateAdminROOT("+34666000020","ROOT"));
-        assertThat(userService.updateAdminROOT("+34666000020","ADMINISTRATOR")).isNotNull();
+        assertThrows(ForbiddenException.class,()->userService.updateRoleROOT("+34666000020","ROOT"));
+        assertThat(userService.updateRoleROOT("+34666000020","ADMINISTRATOR")).isNotNull();
     }
 
     @Test
     void testUpdateAdminADMINISTRATOR(){
-        assertThrows(ForbiddenException.class,()->userService.updateAdminADMINISTRATOR("+34666000020","ROOT"));
-        assertThat(userService.updateAdminADMINISTRATOR("+34666000020","ADMINISTRATOR")).isNotNull();
-        assertThrows(ForbiddenException.class,()->userService.updateAdminADMINISTRATOR("+34666000020","BAN"));
-        assertThrows(ForbiddenException.class,()->userService.updateAdminADMINISTRATOR("+34666000020","CLIENT"));
+        assertThrows(ForbiddenException.class,()->userService.updateRoleADMINISTRATOR("+34666000020","ROOT"));
+        assertThat(userService.updateRoleADMINISTRATOR("+34666000020","ADMINISTRATOR")).isNotNull();
+        assertThrows(ForbiddenException.class,()->userService.updateRoleADMINISTRATOR("+34666000020","BAN"));
+        assertThrows(ForbiddenException.class,()->userService.updateRoleADMINISTRATOR("+34666000020","CLIENT"));
     }
 
     @Test
@@ -78,6 +82,16 @@ public class UserServiceTests {
         assertEquals(user.getEmail(),"test@test.com");
         assertEquals(user.getBirthdays(),LocalDate.of(2000,12,12));
         assertEquals(user.getDescription(),"test");
+    }
 
+    @Test
+    void testUpdateSetting(){
+        SettingUpdateDto settingUpdateDto = new SettingUpdateDto();
+        settingUpdateDto.setHideMyProfile(false);
+        userService.updateSetting("+34123",settingUpdateDto);
+        assertEquals(userService.read("+34123").getSetting().getHideMyProfile(),false);
+        settingUpdateDto.setHideMyProfile(true);
+        userService.updateSetting("+34123",settingUpdateDto);
+        assertEquals(userService.read("+34123").getSetting().getHideMyProfile(),true);
     }
 }

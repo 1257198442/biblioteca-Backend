@@ -28,6 +28,7 @@ public class User {
     private String description;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthdays;
+    private Setting setting;
     public User toShow(){
         User user = new User();
         BeanUtils.copyProperties(this,user);

@@ -1,5 +1,6 @@
 package com.example.demo.adapters.rest;
 
+import com.example.demo.adapters.rest.dto.SettingUpdateDto;
 import com.example.demo.adapters.rest.dto.UserUpdateDto;
 import com.example.demo.domain.models.Role;
 import com.example.demo.domain.models.User;
@@ -151,6 +152,21 @@ public class UserResourceTests {
         putUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"+34123",userUpdateDto).isEqualTo(HttpStatus.OK);
     }
 
+    @Test
+    void testUpdateSetting(){
+        SettingUpdateDto settingUpdateDto = SettingUpdateDto.builder().hideMyProfile(false).build();
+        SettingUpdateDto settingUpdateDto1 = SettingUpdateDto.builder().hideMyProfile(true).build();
+        //401
+        putUpdateClient("","+34123",settingUpdateDto).isEqualTo(HttpStatus.UNAUTHORIZED);
+        //404
+        putUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"null",settingUpdateDto).isEqualTo(HttpStatus.NOT_FOUND);
+        //403
+        putUpdateClient("Bearer "+jwtService.createToken("+34645321068","client","CLIENT"),"+34123",settingUpdateDto).isEqualTo(HttpStatus.FORBIDDEN);
+        //200
+        putUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"+34123",settingUpdateDto).isEqualTo(HttpStatus.OK);
+        putUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"+34123",settingUpdateDto1).isEqualTo(HttpStatus.OK);
+    }
+
     StatusAssertions getReadClient(String telephone){
         String user = "+34666666666";
         String name = "root";
@@ -174,6 +190,8 @@ public class UserResourceTests {
                 .expectStatus();
     }
 
+
+
     StatusAssertions putRoleUpdateClient(String token, String telephone, String body) {
         return this.webTestClient
                 .put()
@@ -190,6 +208,19 @@ public class UserResourceTests {
         return this.webTestClient
                 .put()
                 .uri("/user/"+telephone)
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.ALL)
+                .bodyValue(body)
+                .exchange()
+                .expectStatus();
+
+    }
+
+    StatusAssertions putUpdateClient(String token, String telephone, SettingUpdateDto body) {
+        return this.webTestClient
+                .put()
+                .uri("/user/"+telephone+"/setting")
                 .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.ALL)
