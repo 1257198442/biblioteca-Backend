@@ -16,10 +16,13 @@ public class SeederDev {
     private final UserRepository userDao;
     private final LibraryRepository libraryDao;
 
+    private final AvatarRepository avatarDao;
+
     @Autowired
-    public SeederDev(UserRepository userDao,LibraryRepository libraryDao){
+    public SeederDev(UserRepository userDao,LibraryRepository libraryDao,AvatarRepository avatarDao){
         this.userDao = userDao;
         this.libraryDao = libraryDao;
+        this.avatarDao = avatarDao;
         this.deleteAllAndInitializeAndSeedDataBase();
     }
     public void deleteAllAndInitializeAndSeedDataBase() {
@@ -29,6 +32,8 @@ public class SeederDev {
 
     public void deleteAllAndInitialize() {
         this.userDao.deleteAll();
+        this.libraryDao.deleteAll();
+        this.avatarDao.deleteAll();
     }
     private void seedDataBase() {
         LogManager.getLogger(this.getClass()).warn("------- Initial Load from JAVA -----------");
@@ -62,5 +67,16 @@ public class SeederDev {
                         .discord("https://www.discord.com/").build()
         };
         this.libraryDao.saveAll(Arrays.asList(libraryEntities));
+
+        LogManager.getLogger(this.getClass()).warn("-------      Initial Library      -----------");
+        AvatarEntity[] avatarEntities = {
+                AvatarEntity.builder().fileName("user.png").url("https://localhost/images/avatar/user.png").telephone("+34666666666").uploadTime(LocalDateTime.now()).build(),
+                AvatarEntity.builder().fileName("user.png").url("https://localhost/images/avatar/user.png").telephone("+34666000001").uploadTime(LocalDateTime.now()).build(),
+                AvatarEntity.builder().fileName("user.png").url("https://localhost/images/avatar/user.png").telephone("+34666000002").uploadTime(LocalDateTime.now()).build(),
+                AvatarEntity.builder().fileName("user.png").url("https://localhost/images/avatar/user.png").telephone("+34666").uploadTime(LocalDateTime.of(2000,1,1,1,1,1)).build(),
+                AvatarEntity.builder().fileName("user.png").url("https://localhost/images/avatar/user.png").telephone("+34645321068").uploadTime(LocalDateTime.now()).build(),
+                AvatarEntity.builder().fileName("user.png").url("https://localhost/images/avatar/user.png").telephone("+34123").uploadTime(LocalDateTime.now()).build(),
+        };
+        this.avatarDao.saveAll(Arrays.asList(avatarEntities));
     }
 }
