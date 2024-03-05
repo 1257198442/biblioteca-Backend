@@ -85,4 +85,24 @@ public class UserPersistenceMongodbTests {
         List<User> userList =this.userPersistenceMongodb.readAll();
         assertNotNull(userList);
     }
+    @Test
+    void testCreate(){
+        Setting setting = Setting.builder()
+                .hideMyProfile(true).build();
+        User user = User.builder()
+                .name("test")
+                .password("6")
+                .createTime(LocalDateTime.of(2000,1,1,1,1,1))
+                .telephone("+34999")
+                .email("test@test.com")
+                .role(Role.CLIENT)
+                .active(true)
+                .description("test")
+                .birthdays(LocalDate.of(2000,1,1))
+                .setting(setting).build();
+        userPersistenceMongodb.create(user);
+        User userResult = userPersistenceMongodb.read(user.getTelephone());
+        assertEquals(userResult,user);
+
+    }
 }

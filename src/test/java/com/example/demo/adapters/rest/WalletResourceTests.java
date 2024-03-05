@@ -1,5 +1,7 @@
 package com.example.demo.adapters.rest;
 
+import com.example.demo.adapters.rest.dto.TransactionRecordDto;
+import com.example.demo.domain.models.TransactionDetails;
 import com.example.demo.domain.service.JwtService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.StatusAssertions;
 import org.springframework.test.web.reactive.server.WebTestClient;
+
+import java.math.BigDecimal;
 
 @RestTestConfig
 @ActiveProfiles("test")
@@ -31,6 +35,43 @@ public class WalletResourceTests {
                 .get()
                 .uri("/wallet/"+telephone )
                 .header("Authorization", token)
+                .exchange()
+                .expectStatus();
+    }
+    @Test
+    void testRecharge(){
+        TransactionDetails transactionDetails = TransactionDetails.builder()
+                .postalCode("00000")
+                .lastName("JIAMING")
+                .firstName("SHI")
+                .city("MADRID")
+                .billingAddress("TEST").build();
+        TransactionRecordDto transactionRecordDto = TransactionRecordDto.builder()
+                .transactionDetails(transactionDetails)
+                .amount(new BigDecimal("100"))
+                .purpose("test")
+                .telephone("+34123").build();
+        //200
+        postRechargeClient("Bearer "+jwtService.createToken("+34123","user","CLIENT"),transactionRecordDto).isEqualTo(HttpStatus.OK);
+        //401
+        postRechargeClient("",transactionRecordDto).isEqualTo(HttpStatus.UNAUTHORIZED);
+        //403
+        postRechargeClient("Bearer "+jwtService.createToken("+34666000002","Client","CLIENT"),transactionRecordDto).isEqualTo(HttpStatus.FORBIDDEN);
+        //404
+        transactionRecordDto.setTelephone("null");
+        postRechargeClient("Bearer "+jwtService.createToken("+34666666666","ROOT","ROOT"),transactionRecordDto).isEqualTo(HttpStatus.NOT_FOUND);
+        //422
+        transactionRecordDto.setTelephone("+34123");
+        transactionRecordDto.setAmount(new BigDecimal("-100"));
+        postRechargeClient("Bearer "+jwtService.createToken("+34123","user","CLIENT"),transactionRecordDto).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    StatusAssertions postRechargeClient(String token, TransactionRecordDto transactionRecordDto){
+        return this.webTestClient
+                .post()
+                .uri("/wallet/recharge")
+                .header("Authorization", token)
+                .bodyValue(transactionRecordDto)
                 .exchange()
                 .expectStatus();
     }

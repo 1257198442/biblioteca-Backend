@@ -101,7 +101,7 @@ public class UserResource {
     @SecurityRequirement(name = "bearerAuth")
     @PutMapping(TELEPHONE)
     public User update(@PathVariable String telephone, @RequestBody UserUpdateDto userUpdate){
-        if(Role.isCompetent(adminRole,this.extractRoleClaims())||extractUserName().equals(telephone)){
+        if(hasPermission(rootRole,telephone)){
             return this.userService.update(telephone,userUpdate);
         } else {
             throw new ForbiddenException("You don't have permission to make this request.");
@@ -111,7 +111,7 @@ public class UserResource {
     @SecurityRequirement(name = "bearerAuth")
     @PutMapping(TELEPHONE+SETTING)
     public User updateSetting(@PathVariable String telephone, @RequestBody SettingUpdateDto settingUpdateDto){
-        if(Role.isCompetent(adminRole,this.extractRoleClaims())||extractUserName().equals(telephone)){
+        if(hasPermission(rootRole,telephone)){
             return this.userService.updateSetting(telephone,settingUpdateDto);
         } else {
             throw new ForbiddenException("You don't have permission to make this request.");
@@ -123,8 +123,14 @@ public class UserResource {
                 .map(GrantedAuthority::getAuthority).collect(Collectors.toList());
         return Role.of(roleClaims.get(0));
     }
+
     private String extractUserName() {
         return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 
+    public boolean hasPermission(List<Role> requiredRoles, String targetTelephone) {
+        boolean hasRolePermission = Role.isCompetent(requiredRoles, this.extractRoleClaims());
+        boolean isTargetUser = extractUserName().equals(targetTelephone);
+        return hasRolePermission || isTargetUser;
+    }
 }

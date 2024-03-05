@@ -44,7 +44,7 @@ public class AvatarResource {
     @SecurityRequirement(name = "bearerAuth")
     @PutMapping(TELEPHONE)
     public Avatar updateAvatarByMobile(@PathVariable String telephone, @RequestPart("file") MultipartFile file){
-        if(adminService.isCompetent(adminRole,this.extractRoleClaims())||extractUserName().equals(telephone)){
+        if(hasPermission(adminRole,telephone)){
             return this.saveAvatar(telephone,file);
         }else {
             throw new ForbiddenException("You don't have permission to make this request.");
@@ -80,4 +80,9 @@ public class AvatarResource {
         return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 
+    public boolean hasPermission(List<Role> requiredRoles, String targetTelephone) {
+        boolean hasRolePermission = Role.isCompetent(requiredRoles, this.extractRoleClaims());
+        boolean isTargetUser = extractUserName().equals(targetTelephone);
+        return hasRolePermission || isTargetUser;
+    }
 }
