@@ -36,5 +36,4 @@ public class AvatarPersistenceMongodb implements AvatarPersistence {
         return this.avatarDao.save(avatarEntity).toAvatar();
     }
 
-
 }

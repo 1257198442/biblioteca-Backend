@@ -71,11 +71,13 @@ public class AvatarResource {
         }
         throw new ConflictException("update fault");
     }
+
     private Role extractRoleClaims() {
         List< String > roleClaims = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority).collect(Collectors.toList());
         return Role.of(roleClaims.get(0));
     }
+
     private String extractUserName() {
         return SecurityContextHolder.getContext().getAuthentication().getName();
     }

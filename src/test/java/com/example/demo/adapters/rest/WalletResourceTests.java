@@ -48,7 +48,7 @@ public class WalletResourceTests {
                 .billingAddress("TEST").build();
         TransactionRecordDto transactionRecordDto = TransactionRecordDto.builder()
                 .transactionDetails(transactionDetails)
-                .amount(new BigDecimal("100"))
+                .amount(new BigDecimal("10000"))
                 .purpose("test")
                 .telephone("+34123").build();
         //200
@@ -70,6 +70,45 @@ public class WalletResourceTests {
         return this.webTestClient
                 .post()
                 .uri("/wallet/recharge")
+                .header("Authorization", token)
+                .bodyValue(transactionRecordDto)
+                .exchange()
+                .expectStatus();
+    }
+
+    @Test
+    void testWithdrawal(){
+        TransactionDetails transactionDetails = TransactionDetails.builder()
+                .postalCode("00000")
+                .lastName("JIAMING")
+                .firstName("SHI")
+                .city("MADRID")
+                .billingAddress("TEST").build();
+        TransactionRecordDto transactionRecordDto = TransactionRecordDto.builder()
+                .transactionDetails(transactionDetails)
+                .amount(new BigDecimal("1000"))
+                .purpose("test")
+                .telephone("+34123").build();
+        //200
+        postWithdrawalClient("Bearer "+jwtService.createToken("+34123","user","CLIENT"),transactionRecordDto).isEqualTo(HttpStatus.OK);
+        //401
+        postWithdrawalClient("",transactionRecordDto).isEqualTo(HttpStatus.UNAUTHORIZED);
+        //403
+        postWithdrawalClient("Bearer "+jwtService.createToken("+34666000002","Client","CLIENT"),transactionRecordDto).isEqualTo(HttpStatus.FORBIDDEN);
+        transactionRecordDto.setAmount(new BigDecimal("1000000"));
+        postWithdrawalClient("Bearer "+jwtService.createToken("+34123","user","CLIENT"),transactionRecordDto).isEqualTo(HttpStatus.FORBIDDEN);
+        //404
+        transactionRecordDto.setTelephone("null");
+        postWithdrawalClient("Bearer "+jwtService.createToken("+34666666666","ROOT","ROOT"),transactionRecordDto).isEqualTo(HttpStatus.NOT_FOUND);
+        //422
+        transactionRecordDto.setTelephone("+34123");
+        transactionRecordDto.setAmount(new BigDecimal("-100"));
+        postWithdrawalClient("Bearer "+jwtService.createToken("+34123","user","CLIENT"),transactionRecordDto).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+    StatusAssertions postWithdrawalClient(String token, TransactionRecordDto transactionRecordDto){
+        return this.webTestClient
+                .post()
+                .uri("/wallet/withdrawal")
                 .header("Authorization", token)
                 .bodyValue(transactionRecordDto)
                 .exchange()

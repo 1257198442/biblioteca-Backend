@@ -38,7 +38,8 @@ public class UserService {
             throw new ForbiddenException("Your account has been banned.: "+telephone);
         }
         return jwtService.createToken(user.getTelephone(), user.getName(), user.getRole().name());
-}
+    }
+
     public User read(String telephone){
         return this.userPersistence.read(telephone).toShow();
     }
@@ -47,6 +48,7 @@ public class UserService {
             throw new ConflictException("User is Exist: "+telephone);
         }
     }
+
     public User create(UserUploadDto userUpload){
         this.assertUserNotExist(this.phoneNumberValidator.validate(userUpload.getTelephone()));
         User user = new User();

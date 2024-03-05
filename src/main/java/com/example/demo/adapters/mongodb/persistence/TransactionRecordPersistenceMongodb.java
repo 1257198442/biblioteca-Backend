@@ -37,6 +37,5 @@ public class TransactionRecordPersistenceMongodb implements TransactionRecordPer
         }else {
             throw new ForbiddenException("The balance is insufficient.");
         }
-
     }
 }

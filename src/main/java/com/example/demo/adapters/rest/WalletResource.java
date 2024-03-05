@@ -16,7 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,11 +24,10 @@ import java.util.stream.Collectors;
 public class WalletResource {
     public static final String WALLET = "/wallet";
     public static final String TELEPHONE = "/{telephone}";
-    public static final String  RECHARGE = "/recharge";
+    public static final String RECHARGE = "/recharge";
+    public static final String WITHDRAWAL = "/withdrawal";
     public final WalletService walletService;
     private final TransactionRecordService transactionRecordService;
-    public final List<Role> allRole= Arrays.asList(Role.CLIENT,Role.ADMINISTRATOR,Role.ROOT);
-    public final List<Role> adminRole=Arrays.asList(Role.ADMINISTRATOR,Role.ROOT);
     public final List<Role> rootRole= List.of(Role.ROOT);
     @Autowired
     public WalletResource(WalletService walletService,
@@ -52,8 +50,8 @@ public class WalletResource {
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping(RECHARGE)
     public TransactionRecord recharge(@RequestBody TransactionRecordDto transactionRecordData){
-        if(transactionRecordData.amount.compareTo(BigDecimal.ZERO)<0){
-            throw new UnprocessableEntityException("Unable to recharge negative numbers");
+        if(transactionRecordData.amount.compareTo(BigDecimal.ZERO)<=0){
+            throw new UnprocessableEntityException("The amount cannot be negative");
         }
         if(hasPermission(rootRole,transactionRecordData.getTelephone())){
         return this.transactionRecordService.create(transactionRecordData);
@@ -61,6 +59,22 @@ public class WalletResource {
             throw new ForbiddenException("You don't have permission to make this request.");
         }
     }
+
+    @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT')or hasRole('CLIENT')" )
+    @SecurityRequirement(name = "bearerAuth")
+    @PostMapping(WITHDRAWAL)
+    public TransactionRecord withdrawal(@RequestBody TransactionRecordDto transactionRecordData){
+        if(transactionRecordData.amount.compareTo(BigDecimal.ZERO)<=0){
+            throw new UnprocessableEntityException("The amount cannot be negative");
+        }
+        transactionRecordData.setAmount(transactionRecordData.getAmount().negate());
+        if(hasPermission(rootRole,transactionRecordData.getTelephone())){
+            return this.transactionRecordService.create(transactionRecordData);
+        }else {
+            throw new ForbiddenException("You don't have permission to make this request.");
+        }
+    }
+
 
     private Role extractRoleClaims() {
         List< String > roleClaims = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
