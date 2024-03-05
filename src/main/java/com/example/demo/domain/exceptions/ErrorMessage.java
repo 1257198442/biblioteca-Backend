@@ -16,5 +16,4 @@ class ErrorMessage {
         this.message = exception.getMessage();
         this.code = code;
     }
-
 }

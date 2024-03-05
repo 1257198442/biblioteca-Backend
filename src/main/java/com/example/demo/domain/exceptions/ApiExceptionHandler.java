@@ -78,5 +78,4 @@ public class ApiExceptionHandler {
         exception.printStackTrace();
         return new ErrorMessage(exception, HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
-
 }

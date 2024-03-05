@@ -16,5 +16,4 @@ import java.math.BigDecimal;
 public class Wallet {
     public BigDecimal balance;
     public String telephone;
-
 }
