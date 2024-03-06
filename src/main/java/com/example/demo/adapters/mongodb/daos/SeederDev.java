@@ -18,16 +18,19 @@ public class SeederDev {
     private final LibraryRepository libraryDao;
     private final AvatarRepository avatarDao;
     private final WalletRepository walletDao;
+    private final TransactionRecordRepository transactionRecordDao;
 
     @Autowired
     public SeederDev(UserRepository userDao,
                      LibraryRepository libraryDao,
                      AvatarRepository avatarDao,
-                     WalletRepository walletDao){
+                     WalletRepository walletDao,
+                     TransactionRecordRepository transactionRecordDao){
         this.userDao = userDao;
         this.libraryDao = libraryDao;
         this.avatarDao = avatarDao;
         this.walletDao = walletDao;
+        this.transactionRecordDao = transactionRecordDao;
         this.deleteAllAndInitializeAndSeedDataBase();
     }
     public void deleteAllAndInitializeAndSeedDataBase() {
@@ -94,6 +97,19 @@ public class SeederDev {
                 WalletEntity.builder().telephone("+34123").balance(new BigDecimal("235")).build()
         };
         this.walletDao.saveAll(Arrays.asList(walletEntities));
+
+        LogManager.getLogger(this.getClass()).warn("-------      Initial TransactionRecord      -----------");
+        TransactionDetails transactionDetails = TransactionDetails.builder()
+                .billingAddress("Address")
+                .city("MADRID")
+                .firstName("JIAMING")
+                .lastName("SHI")
+                .postalCode("00000").build();
+        TransactionRecordEntity[] transactionRecordEntities = {
+                TransactionRecordEntity.builder().telephone("+34123").timestampTime(LocalDateTime.now()).transactionDetails(transactionDetails).reference("ijadlkfjsjf1").purpose("test").amount(new BigDecimal("100")).build(),
+                TransactionRecordEntity.builder().telephone("+34123").timestampTime(LocalDateTime.now()).transactionDetails(transactionDetails).reference("asldjaaslskl").purpose("test").amount(new BigDecimal("-100")).build(),
+        };
+        this.transactionRecordDao.saveAll(Arrays.asList(transactionRecordEntities));
     }
 
 }

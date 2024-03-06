@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface TransactionRecordPersistence {
     TransactionRecord create(TransactionRecord transactionRecord);
+    TransactionRecord readByReference(String reference);
+    List<TransactionRecord> readByTelephone(String telephone);
 }

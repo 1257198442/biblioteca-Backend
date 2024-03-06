@@ -10,9 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestConfig
 public class TransactionRecordPersistenceTests {
@@ -41,4 +42,25 @@ public class TransactionRecordPersistenceTests {
         transactionRecord.setAmount(new BigDecimal("-10000"));
         assertThrows(ForbiddenException.class, () -> transactionRecordPersistenceMongodb.create(transactionRecord));
     }
+    @Test
+    void testReadByTelephone(){
+        List<TransactionRecord> transactionRecords = transactionRecordPersistenceMongodb.readByTelephone("+34123");
+        assertEquals(2,transactionRecords.size());
+    }
+    @Test
+    void testReadReference(){
+        TransactionRecord transactionRecord = transactionRecordPersistenceMongodb.readByReference("ijadlkfjsjf1");
+        assertEquals("test", transactionRecord.getPurpose());
+        assertEquals("+34123", transactionRecord.getTelephone());
+        assertEquals(new BigDecimal("100"), transactionRecord.getAmount());
+        assertTrue(transactionRecord.getTimestampTime().isBefore(LocalDateTime.now()));
+        TransactionDetails transactionDetails = transactionRecord.getTransactionDetails();
+        assertEquals("Address", transactionDetails.getBillingAddress());
+        assertEquals("MADRID", transactionDetails.getCity());
+        assertEquals("JIAMING", transactionDetails.getFirstName());
+        assertEquals("SHI", transactionDetails.getLastName());
+        assertEquals("00000", transactionDetails.getPostalCode());
+
+    }
+
 }

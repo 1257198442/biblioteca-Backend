@@ -16,14 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 @TestConfig
 public class TransactionRecordEntityTests {
 
-//    public String reference;
-//    public String purpose;
-//    public String telephone;
-//    public BigDecimal amount;
-//    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-//    private LocalDateTime timestampTime;
-//    private TransactionDetails transactionDetails;
-
     @Test
     void testToTransactionRecord(){
         TransactionDetails transactionDetails = TransactionDetails.builder()

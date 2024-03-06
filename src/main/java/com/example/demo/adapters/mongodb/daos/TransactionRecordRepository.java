@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface TransactionRecordDao extends MongoRepository<TransactionRecordEntity,String> {
-
+public interface TransactionRecordRepository extends MongoRepository<TransactionRecordEntity,String> {
+    Optional<TransactionRecordEntity> findByReference(String reference);
+    List<TransactionRecordEntity> findByTelephone(String telephone);
 }
