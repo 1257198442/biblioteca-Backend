@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class TransactionRecordService {
@@ -32,5 +33,13 @@ public class TransactionRecordService {
 
     public void sendEmail(){
         //TODO send email
+    }
+
+    public TransactionRecord readByReference(String reference){
+        return this.transactionRecordPersistence.readByReference(reference);
+    }
+
+    public List<TransactionRecord> readByTelephone(String telephone){
+        return this.transactionRecordPersistence.readByTelephone(telephone);
     }
 }
