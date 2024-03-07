@@ -22,28 +22,17 @@ public class EmailService {
         this.javaMailSender = javaMailSender;
     }
 
-@Async
-public CompletableFuture<Void> sendEmail(String to, String subject, String text) {
+
+public void sendEmail(String to, String subject, String text) {
     SimpleMailMessage message = new SimpleMailMessage();
     message.setFrom(from);
     message.setTo(to);
     message.setSubject(subject);
     message.setText(text);
-    return CompletableFuture.runAsync(() -> {
-        long startTime = System.currentTimeMillis();
         if (isSimulated) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
             System.out.println("Email sent successfully" + message);
         } else {
             javaMailSender.send(message);
         }
-        long endTime = System.currentTimeMillis();
-        long duration = endTime - startTime;
-        System.out.println("Tarda : " + duration + " (ms) en enviar un correo electrónico");
-    });
     }
 }

@@ -15,12 +15,8 @@ class EmailServiceTests {
     @Test
     void testSendEmail(){
         emailService.isSimulated=true;
-        long startTime = System.currentTimeMillis();
-        emailService.sendEmail("12571984422@qq.com","testEmail","this is a testEmail").join();
+        emailService.sendEmail("12571984422@qq.com","testEmail","this is a testEmail");
         assertTrue(true);
-        long endTime = System.currentTimeMillis();
-        long duration = endTime - startTime;
-        assertTrue(duration >= 1000);
     }
 
 

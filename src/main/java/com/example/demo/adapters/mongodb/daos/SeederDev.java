@@ -55,7 +55,8 @@ public class SeederDev {
                 UserEntity.builder().role(Role.CLIENT).createTime(LocalDateTime.now()).email("1257198442@qq.com").name("User").password(pass).telephone("+34666000002").active(true).description("I am is client").birthdays(LocalDate.of(2000,1,3)).setting(setting).build(),
                 UserEntity.builder().role(Role.BAN).createTime(LocalDateTime.now()).email("test1@test.com").name("BAN").password(pass).telephone("+34666").active(true).description("An root").birthdays(LocalDate.of(2000,1,4)).setting(setting).build(),
                 UserEntity.builder().role(Role.CLIENT).createTime(LocalDateTime.now()).email("test2@test.com").name("User").password(pass).telephone("+34645321068").active(true).description("An root").birthdays(LocalDate.of(2000,1,5)).setting(setting).build(),
-                UserEntity.builder().role(Role.CLIENT).createTime(LocalDateTime.now()).email("test2@test.com").name("User").password(pass).telephone("+34123").active(true).description("An root").birthdays(LocalDate.of(2000,1,6)).setting(setting1).build(),
+                UserEntity.builder().role(Role.CLIENT).createTime(LocalDateTime.now()).email("test2@test.com").name("User").password(pass).telephone("+34123").active(true).description("user").birthdays(LocalDate.of(2000,1,6)).setting(setting1).build(),
+                UserEntity.builder().role(Role.CLIENT).createTime(LocalDateTime.now()).email("test2@test.com").name("User").password(pass).telephone("+34321").active(true).description("user").birthdays(LocalDate.of(2000,1,6)).setting(setting1).build(),
         };
         userDao.saveAll(Arrays.asList(userEntities));
 
@@ -95,7 +96,8 @@ public class SeederDev {
                 WalletEntity.builder().telephone("+34666000002").balance(new BigDecimal("0")).build(),
                 WalletEntity.builder().telephone("+34666").balance(new BigDecimal("0")).build(),
                 WalletEntity.builder().telephone("+34645321068").balance(new BigDecimal("0")).build(),
-                WalletEntity.builder().telephone("+34123").balance(new BigDecimal("235")).build()
+                WalletEntity.builder().telephone("+34123").balance(new BigDecimal("235")).build(),
+                WalletEntity.builder().telephone("+34321").balance(new BigDecimal("1000000")).build()
         };
         this.walletDao.saveAll(Arrays.asList(walletEntities));
 

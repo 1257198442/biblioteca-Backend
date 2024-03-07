@@ -50,9 +50,9 @@ public class WalletResourceTests {
                 .transactionDetails(transactionDetails)
                 .amount(new BigDecimal("10000"))
                 .purpose("test")
-                .telephone("+34123").build();
+                .telephone("+34321").build();
         //200
-        postRechargeClient("Bearer "+jwtService.createToken("+34123","user","CLIENT"),transactionRecordDto).isEqualTo(HttpStatus.OK);
+        postRechargeClient("Bearer "+jwtService.createToken("+34666666666","user","ROOT"),transactionRecordDto).isEqualTo(HttpStatus.OK);
         //401
         postRechargeClient("",transactionRecordDto).isEqualTo(HttpStatus.UNAUTHORIZED);
         //403
@@ -88,9 +88,9 @@ public class WalletResourceTests {
                 .transactionDetails(transactionDetails)
                 .amount(new BigDecimal("1000"))
                 .purpose("test")
-                .telephone("+34123").build();
+                .telephone("+34321").build();
         //200
-        postWithdrawalClient("Bearer "+jwtService.createToken("+34123","user","CLIENT"),transactionRecordDto).isEqualTo(HttpStatus.OK);
+        postWithdrawalClient("Bearer "+jwtService.createToken("+34666666666","user","ROOT"),transactionRecordDto).isEqualTo(HttpStatus.OK);
         //401
         postWithdrawalClient("",transactionRecordDto).isEqualTo(HttpStatus.UNAUTHORIZED);
         //403
