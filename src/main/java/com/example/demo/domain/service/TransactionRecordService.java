@@ -40,8 +40,9 @@ public class TransactionRecordService {
         transactionRecord.setReference(randomStringService.generateRandomString(12));
         transactionRecord.setTimestampTime(LocalDateTime.now());
         TransactionRecord transactionRecord1 = this.transactionRecordPersistence.create(transactionRecord);
-        //TODO Verify that the user needs to receive email
-        this.sendEmail(transactionRecord);
+        if (this.userPersistence.read(transactionRecordData.getTelephone()).getSetting().getEmailWhenOrderIsGenerated()){
+            this.sendEmail(transactionRecord);
+        }
         return transactionRecord1;
     }
 

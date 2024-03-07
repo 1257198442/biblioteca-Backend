@@ -26,7 +26,7 @@ class UserRepositoryTests {
     }
     @Test
     void testCreat(){
-        Setting setting = Setting.builder().hideMyProfile(true).build();
+        Setting setting = Setting.builder().hideMyProfile(true).emailWhenOrderIsGenerated(true).build();
         UserEntity userEntity = UserEntity.builder()
                 .name("Test")
                 .email("test@test.com")

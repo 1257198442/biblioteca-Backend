@@ -51,17 +51,23 @@ public class UserService {
 
     public User create(UserUploadDto userUpload){
         this.assertUserNotExist(this.phoneNumberValidator.validate(userUpload.getTelephone()));
-        User user = new User();
-        BeanUtils.copyProperties(userUpload,user);
-        user.setRole(Role.CLIENT);
-        user.setCreateTime(LocalDateTime.now());
-        user.setPassword(new BCryptPasswordEncoder().encode(userUpload.getPassword()));
-        user.setActive(true);
-        user.setDescription("This user has not modified his profile");
-        user.setBirthdays(LocalDate.of(1990,1,1));
-        Setting setting = Setting.builder().hideMyProfile(true).build();
-        user.setSetting(setting);
-        return this.userPersistence.create(user).toShow();
+        return this.userPersistence.create(initUser(userUpload)).toShow();
+    }
+
+    public User initUser(UserUploadDto userUpload){
+        Setting setting = Setting.builder().hideMyProfile(true).emailWhenOrderIsGenerated(true).build();
+
+       return User.builder()
+                .name(userUpload.getName())
+                .password(new BCryptPasswordEncoder().encode(userUpload.getPassword()))
+                .telephone(userUpload.getTelephone())
+                .email(userUpload.getEmail())
+                .role(Role.CLIENT)
+                .createTime(LocalDateTime.now())
+                .active(true)
+                .description("This user has not modified his profile")
+                .birthdays(LocalDate.of(1990,1,1))
+                .setting(setting).build();
     }
 
     public User updateRoleROOT(String telephone, String role){
