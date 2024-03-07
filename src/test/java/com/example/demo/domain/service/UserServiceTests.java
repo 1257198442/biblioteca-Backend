@@ -88,6 +88,7 @@ public class UserServiceTests {
     void testUpdateSetting(){
         SettingUpdateDto settingUpdateDto = new SettingUpdateDto();
         settingUpdateDto.setHideMyProfile(false);
+        settingUpdateDto.setEmailWhenOrderIsGenerated(true);
         userService.updateSetting("+34123",settingUpdateDto);
         assertEquals(userService.read("+34123").getSetting().getHideMyProfile(),false);
         settingUpdateDto.setHideMyProfile(true);
