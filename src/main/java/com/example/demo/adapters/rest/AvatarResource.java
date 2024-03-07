@@ -2,6 +2,7 @@ package com.example.demo.adapters.rest;
 
 import com.example.demo.domain.exceptions.ConflictException;
 import com.example.demo.domain.exceptions.ForbiddenException;
+import com.example.demo.domain.exceptions.UnprocessableEntityException;
 import com.example.demo.domain.models.Avatar;
 import com.example.demo.domain.models.Role;
 import com.example.demo.domain.service.AvatarService;
@@ -69,7 +70,7 @@ public class AvatarResource {
                 e.printStackTrace();
             }
         }
-        throw new ConflictException("update fault");
+        throw new UnprocessableEntityException("update fault");
     }
 
     private Role extractRoleClaims() {

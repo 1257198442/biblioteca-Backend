@@ -45,7 +45,6 @@ public class TransactionRecordResource {
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping(SEARCH)
     public List<TransactionRecord> readByTelephone(@RequestParam String telephone){
-        System.out.println(telephone);
         if(hasPermission(rootRole,telephone)){
             return this.transactionRecordService.readByTelephone(telephone);
         } else {
