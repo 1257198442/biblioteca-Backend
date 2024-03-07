@@ -154,8 +154,8 @@ public class UserResourceTests {
 
     @Test
     void testUpdateSetting(){
-        SettingUpdateDto settingUpdateDto = SettingUpdateDto.builder().hideMyProfile(false).build();
-        SettingUpdateDto settingUpdateDto1 = SettingUpdateDto.builder().hideMyProfile(true).build();
+        SettingUpdateDto settingUpdateDto = SettingUpdateDto.builder().hideMyProfile(false).emailWhenOrderIsGenerated(true).build();
+        SettingUpdateDto settingUpdateDto1 = SettingUpdateDto.builder().hideMyProfile(true).emailWhenOrderIsGenerated(true).build();
         //401
         putUpdateClient("","+34123",settingUpdateDto).isEqualTo(HttpStatus.UNAUTHORIZED);
         //404
@@ -163,8 +163,8 @@ public class UserResourceTests {
         //403
         putUpdateClient("Bearer "+jwtService.createToken("+34645321068","client","CLIENT"),"+34123",settingUpdateDto).isEqualTo(HttpStatus.FORBIDDEN);
         //200
-        putUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"+34123",settingUpdateDto).isEqualTo(HttpStatus.OK);
-        putUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"+34123",settingUpdateDto1).isEqualTo(HttpStatus.OK);
+        putUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"+34666",settingUpdateDto).isEqualTo(HttpStatus.OK);
+        putUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"+34666",settingUpdateDto1).isEqualTo(HttpStatus.OK);
     }
 
     StatusAssertions getReadClient(String telephone){

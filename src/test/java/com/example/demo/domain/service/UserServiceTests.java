@@ -94,4 +94,5 @@ public class UserServiceTests {
         userService.updateSetting("+34123",settingUpdateDto);
         assertEquals(userService.read("+34123").getSetting().getHideMyProfile(),true);
     }
+
 }

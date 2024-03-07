@@ -2,8 +2,10 @@ package com.example.demo.adapters.mongodb.persistence;
 
 import com.example.demo.adapters.mongodb.daos.AvatarRepository;
 import com.example.demo.adapters.mongodb.daos.UserRepository;
+import com.example.demo.adapters.mongodb.daos.WalletRepository;
 import com.example.demo.adapters.mongodb.entities.AvatarEntity;
 import com.example.demo.adapters.mongodb.entities.UserEntity;
+import com.example.demo.adapters.mongodb.entities.WalletEntity;
 import com.example.demo.domain.exceptions.NotFoundException;
 import com.example.demo.domain.models.User;
 import com.example.demo.domain.persistence.UserPersistence;
@@ -11,6 +13,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,12 +23,15 @@ import java.util.stream.Collectors;
 public class UserPersistenceMongodb implements UserPersistence {
     private final UserRepository userRepository;
     private final AvatarRepository avatarRepository;
+    private final WalletRepository walletRepository;
 
     @Autowired
     public UserPersistenceMongodb(UserRepository userRepository,
-                                  AvatarRepository avatarRepository){
+                                  AvatarRepository avatarRepository,
+                                  WalletRepository walletRepository){
         this.userRepository = userRepository;
         this.avatarRepository = avatarRepository;
+        this.walletRepository = walletRepository;
     }
 
     @Override
@@ -51,6 +57,7 @@ public class UserPersistenceMongodb implements UserPersistence {
 
     private void createNeedToBe(User user){
         this.avatarRepository.save(new AvatarEntity("user.png","https://localhost/images/avatar/user.png",user.getTelephone(), LocalDateTime.now()));
+        this.walletRepository.save(new WalletEntity(new BigDecimal("0"),user.getTelephone()));
     }
 
     @Override

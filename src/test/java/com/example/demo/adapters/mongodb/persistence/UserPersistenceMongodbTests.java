@@ -35,8 +35,8 @@ public class UserPersistenceMongodbTests {
     }
     @Test
     void testUpdate(){
-        Setting setting = Setting.builder().hideMyProfile(true).build();
-        Setting setting1 = Setting.builder().hideMyProfile(false).build();
+        Setting setting = Setting.builder().hideMyProfile(true).emailWhenOrderIsGenerated(true).build();
+        Setting setting1 = Setting.builder().hideMyProfile(false).emailWhenOrderIsGenerated(true).build();
         User user = User.builder()
                 .name("Test99")
                 .email("test@test.com")
@@ -87,8 +87,7 @@ public class UserPersistenceMongodbTests {
     }
     @Test
     void testCreate(){
-        Setting setting = Setting.builder()
-                .hideMyProfile(true).build();
+        Setting setting = Setting.builder().hideMyProfile(true).emailWhenOrderIsGenerated(true).build();
         User user = User.builder()
                 .name("test")
                 .password("6")
