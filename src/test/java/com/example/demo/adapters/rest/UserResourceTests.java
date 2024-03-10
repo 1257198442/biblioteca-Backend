@@ -181,6 +181,17 @@ public class UserResourceTests {
         putUpdatePasswordClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"+34123",passwordUpdateDto1).isEqualTo(HttpStatus.OK);
         putUpdatePasswordClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"+34123",passwordUpdateDto2).isEqualTo(HttpStatus.OK);
     }
+    @Test
+    void testResetPassword(){
+        //401
+        putResetPasswordClient("","+34123").isEqualTo(HttpStatus.UNAUTHORIZED);
+        //403
+        putResetPasswordClient("Bearer "+jwtService.createToken("+34123","user","CLIENT"),"+34123").isEqualTo(HttpStatus.FORBIDDEN);
+        //404
+        putResetPasswordClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"null").isEqualTo(HttpStatus.NOT_FOUND);
+        //200
+        putResetPasswordClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"+34666").isEqualTo(HttpStatus.OK);
+    }
 
     StatusAssertions getReadClient(String telephone){
         String user = "+34666666666";
@@ -251,6 +262,15 @@ public class UserResourceTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.ALL)
                 .bodyValue(body)
+                .exchange()
+                .expectStatus();
+    }
+
+    StatusAssertions putResetPasswordClient(String token,String telephone){
+        return this.webTestClient
+                .put()
+                .uri("/user/"+telephone + "/resetPassword")
+                .header("Authorization", token)
                 .exchange()
                 .expectStatus();
     }
