@@ -11,6 +11,7 @@ import com.example.demo.domain.models.Role;
 import com.example.demo.domain.models.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDate;
 
@@ -94,6 +95,12 @@ public class UserServiceTests {
         settingUpdateDto.setHideMyProfile(true);
         userService.updateSetting("+34123",settingUpdateDto);
         assertEquals(userService.read("+34123").getSetting().getHideMyProfile(),true);
+    }
+    @Test
+    void testGetPassword(){
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        assertTrue(encoder.matches("6",this.userService.getUserPassword("+34123")));
+        assertFalse(encoder.matches("7",this.userService.getUserPassword("+34123")));
     }
 
 }

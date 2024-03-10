@@ -1,5 +1,6 @@
 package com.example.demo.adapters.rest;
 
+import com.example.demo.adapters.rest.dto.PasswordUpdateDto;
 import com.example.demo.adapters.rest.dto.SettingUpdateDto;
 import com.example.demo.adapters.rest.dto.UserUpdateDto;
 import com.example.demo.domain.models.Role;
@@ -167,6 +168,20 @@ public class UserResourceTests {
         putUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"+34666",settingUpdateDto1).isEqualTo(HttpStatus.OK);
     }
 
+    @Test
+    void testChangePassword(){
+        PasswordUpdateDto passwordUpdateDto1 = PasswordUpdateDto.builder().oldPassword("6").newPassword("7").build();
+        PasswordUpdateDto passwordUpdateDto2 = PasswordUpdateDto.builder().oldPassword("7").newPassword("6").build();
+        //401
+        putUpdatePasswordClient("","+34123",passwordUpdateDto1).isEqualTo(HttpStatus.UNAUTHORIZED);
+        //403
+        putUpdatePasswordClient("Bearer "+jwtService.createToken("+34645321068","client","CLIENT"),"+34123",passwordUpdateDto1).isEqualTo(HttpStatus.FORBIDDEN);
+        putUpdatePasswordClient("Bearer "+jwtService.createToken("+34123","client","CLIENT"),"+34123",passwordUpdateDto2).isEqualTo(HttpStatus.FORBIDDEN);
+        //200
+        putUpdatePasswordClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"+34123",passwordUpdateDto1).isEqualTo(HttpStatus.OK);
+        putUpdatePasswordClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"+34123",passwordUpdateDto2).isEqualTo(HttpStatus.OK);
+    }
+
     StatusAssertions getReadClient(String telephone){
         String user = "+34666666666";
         String name = "root";
@@ -189,8 +204,6 @@ public class UserResourceTests {
                 .exchange()
                 .expectStatus();
     }
-
-
 
     StatusAssertions putRoleUpdateClient(String token, String telephone, String body) {
         return this.webTestClient
@@ -228,6 +241,18 @@ public class UserResourceTests {
                 .exchange()
                 .expectStatus();
 
+    }
+
+    StatusAssertions putUpdatePasswordClient(String token, String telephone, PasswordUpdateDto body){
+        return this.webTestClient
+                .put()
+                .uri("/user/"+telephone + "/password")
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.ALL)
+                .bodyValue(body)
+                .exchange()
+                .expectStatus();
     }
 }
 

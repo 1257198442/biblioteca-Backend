@@ -21,5 +21,4 @@ public class UserUpdateDto {
     private String email;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthdays;
-    private Setting setting;
 }
