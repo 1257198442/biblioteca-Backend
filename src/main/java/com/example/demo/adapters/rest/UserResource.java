@@ -10,6 +10,7 @@ import com.example.demo.domain.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,6 +33,7 @@ public class UserResource {
     public static final String SETTING = "/setting";
     public static final String TELEPHONE = "/{telephone}";
     public static final String PASSWORD = "/password";
+    public static final String RESET_PASSWORD = "/resetPassword";
     public static final String ROLE = "/role";
     public final UserService userService;
     public final RoleService roleService;
@@ -39,6 +41,8 @@ public class UserResource {
     public final List<Role> adminRole=Arrays.asList(Role.ADMINISTRATOR,Role.ROOT);
     public final List<Role> rootRole= List.of(Role.ROOT);
 
+    @Value("${Reset.password}")
+    public   String resetPassword;
     @Autowired
     public UserResource(UserService userService,RoleService roleService){
         this.userService = userService;
@@ -131,6 +135,18 @@ public class UserResource {
         }else {
             throw new ForbiddenException("You don't have permission to make this request.");
         }
+    }
+
+    @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT')or hasRole('CLIENT')" )
+    @SecurityRequirement(name = "bearerAuth")
+    @PutMapping(TELEPHONE+RESET_PASSWORD)
+    public User resetPassword(@PathVariable String telephone){
+        if (roleService.isCompetent(rootRole,this.extractRoleClaims())){
+            return this.userService.changePassword(telephone,this.resetPassword);
+        }else {
+            throw new ForbiddenException("You don't have permission to make this request.");
+        }
+
     }
 
     private Role extractRoleClaims() {
