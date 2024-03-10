@@ -1,10 +1,7 @@
 package com.example.demo.adapters.rest;
 
 
-import com.example.demo.adapters.rest.dto.SettingUpdateDto;
-import com.example.demo.adapters.rest.dto.TokenDto;
-import com.example.demo.adapters.rest.dto.UserUpdateDto;
-import com.example.demo.adapters.rest.dto.UserUploadDto;
+import com.example.demo.adapters.rest.dto.*;
 import com.example.demo.domain.exceptions.ForbiddenException;
 import com.example.demo.domain.models.Role;
 import com.example.demo.domain.models.User;
@@ -18,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -33,6 +31,7 @@ public class UserResource {
     public static final String LOGIN = "/login";
     public static final String SETTING = "/setting";
     public static final String TELEPHONE = "/{telephone}";
+    public static final String PASSWORD = "/password";
     public static final String ROLE = "/role";
     public final UserService userService;
     public final RoleService roleService;
@@ -114,6 +113,22 @@ public class UserResource {
         if(hasPermission(rootRole,telephone)){
             return this.userService.updateSetting(telephone,settingUpdateDto);
         } else {
+            throw new ForbiddenException("You don't have permission to make this request.");
+        }
+    }
+
+    @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT')or hasRole('CLIENT')" )
+    @SecurityRequirement(name = "bearerAuth")
+    @PutMapping(TELEPHONE+PASSWORD)
+    public User changePassword(@PathVariable String telephone,@RequestBody PasswordUpdateDto password){
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        if(hasPermission(rootRole,telephone)){
+            if(encoder.matches(password.getOldPassword(),this.userService.getUserPassword(telephone))){
+                return this.userService.changePassword(telephone,password.getNewPassword());
+            }else {
+                throw new ForbiddenException("The password is wrong.");
+            }
+        }else {
             throw new ForbiddenException("You don't have permission to make this request.");
         }
     }

@@ -43,6 +43,7 @@ public class UserService {
     public User read(String telephone){
         return this.userPersistence.read(telephone).toShow();
     }
+
     public void assertUserNotExist(String telephone){
         if(this.userPersistence.existTelephone(telephone)){
             throw new ConflictException("User is Exist: "+telephone);
@@ -117,5 +118,15 @@ public class UserService {
         BeanUtils.copyProperties(settingUpdateDto,setting);
         user.setSetting(setting);
         return this.userPersistence.update(user).toShow();
+    }
+
+    public User changePassword(String telephone,String password){
+        User user = this.userPersistence.read(telephone);
+        user.setPassword(new BCryptPasswordEncoder().encode(password));
+        return this.userPersistence.update(user).toShow();
+    }
+
+    public String getUserPassword(String telephone){
+        return this.userPersistence.read(telephone).getPassword();
     }
 }

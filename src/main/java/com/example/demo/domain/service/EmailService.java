@@ -23,12 +23,12 @@ public class EmailService {
     }
 
 
-public void sendEmail(String to, String subject, String text) {
-    SimpleMailMessage message = new SimpleMailMessage();
-    message.setFrom(from);
-    message.setTo(to);
-    message.setSubject(subject);
-    message.setText(text);
+    public void sendEmail(String to, String subject, String text) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(from);
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(text);
         if (isSimulated) {
             System.out.println("Email sent successfully" + message);
         } else {
