@@ -1,6 +1,5 @@
 package com.example.demo.adapters.rest;
 
-import com.example.demo.domain.exceptions.ConflictException;
 import com.example.demo.domain.exceptions.ForbiddenException;
 import com.example.demo.domain.exceptions.UnprocessableEntityException;
 import com.example.demo.domain.models.Avatar;
@@ -16,12 +15,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 //@Rest
@@ -61,8 +60,9 @@ public class AvatarResource {
     public Avatar saveAvatar(String telephone, MultipartFile file){
         if (!file.isEmpty()) {
             try {
-                String fileName = file.getOriginalFilename();
+                String fileName = "avatar"+ Base64.getEncoder().encodeToString(telephone.getBytes(StandardCharsets.UTF_8))+"."+getExtension(file);
                 Path path = Paths.get("src/main/resources/static/images/userUpload/" + fileName);
+                System.out.println(fileName);
                 Files.write(path, file.getBytes());
                 Avatar avatar = new Avatar(fileName,"https://localhost/images/userUpload/"+ fileName,telephone,LocalDateTime.now());
                 return this.avatarService.update(avatar);
@@ -71,6 +71,34 @@ public class AvatarResource {
             }
         }
         throw new UnprocessableEntityException("update fault");
+    }
+
+    private String getExtension(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new UnprocessableEntityException("File is empty or null");
+        }
+        String fileName = file.getOriginalFilename();
+        int lastDotIndex;
+        if (fileName != null) {
+            lastDotIndex = fileName.lastIndexOf('.');
+        }else {
+            throw new UnprocessableEntityException("update fault");
+        }
+        String extension = lastDotIndex != -1 ? fileName.substring(lastDotIndex + 1) : "";
+        if(isImageExtension(extension)){
+            return extension;
+        }else {
+            throw new UnprocessableEntityException("update fault");
+        }
+    }
+
+    private static final Set<String> COMMON_IMAGE_EXTENSIONS = new HashSet<>(Arrays.asList(
+            "jpeg", "jpg", "png", "gif", "bmp", "dib", "tiff", "tif", "webp", "svg", "ico"
+    ));
+
+    public static boolean isImageExtension(String extension) {
+        // 检查传入的扩展名是否在常用图片后缀集合中
+        return COMMON_IMAGE_EXTENSIONS.contains(extension);
     }
 
     private Role extractRoleClaims() {
