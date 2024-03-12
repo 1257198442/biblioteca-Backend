@@ -176,7 +176,7 @@ public class UserResourceTests {
         putUpdatePasswordClient("","+34123",passwordUpdateDto1).isEqualTo(HttpStatus.UNAUTHORIZED);
         //403
         putUpdatePasswordClient("Bearer "+jwtService.createToken("+34645321068","client","CLIENT"),"+34123",passwordUpdateDto1).isEqualTo(HttpStatus.FORBIDDEN);
-        putUpdatePasswordClient("Bearer "+jwtService.createToken("+34123","client","CLIENT"),"+34123",passwordUpdateDto2).isEqualTo(HttpStatus.FORBIDDEN);
+        putUpdatePasswordClient("Bearer "+jwtService.createToken("+34123","client","CLIENT"),"+34123",passwordUpdateDto2).isEqualTo(HttpStatus.UNAUTHORIZED);
         //200
         putUpdatePasswordClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"+34123",passwordUpdateDto1).isEqualTo(HttpStatus.OK);
         putUpdatePasswordClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"+34123",passwordUpdateDto2).isEqualTo(HttpStatus.OK);

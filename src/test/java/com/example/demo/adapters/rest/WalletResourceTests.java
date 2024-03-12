@@ -85,6 +85,7 @@ public class WalletResourceTests {
                 .city("MADRID")
                 .billingAddress("TEST").build();
         TransactionRecordDto transactionRecordDto = TransactionRecordDto.builder()
+                .password("6")
                 .transactionDetails(transactionDetails)
                 .amount(new BigDecimal("1000"))
                 .purpose("test")
