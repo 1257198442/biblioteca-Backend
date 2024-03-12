@@ -13,7 +13,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import java.math.BigDecimal;
 
 @RestTestConfig
-@ActiveProfiles("test")
+@ActiveProfiles({"test","dev"})
 public class WalletResourceTests {
     @Autowired
     private WebTestClient webTestClient;

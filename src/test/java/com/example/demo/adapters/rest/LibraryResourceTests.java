@@ -14,7 +14,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @RestTestConfig
-@ActiveProfiles("test")
+@ActiveProfiles({"test","dev"})
 public class LibraryResourceTests {
     @Autowired
     private WebTestClient webTestClient;

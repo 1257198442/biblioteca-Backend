@@ -9,7 +9,7 @@ import org.springframework.test.web.reactive.server.StatusAssertions;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 @RestTestConfig
-@ActiveProfiles("test")
+@ActiveProfiles({"test","dev"})
 public class TransactionRecordResourceTests {
     @Autowired
     private WebTestClient webTestClient;

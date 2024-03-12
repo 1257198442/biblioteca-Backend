@@ -24,7 +24,7 @@ import static org.hibernate.validator.internal.util.Contracts.assertTrue;
 import static org.junit.jupiter.api.Assertions.*;
 
 @RestTestConfig
-@ActiveProfiles("test")
+@ActiveProfiles({"test","dev"})
 public class UserResourceTests {
     @Autowired
     private WebTestClient webTestClient;

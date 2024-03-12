@@ -1,9 +1,11 @@
-package com.example.demo.adapters.mongodb.daos;
+package com.example.demo;
 
+import com.example.demo.adapters.mongodb.daos.*;
 import com.example.demo.adapters.mongodb.entities.*;
 import com.example.demo.domain.models.*;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 
 @Service
+@Profile("dev")
 public class SeederDev {
     private final UserRepository userDao;
     private final LibraryRepository libraryDao;
