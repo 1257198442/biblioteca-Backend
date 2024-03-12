@@ -58,14 +58,15 @@ public class AvatarResource {
     }
 
     public Avatar saveAvatar(String telephone, MultipartFile file){
+        Avatar avatar = this.avatarService.read(telephone);
         if (!file.isEmpty()) {
             try {
-                String fileName = "avatar"+ Base64.getEncoder().encodeToString(telephone.getBytes(StandardCharsets.UTF_8))+"."+getExtension(file);
+                String fileName = "avatar"+ Base64.getEncoder().encodeToString(avatar.getTelephone().getBytes(StandardCharsets.UTF_8))+"."+getExtension(file);
                 Path path = Paths.get("src/main/resources/static/images/userUpload/" + fileName);
                 System.out.println(fileName);
                 Files.write(path, file.getBytes());
-                Avatar avatar = new Avatar(fileName,"https://localhost/images/userUpload/"+ fileName,telephone,LocalDateTime.now());
-                return this.avatarService.update(avatar);
+                Avatar avatar1 = new Avatar(fileName,"https://localhost/images/userUpload/"+ fileName,telephone,LocalDateTime.now());
+                return this.avatarService.update(avatar1);
             } catch (IOException e) {
                 e.printStackTrace();
             }
