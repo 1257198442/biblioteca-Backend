@@ -41,18 +41,19 @@ public class AvatarResourceTests {
 
     @Test
     public void testUpdateAvatar() throws IOException {
+        ClassPathResource file = new ClassPathResource("static/testImages/img.png");
+        ClassPathResource file1 = new ClassPathResource("static/testImages/test.txt");
         //401
-        putUpdateAvatarClient("null","+34123").isEqualTo(HttpStatus.UNAUTHORIZED);
+        putUpdateAvatarClient("null","+34123",file).isEqualTo(HttpStatus.UNAUTHORIZED);
         //403
-        putUpdateAvatarClient("Bearer "+jwtService.createToken("+34645321068","client","CLIENT"),"+34123").isEqualTo(HttpStatus.FORBIDDEN);
+        putUpdateAvatarClient("Bearer "+jwtService.createToken("+34645321068","client","CLIENT"),"+34123",file).isEqualTo(HttpStatus.FORBIDDEN);
         //404
-        putUpdateAvatarClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"null").isEqualTo(HttpStatus.NOT_FOUND);
-        //200
-        putUpdateAvatarClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"+34123").isEqualTo(HttpStatus.OK);
+        putUpdateAvatarClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"null",file).isEqualTo(HttpStatus.NOT_FOUND);
+        //422
+        putUpdateAvatarClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"+34123",file1).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
-    StatusAssertions putUpdateAvatarClient(String token,String telephone) throws IOException {
-        ClassPathResource file = new ClassPathResource("static/testImages/img.png");
+    StatusAssertions putUpdateAvatarClient(String token,String telephone,ClassPathResource file) throws IOException {
         return webTestClient.put()
                 .uri("/avatar/"+telephone)
                 .header("Authorization", token)
