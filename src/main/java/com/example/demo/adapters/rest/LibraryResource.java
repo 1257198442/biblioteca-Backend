@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 @RequestMapping(LibraryResource.LIBRARY)
 public class LibraryResource {
     public static final String LIBRARY = "/library";
-    public static final String NAME = "/{name}";
     private final LibraryService libraryService;
     private final RoleService roleService;
     public final List<Role> rootRole= List.of(Role.ROOT);

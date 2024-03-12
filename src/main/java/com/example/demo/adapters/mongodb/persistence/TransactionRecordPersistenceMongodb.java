@@ -45,7 +45,7 @@ public class TransactionRecordPersistenceMongodb implements TransactionRecordPer
     public TransactionRecord readByReference(String reference) {
         return this.transactionRecordDao
                 .findByReference(reference)
-                .orElseThrow(()->new NotFoundException("TransactionRecord: "+reference+" is not Fount"))
+                .orElseThrow(()->new NotFoundException("TransactionRecord reference: "+reference+" is not Fount"))
                 .toTransactionRecord();
     }
 

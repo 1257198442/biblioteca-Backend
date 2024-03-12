@@ -12,7 +12,8 @@ public class ApiExceptionHandler {
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler({
-            org.springframework.security.access.AccessDeniedException.class
+            org.springframework.security.access.AccessDeniedException.class,
+            UnauthorizedException.class
     })
     @ResponseBody
     public void unauthorizedRequest(Exception exception) {

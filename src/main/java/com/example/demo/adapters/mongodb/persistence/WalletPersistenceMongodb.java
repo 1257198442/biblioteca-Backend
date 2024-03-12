@@ -17,7 +17,7 @@ public class WalletPersistenceMongodb implements WalletPersistence {
     @Override
     public Wallet read(String telephone) {
         return this.walletDao.findByTelephone(telephone)
-                .orElseThrow(()->new NotFoundException("Wallet: "+telephone+" is not Fount"))
+                .orElseThrow(()->new NotFoundException("Wallet telephone: "+telephone+" is not Fount"))
                 .toWallet();
     }
 }

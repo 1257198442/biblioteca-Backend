@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TransactionRecordDto {
+    public String password;
     public String purpose;
     public String telephone;
     public BigDecimal amount;

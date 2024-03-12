@@ -3,6 +3,7 @@ package com.example.demo.adapters.rest;
 
 import com.example.demo.adapters.rest.dto.*;
 import com.example.demo.domain.exceptions.ForbiddenException;
+import com.example.demo.domain.exceptions.UnauthorizedException;
 import com.example.demo.domain.models.Role;
 import com.example.demo.domain.models.User;
 import com.example.demo.domain.service.RoleService;
@@ -130,7 +131,7 @@ public class UserResource {
             if(encoder.matches(password.getOldPassword(),this.userService.getUserPassword(telephone))){
                 return this.userService.changePassword(telephone,password.getNewPassword());
             }else {
-                throw new ForbiddenException("The password is wrong.");
+                throw new UnauthorizedException("The password is wrong.");
             }
         }else {
             throw new ForbiddenException("You don't have permission to make this request.");
