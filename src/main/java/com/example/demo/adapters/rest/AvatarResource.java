@@ -8,6 +8,7 @@ import com.example.demo.domain.service.AvatarService;
 import com.example.demo.domain.service.RoleService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,7 +32,7 @@ public class AvatarResource {
     public static final String TELEPHONE = "/{telephone}";
     private final AvatarService avatarService;
     private final RoleService adminService;
-    public final List<Role> adminRole= Arrays.asList(Role.ADMINISTRATOR,Role.ROOT);
+    public final List<Role> rootRole= Arrays.asList(Role.ROOT);
 
     @Autowired
     public AvatarResource(AvatarService avatarService, RoleService roleService){
@@ -42,9 +43,9 @@ public class AvatarResource {
     //PUT
     @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT')or hasRole('CLIENT')" )
     @SecurityRequirement(name = "bearerAuth")
-    @PutMapping(TELEPHONE)
+    @PutMapping(value = TELEPHONE,consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Avatar updateAvatarByMobile(@PathVariable String telephone, @RequestPart("file") MultipartFile file){
-        if(hasPermission(adminRole,telephone)){
+        if(hasPermission(rootRole,telephone)){
             return this.saveAvatar(telephone,file);
         }else {
             throw new ForbiddenException("You don't have permission to make this request.");

@@ -16,8 +16,9 @@ public class ApiExceptionHandler {
             UnauthorizedException.class
     })
     @ResponseBody
-    public void unauthorizedRequest(Exception exception) {
+    public ErrorMessage unauthorizedRequest(Exception exception) {
         LogManager.getLogger(this.getClass()).debug(() -> "Unauthorized: " + exception.getMessage());
+        return new ErrorMessage("UnauthorizedException","Unauthorized Exception (401)",401);
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

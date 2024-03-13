@@ -16,4 +16,9 @@ class ErrorMessage {
         this.message = exception.getMessage();
         this.code = code;
     }
+    ErrorMessage(String error,String message, Integer code){
+        this.error = error;
+        this.message = message;
+        this.code = code;
+    }
 }
