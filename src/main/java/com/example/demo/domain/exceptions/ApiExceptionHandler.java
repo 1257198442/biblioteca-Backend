@@ -18,7 +18,18 @@ public class ApiExceptionHandler {
     @ResponseBody
     public ErrorMessage unauthorizedRequest(Exception exception) {
         LogManager.getLogger(this.getClass()).debug(() -> "Unauthorized: " + exception.getMessage());
-        return new ErrorMessage("UnauthorizedException","Unauthorized Exception (401)",401);
+        return new ErrorMessage("UnauthorizedException","Unauthorized Exception (401)",HttpStatus.UNAUTHORIZED.value());
+    }
+
+    @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
+    @ExceptionHandler({
+            org.springframework.web.multipart.MaxUploadSizeExceededException.class,
+            MaxUploadSizeExceededException.class
+    })
+    @ResponseBody
+    public ErrorMessage maxUploadSizeExceededRequest(Exception exception) {
+        LogManager.getLogger(this.getClass()).debug(() -> "MaxUploadSizeExceeded: " + exception.getMessage());
+        return new ErrorMessage("MaxUploadSizeExceededException", "Max Upload Size Exceeded Exception (413) Uploading a file that cannot exceed 10 MB",HttpStatus.PAYLOAD_TOO_LARGE.value());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

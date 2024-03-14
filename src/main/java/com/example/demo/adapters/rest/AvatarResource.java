@@ -1,6 +1,7 @@
 package com.example.demo.adapters.rest;
 
 import com.example.demo.domain.exceptions.ForbiddenException;
+import com.example.demo.domain.exceptions.MaxUploadSizeExceededException;
 import com.example.demo.domain.exceptions.UnprocessableEntityException;
 import com.example.demo.domain.models.Avatar;
 import com.example.demo.domain.models.Role;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -24,7 +24,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-//@Rest
 @RestController
 @RequestMapping(AvatarResource.AVATAR)
 public class AvatarResource {
@@ -44,7 +43,7 @@ public class AvatarResource {
     @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT')or hasRole('CLIENT')" )
     @SecurityRequirement(name = "bearerAuth")
     @PutMapping(value = TELEPHONE,consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public Avatar updateAvatarByMobile(@PathVariable String telephone, @RequestPart("file") MultipartFile file){
+    public Avatar updateAvatarByMobile(@PathVariable String telephone, @RequestPart("file") MultipartFile file) throws IOException {
         if(hasPermission(rootRole,telephone)){
             return this.saveAvatar(telephone,file);
         }else {
@@ -58,11 +57,14 @@ public class AvatarResource {
         return this.avatarService.read(telephone);
     }
 
-    public Avatar saveAvatar(String telephone, MultipartFile file){
+    public Avatar saveAvatar(String telephone, MultipartFile file) throws IOException {
         Avatar avatar = this.avatarService.read(telephone);
         if (!file.isEmpty()) {
+            if (this.fileSizeTooLarge(file)){
+                throw new MaxUploadSizeExceededException("Avatar files size cannot be larger than 300kb");
+            }
             try {
-                String fileName = "avatar"+ Base64.getEncoder().encodeToString(avatar.getTelephone().getBytes(StandardCharsets.UTF_8))+"."+getExtension(file);
+                String fileName = "avatar"+ avatar.getTelephone()+"."+getExtension(file);
                 Path path = Paths.get("src/main/resources/static/images/userUpload/" + fileName);
                 System.out.println(fileName);
                 Files.write(path, file.getBytes());
@@ -99,7 +101,6 @@ public class AvatarResource {
     ));
 
     public static boolean isImageExtension(String extension) {
-        // 检查传入的扩展名是否在常用图片后缀集合中
         return COMMON_IMAGE_EXTENSIONS.contains(extension);
     }
 
@@ -117,5 +118,11 @@ public class AvatarResource {
         boolean hasRolePermission = Role.isCompetent(requiredRoles, this.extractRoleClaims());
         boolean isTargetUser = extractUserName().equals(targetTelephone);
         return hasRolePermission || isTargetUser;
+    }
+
+    private boolean fileSizeTooLarge (MultipartFile file) throws IOException {
+        long maxFileSize = 300 * 1024;
+        long fileSize = file.getSize();
+        return fileSize > maxFileSize;
     }
 }
