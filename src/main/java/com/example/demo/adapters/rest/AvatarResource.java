@@ -132,7 +132,7 @@ public class AvatarResource {
     }
 
     private boolean fileSizeTooLarge (MultipartFile file){
-        long maxFileSize = 300 * 1024;
+        long maxFileSize = 5 * 1024 * 1024;
         long fileSize = file.getSize();
         return fileSize > maxFileSize;
     }
