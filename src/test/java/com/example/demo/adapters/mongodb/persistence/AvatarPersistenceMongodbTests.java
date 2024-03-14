@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class AvatarPersistenceMongodbTests {
     @Autowired
     private AvatarPersistenceMongodb avatarPersistenceMongodb;
-                   // AvatarEntity.builder().fileName("user.png").url("https://localhost/images/avatar/user.png").telephone("+34666").uploadTime(LocalDateTime.of(2000,1,1,1,1,1)).build(),
+
     @Test
     void testRead(){
         Avatar avatar = avatarPersistenceMongodb.read("+34666");
