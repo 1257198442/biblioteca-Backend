@@ -16,10 +16,6 @@ public class AvatarPersistenceMongodb implements AvatarPersistence {
     public AvatarPersistenceMongodb(AvatarRepository avatarDao){
         this.avatarDao = avatarDao;
     }
-    @Override
-    public Avatar create(Avatar avatar) {
-        return this.avatarDao.save(new AvatarEntity(avatar)).toAvatar();
-    }
 
     @Override
     public Avatar read(String telephone) {
