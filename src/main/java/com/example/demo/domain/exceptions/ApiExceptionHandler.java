@@ -29,7 +29,7 @@ public class ApiExceptionHandler {
     @ResponseBody
     public ErrorMessage maxUploadSizeExceededRequest(Exception exception) {
         LogManager.getLogger(this.getClass()).debug(() -> "MaxUploadSizeExceeded: " + exception.getMessage());
-        return new ErrorMessage("MaxUploadSizeExceededException", "Max Upload Size Exceeded Exception (413) Uploading a file that cannot exceed 10 MB",HttpStatus.PAYLOAD_TOO_LARGE.value());
+        return new ErrorMessage(exception, HttpStatus.PAYLOAD_TOO_LARGE.value());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

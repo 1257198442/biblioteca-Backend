@@ -60,7 +60,7 @@ public class AvatarResource {
         Avatar avatar = this.avatarService.read(telephone);
         if (!file.isEmpty()) {
             if (this.fileSizeTooLarge(file)){
-                throw new MaxUploadSizeExceededException("Avatar files size cannot be larger than 300kb");
+                throw new MaxUploadSizeExceededException("Avatar files size cannot be larger than 5MB");
             }
             Tika tika = new Tika();
             String fileContentType = tika.detect(file.getInputStream(), file.getOriginalFilename());
