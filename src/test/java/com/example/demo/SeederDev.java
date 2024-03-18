@@ -22,18 +22,21 @@ public class SeederDev {
     private final AvatarRepository avatarDao;
     private final WalletRepository walletDao;
     private final TransactionRecordRepository transactionRecordDao;
+    private final BookRepository bookRepository;
 
     @Autowired
     public SeederDev(UserRepository userDao,
                      LibraryRepository libraryDao,
                      AvatarRepository avatarDao,
                      WalletRepository walletDao,
-                     TransactionRecordRepository transactionRecordDao){
+                     TransactionRecordRepository transactionRecordDao,
+                     BookRepository bookRepository){
         this.userDao = userDao;
         this.libraryDao = libraryDao;
         this.avatarDao = avatarDao;
         this.walletDao = walletDao;
         this.transactionRecordDao = transactionRecordDao;
+        this.bookRepository = bookRepository;
         this.deleteAllAndInitializeAndSeedDataBase();
     }
     public void deleteAllAndInitializeAndSeedDataBase() {
@@ -45,6 +48,9 @@ public class SeederDev {
         this.userDao.deleteAll();
         this.libraryDao.deleteAll();
         this.avatarDao.deleteAll();
+        this.walletDao.deleteAll();
+        this.transactionRecordDao.deleteAll();
+        this.bookRepository.deleteAll();
     }
     private void seedDataBase() {
         LogManager.getLogger(this.getClass()).warn("------- Initial Load from JAVA -----------");
@@ -116,6 +122,14 @@ public class SeederDev {
                 TransactionRecordEntity.builder().telephone("+34123").timestampTime(LocalDateTime.now()).transactionDetails(transactionDetails).reference("asldjaaslskl").purpose("test").amount(new BigDecimal("-100")).build(),
         };
         this.transactionRecordDao.saveAll(Arrays.asList(transactionRecordEntities));
+        LogManager.getLogger(this.getClass()).warn("-------      Initial Book      -----------");
+        BookEntity[] bookEntities = {
+                BookEntity.builder().bookID("1").name("test").entryTime(LocalDateTime.now()).description("this is a test book").status(BookStatus.OCCUPIED).imgUrl("https://localhost/images/book/default.jpg").deposit(new BigDecimal("12")).language(Language.English).build(),
+                BookEntity.builder().bookID("2").name("test1").entryTime(LocalDateTime.now()).description("this is a test book1").status(BookStatus.ENABLE).imgUrl("https://localhost/images/book/default.jpg").deposit(new BigDecimal("32")).language(Language.Spanish).build(),
+                BookEntity.builder().bookID("3").name("test2").entryTime(LocalDateTime.now()).description("this is a test book2").status(BookStatus.OCCUPIED).imgUrl("https://localhost/images/book/default.jpg").deposit(new BigDecimal("55")).language(Language.English).build(),
+        };
+        this.bookRepository.saveAll(Arrays.asList(bookEntities));
+
     }
 
 }
