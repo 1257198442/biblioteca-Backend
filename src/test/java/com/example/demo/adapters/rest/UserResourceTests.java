@@ -1,7 +1,8 @@
 package com.example.demo.adapters.rest;
 
-import com.example.demo.adapters.rest.dto.UserUploadDto;
-import com.example.demo.domain.exceptions.NotFoundException;
+import com.example.demo.adapters.rest.dto.PasswordUpdateDto;
+import com.example.demo.adapters.rest.dto.SettingUpdateDto;
+import com.example.demo.adapters.rest.dto.UserUpdateDto;
 import com.example.demo.domain.models.Role;
 import com.example.demo.domain.models.User;
 import com.example.demo.domain.service.JwtService;
@@ -14,6 +15,7 @@ import org.springframework.test.web.reactive.server.StatusAssertions;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Base64;
 
@@ -22,7 +24,7 @@ import static org.hibernate.validator.internal.util.Contracts.assertTrue;
 import static org.junit.jupiter.api.Assertions.*;
 
 @RestTestConfig
-@ActiveProfiles("test")
+@ActiveProfiles({"test","dev"})
 public class UserResourceTests {
     @Autowired
     private WebTestClient webTestClient;
@@ -99,7 +101,7 @@ public class UserResourceTests {
                     User user = response.getResponseBody();
                     assertEquals(Role.CLIENT, user.getRole());
                 });
-        putUpdateClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"+34123","BAN").isOk();
+        putRoleUpdateClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"+34123","BAN").isOk();
         this.getReadClient("+34123").isOk()
                 .expectBody(User.class)
                 .consumeWith(response -> {
@@ -107,13 +109,13 @@ public class UserResourceTests {
                     assertEquals(Role.BAN, user.getRole());
                 });
         //404
-        putUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"test","CLIENT").isEqualTo(HttpStatus.NOT_FOUND);
+        putRoleUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"test","CLIENT").isEqualTo(HttpStatus.NOT_FOUND);
         //422
-        putUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"+34123","TEST").isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+        putRoleUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"+34123","TEST").isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
         //403
-        putUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"+34123","ROOT").isEqualTo(HttpStatus.FORBIDDEN);
+        putRoleUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"+34123","ROOT").isEqualTo(HttpStatus.FORBIDDEN);
         //403
-        putUpdateClient("Bearer "+jwtService.createToken("+34666000002","user","CLIENT"),"+34123","ADMINISTRATOR").isEqualTo(HttpStatus.FORBIDDEN);
+        putRoleUpdateClient("Bearer "+jwtService.createToken("+34666000002","user","CLIENT"),"+34123","ADMINISTRATOR").isEqualTo(HttpStatus.FORBIDDEN);
 
     }
     @Test
@@ -134,6 +136,63 @@ public class UserResourceTests {
                     assertNotNull(response.getResponseBody());
                 });
     }
+    @Test
+    void testUpdate(){
+        UserUpdateDto userUpdateDto = UserUpdateDto.builder()
+                .description("t")
+                .birthdays(LocalDate.of(2020,1,1))
+                .email("test@testtest.com")
+                .name("123").build();
+        //401
+        putUpdateClient("","+34123",userUpdateDto).isEqualTo(HttpStatus.UNAUTHORIZED);
+        //404
+        putUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"null",userUpdateDto).isEqualTo(HttpStatus.NOT_FOUND);
+        //403
+        putUpdateClient("Bearer "+jwtService.createToken("+34645321068","client","CLIENT"),"+34123",userUpdateDto).isEqualTo(HttpStatus.FORBIDDEN);
+        //200
+        putUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"+34123",userUpdateDto).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    void testUpdateSetting(){
+        SettingUpdateDto settingUpdateDto = SettingUpdateDto.builder().hideMyProfile(false).emailWhenOrderIsGenerated(true).build();
+        SettingUpdateDto settingUpdateDto1 = SettingUpdateDto.builder().hideMyProfile(true).emailWhenOrderIsGenerated(true).build();
+        //401
+        putUpdateClient("","+34123",settingUpdateDto).isEqualTo(HttpStatus.UNAUTHORIZED);
+        //404
+        putUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"null",settingUpdateDto).isEqualTo(HttpStatus.NOT_FOUND);
+        //403
+        putUpdateClient("Bearer "+jwtService.createToken("+34645321068","client","CLIENT"),"+34123",settingUpdateDto).isEqualTo(HttpStatus.FORBIDDEN);
+        //200
+        putUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"+34666",settingUpdateDto).isEqualTo(HttpStatus.OK);
+        putUpdateClient("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),"+34666",settingUpdateDto1).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    void testChangePassword(){
+        PasswordUpdateDto passwordUpdateDto1 = PasswordUpdateDto.builder().oldPassword("6").newPassword("7").build();
+        PasswordUpdateDto passwordUpdateDto2 = PasswordUpdateDto.builder().oldPassword("7").newPassword("6").build();
+        //401
+        putUpdatePasswordClient("","+34123",passwordUpdateDto1).isEqualTo(HttpStatus.UNAUTHORIZED);
+        //403
+        putUpdatePasswordClient("Bearer "+jwtService.createToken("+34645321068","client","CLIENT"),"+34123",passwordUpdateDto1).isEqualTo(HttpStatus.FORBIDDEN);
+        putUpdatePasswordClient("Bearer "+jwtService.createToken("+34123","client","CLIENT"),"+34123",passwordUpdateDto2).isEqualTo(HttpStatus.UNAUTHORIZED);
+        //200
+        putUpdatePasswordClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"+34123",passwordUpdateDto1).isEqualTo(HttpStatus.OK);
+        putUpdatePasswordClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"+34123",passwordUpdateDto2).isEqualTo(HttpStatus.OK);
+    }
+    @Test
+    void testResetPassword(){
+        //401
+        putResetPasswordClient("","+34123").isEqualTo(HttpStatus.UNAUTHORIZED);
+        //403
+        putResetPasswordClient("Bearer "+jwtService.createToken("+34123","user","CLIENT"),"+34123").isEqualTo(HttpStatus.FORBIDDEN);
+        //404
+        putResetPasswordClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"null").isEqualTo(HttpStatus.NOT_FOUND);
+        //200
+        putResetPasswordClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"+34666").isEqualTo(HttpStatus.OK);
+    }
+
     StatusAssertions getReadClient(String telephone){
         String user = "+34666666666";
         String name = "root";
@@ -157,7 +216,7 @@ public class UserResourceTests {
                 .expectStatus();
     }
 
-    StatusAssertions putUpdateClient(String token,String telephone,String body) {
+    StatusAssertions putRoleUpdateClient(String token, String telephone, String body) {
         return this.webTestClient
                 .put()
                 .uri("/user/"+telephone + "/role")
@@ -165,6 +224,53 @@ public class UserResourceTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.ALL)
                 .bodyValue(body)
+                .exchange()
+                .expectStatus();
+    }
+
+    StatusAssertions putUpdateClient(String token, String telephone, UserUpdateDto body) {
+        return this.webTestClient
+                .put()
+                .uri("/user/"+telephone)
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.ALL)
+                .bodyValue(body)
+                .exchange()
+                .expectStatus();
+
+    }
+
+    StatusAssertions putUpdateClient(String token, String telephone, SettingUpdateDto body) {
+        return this.webTestClient
+                .put()
+                .uri("/user/"+telephone+"/setting")
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.ALL)
+                .bodyValue(body)
+                .exchange()
+                .expectStatus();
+
+    }
+
+    StatusAssertions putUpdatePasswordClient(String token, String telephone, PasswordUpdateDto body){
+        return this.webTestClient
+                .put()
+                .uri("/user/"+telephone + "/password")
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.ALL)
+                .bodyValue(body)
+                .exchange()
+                .expectStatus();
+    }
+
+    StatusAssertions putResetPasswordClient(String token,String telephone){
+        return this.webTestClient
+                .put()
+                .uri("/user/"+telephone + "/resetPassword")
+                .header("Authorization", token)
                 .exchange()
                 .expectStatus();
     }

@@ -12,11 +12,24 @@ public class ApiExceptionHandler {
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler({
-            org.springframework.security.access.AccessDeniedException.class
+            org.springframework.security.access.AccessDeniedException.class,
+            UnauthorizedException.class
     })
     @ResponseBody
-    public void unauthorizedRequest(Exception exception) {
+    public ErrorMessage unauthorizedRequest(Exception exception) {
         LogManager.getLogger(this.getClass()).debug(() -> "Unauthorized: " + exception.getMessage());
+        return new ErrorMessage("UnauthorizedException","Unauthorized Exception (401)",HttpStatus.UNAUTHORIZED.value());
+    }
+
+    @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
+    @ExceptionHandler({
+            org.springframework.web.multipart.MaxUploadSizeExceededException.class,
+            MaxUploadSizeExceededException.class
+    })
+    @ResponseBody
+    public ErrorMessage maxUploadSizeExceededRequest(Exception exception) {
+        LogManager.getLogger(this.getClass()).debug(() -> "MaxUploadSizeExceeded: " + exception.getMessage());
+        return new ErrorMessage(exception, HttpStatus.PAYLOAD_TOO_LARGE.value());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -78,5 +91,4 @@ public class ApiExceptionHandler {
         exception.printStackTrace();
         return new ErrorMessage(exception, HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
-
 }

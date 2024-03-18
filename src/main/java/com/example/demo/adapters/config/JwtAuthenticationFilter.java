@@ -18,12 +18,10 @@ import java.io.IOException;
 import java.util.List;
 
 public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
-
     private static final String AUTHORIZATION = "Authorization";
 
     @Autowired
     private JwtService jwtService;
-
     public JwtAuthenticationFilter(AuthenticationManager authManager) {
         super(authManager);
     }

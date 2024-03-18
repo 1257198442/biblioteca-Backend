@@ -14,7 +14,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @RestTestConfig
-@ActiveProfiles("test")
+@ActiveProfiles({"test","dev"})
 public class LibraryResourceTests {
     @Autowired
     private WebTestClient webTestClient;
@@ -22,15 +22,12 @@ public class LibraryResourceTests {
     private JwtService jwtService;
     @Test
     void testRead(){
-        //404
-        getRead("null").isEqualTo(HttpStatus.NOT_FOUND);
-        //200
-        getRead("BIBLIOTECA").isEqualTo(HttpStatus.OK);
+        getRead().isEqualTo(HttpStatus.OK);
     }
-    StatusAssertions getRead(String name){
+    StatusAssertions getRead(){
         return this.webTestClient
                 .get()
-                .uri("/library/"+name)
+                .uri("/library")
                 .exchange()
                 .expectStatus();
     }
@@ -60,27 +57,25 @@ public class LibraryResourceTests {
                 .instagram("https://www.instagram.com/")
                 .facebook("https://www.facebook.com/")
                 .discord("https://www.discord.com/").build();
-        //404
-        putUpdateLibrary("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),libraryUpdateDto1,"null").isEqualTo(HttpStatus.NOT_FOUND);
         //403
-        putUpdateLibrary("Bearer "+jwtService.createToken("+34666000001","Administrator","ADMINISTRATOR"),libraryUpdateDto1,"BIBLIOTECA").isEqualTo(HttpStatus.FORBIDDEN);
+        putUpdateLibrary("Bearer "+jwtService.createToken("+34666000001","Administrator","ADMINISTRATOR"),libraryUpdateDto1).isEqualTo(HttpStatus.FORBIDDEN);
         //403
-        putUpdateLibrary("Bearer "+jwtService.createToken("+34666000002","User","CLIENT"),libraryUpdateDto1,"BIBLIOTECA").isEqualTo(HttpStatus.FORBIDDEN);
+        putUpdateLibrary("Bearer "+jwtService.createToken("+34666000002","User","CLIENT"),libraryUpdateDto1).isEqualTo(HttpStatus.FORBIDDEN);
         //200
-        putUpdateLibrary("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),libraryUpdateDto1,"BIBLIOTECA").isOk();
-        getRead("BIBLIOTECA").isOk().expectBody(Library.class)
+        putUpdateLibrary("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),libraryUpdateDto1).isOk();
+        getRead().isOk().expectBody(Library.class)
                 .consumeWith(response ->{
                     String telephone = response.getResponseBody().getTelephone();
                     assertEquals(libraryUpdateDto1.getTelephone(),telephone);
                 });
         //200
-        putUpdateLibrary("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),libraryUpdateDto2,"BIBLIOTECA").isOk();
+        putUpdateLibrary("Bearer "+jwtService.createToken("+3466666666","root","ROOT"),libraryUpdateDto2).isOk();
     }
 
-    StatusAssertions putUpdateLibrary(String token, LibraryUpdateDto libraryUpdateDto, String name) {
+    StatusAssertions putUpdateLibrary(String token, LibraryUpdateDto libraryUpdateDto) {
         return this.webTestClient
                 .put()
-                .uri("/library/"+name)
+                .uri("/library")
                 .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.ALL)
