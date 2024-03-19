@@ -2,10 +2,7 @@ package com.example.demo.domain.service;
 
 import com.example.demo.adapters.rest.dto.BookUploadDto;
 import com.example.demo.adapters.rest.show.BookByShow;
-import com.example.demo.domain.models.Author;
-import com.example.demo.domain.models.Book;
-import com.example.demo.domain.models.BookStatus;
-import com.example.demo.domain.models.Language;
+import com.example.demo.domain.models.*;
 import com.example.demo.domain.persistence.BookPersistence;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +19,17 @@ public class BookService {
     private final BookPersistence bookPersistence;
     private final RandomStringService randomStringService;
     private final AuthorService authorService;
+    private final TypeService typeService;
 
     @Autowired
     public BookService(BookPersistence bookPersistence,
                        RandomStringService randomStringService,
-                       AuthorService authorService){
+                       AuthorService authorService,
+                       TypeService typeService){
         this.bookPersistence = bookPersistence;
         this.randomStringService = randomStringService;
         this.authorService = authorService;
+        this.typeService = typeService;
     }
 
     public Book create(BookUploadDto bookUploadDate){
@@ -41,6 +41,7 @@ public class BookService {
         book.setStatus(BookStatus.DISABLE);
         book.setLanguage(Language.fromString(bookUploadDate.getLanguage()));
         book.setAuthorId(bookUploadDate.getAuthorId()==null?null:this.getAuthorID(bookUploadDate.getAuthorId()));
+        book.setBookType(bookUploadDate.getBookType()==null?null:this.getTypeID(bookUploadDate.getBookType()));
         return this.bookPersistence.create(book);
     }
 
@@ -66,6 +67,13 @@ public class BookService {
                     .collect(Collectors.toList());
             bookReturnData.setAuthor(authors);
         }
+        if(book.getBookType()!=null){
+            List<Type> types = book.getBookType().stream()
+                    .map(this.typeService::getType)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+            bookReturnData.setTypes(types);
+        }
         bookReturnData.setBorrowCount(0);
         return bookReturnData;
     }
@@ -78,7 +86,16 @@ public class BookService {
 
     public List<String> getAuthorID(List<String> authors){
         return authors.stream()
-                .map(authorId->this.authorService.read(authorId).getAuthorId())
+                .map(this.authorService::getAuthorData)
+                .filter(Objects::nonNull)
+                .map(Author::getAuthorId)
+                .collect(Collectors.toList());
+    }
+    public List<String> getTypeID(List<String> types){
+        return types.stream()
+                .map(this.typeService::getType)
+                .filter(Objects::nonNull)
+                .map(Type::getName)
                 .collect(Collectors.toList());
     }
 

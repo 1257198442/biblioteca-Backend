@@ -1,6 +1,7 @@
 package com.example.demo.adapters.rest.dto;
 
 import com.example.demo.domain.models.Author;
+import com.example.demo.domain.models.Type;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,4 +26,5 @@ public class BookUploadDto {
     private String issn;
     private String barcode;
     private List<String> authorId;
+    private List<String> BookType;
 }

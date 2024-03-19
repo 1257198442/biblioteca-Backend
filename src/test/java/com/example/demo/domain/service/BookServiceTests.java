@@ -30,6 +30,7 @@ public class BookServiceTests {
                 .isbn("abcd1234")
                 .deposit(new BigDecimal("99"))
                 .authorId(List.of())
+                .BookType(List.of())
                 .language("English").build();
 
         String id = bookService.create(bookUploadDto).getBookID();
@@ -44,6 +45,7 @@ public class BookServiceTests {
         assertEquals(Language.English,book.getLanguage());
         assertEquals(BookStatus.DISABLE,book.getStatus());
         assertTrue(book.getAuthor().isEmpty());
+        assertTrue(book.getTypes().isEmpty());
         assertNotNull(book.getEntryTime());
         assertNotNull(book.getImgUrl());
         assertThrows(NotFoundException.class,()->bookService.readByBookId("null"));

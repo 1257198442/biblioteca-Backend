@@ -25,6 +25,7 @@ public class SeederDev {
     private final TransactionRecordRepository transactionRecordDao;
     private final BookRepository bookDao;
     private final AuthorRepository authorDao;
+    private final TypeRepository typeDao;
 
     @Autowired
     public SeederDev(UserRepository userDao,
@@ -33,7 +34,8 @@ public class SeederDev {
                      WalletRepository walletDao,
                      TransactionRecordRepository transactionRecordDao,
                      BookRepository bookDao,
-                     AuthorRepository authorDao){
+                     AuthorRepository authorDao,
+                     TypeRepository typeDao){
         this.userDao = userDao;
         this.libraryDao = libraryDao;
         this.avatarDao = avatarDao;
@@ -41,6 +43,7 @@ public class SeederDev {
         this.transactionRecordDao = transactionRecordDao;
         this.bookDao = bookDao;
         this.authorDao = authorDao;
+        this.typeDao = typeDao;
         this.deleteAllAndInitializeAndSeedDataBase();
     }
     public void deleteAllAndInitializeAndSeedDataBase() {
@@ -55,6 +58,8 @@ public class SeederDev {
         this.walletDao.deleteAll();
         this.transactionRecordDao.deleteAll();
         this.bookDao.deleteAll();
+        this.authorDao.deleteAll();
+        this.typeDao.deleteAll();
     }
     private void seedDataBase() {
 
@@ -139,11 +144,21 @@ public class SeederDev {
         };
         this.authorDao.saveAll(Arrays.asList(authorEntities));
 
+        LogManager.getLogger(this.getClass()).warn("-------      Initial Type      -----------");
+        TypeEntity[] typeEntities = {
+                TypeEntity.builder().description("1").name("test").build(),
+                TypeEntity.builder().description("2").name("test2").build(),
+                TypeEntity.builder().description("3").name("test3").build(),
+                TypeEntity.builder().description("4").name("test4").build(),
+                TypeEntity.builder().description("5").name("test5").build(),
+        };
+        this.typeDao.saveAll(Arrays.asList(typeEntities));
+
         LogManager.getLogger(this.getClass()).warn("-------      Initial Book      -----------");
         BookEntity[] bookEntities = {
-                BookEntity.builder().bookID("1").name("test").entryTime(LocalDateTime.now()).description("this is a test book").status(BookStatus.OCCUPIED).imgUrl("https://localhost/images/book/default.jpg").deposit(new BigDecimal("12")).language(Language.English).authorId(List.of(authorEntities[0].getAuthorId())).build(),
-                BookEntity.builder().bookID("2").name("test1").entryTime(LocalDateTime.now()).description("this is a test book1").status(BookStatus.ENABLE).imgUrl("https://localhost/images/book/default.jpg").deposit(new BigDecimal("32")).language(Language.Spanish).authorId(List.of(authorEntities[1].getAuthorId())).build(),
-                BookEntity.builder().bookID("3").name("test2").entryTime(LocalDateTime.now()).description("this is a test book2").status(BookStatus.OCCUPIED).imgUrl("https://localhost/images/book/default.jpg").deposit(new BigDecimal("55")).language(Language.English).authorId(List.of(authorEntities[2].getAuthorId(),authorEntities[3].getAuthorId())).build(),
+                BookEntity.builder().bookID("1").name("test").entryTime(LocalDateTime.now()).description("this is a test book").status(BookStatus.OCCUPIED).imgUrl("https://localhost/images/book/default.jpg").deposit(new BigDecimal("12")).language(Language.English).authorId(List.of(authorEntities[0].getAuthorId())).bookType(List.of(typeEntities[0].getName())).build(),
+                BookEntity.builder().bookID("2").name("test1").entryTime(LocalDateTime.now()).description("this is a test book1").status(BookStatus.ENABLE).imgUrl("https://localhost/images/book/default.jpg").deposit(new BigDecimal("32")).language(Language.Spanish).authorId(List.of(authorEntities[1].getAuthorId())).bookType(List.of(typeEntities[1].getName())).build(),
+                BookEntity.builder().bookID("3").name("test2").entryTime(LocalDateTime.now()).description("this is a test book2").status(BookStatus.OCCUPIED).imgUrl("https://localhost/images/book/default.jpg").deposit(new BigDecimal("55")).language(Language.English).authorId(List.of(authorEntities[2].getAuthorId(),authorEntities[3].getAuthorId())).bookType(List.of(typeEntities[2].getName(),typeEntities[3].getName())).build(),
         };
         this.bookDao.saveAll(Arrays.asList(bookEntities));
 
