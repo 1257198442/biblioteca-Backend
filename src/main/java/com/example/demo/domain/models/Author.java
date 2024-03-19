@@ -15,4 +15,5 @@ public class Author {
     private String description;
     private String nationality;
     private String imgUrl;
+    private String imgFileName;
 }

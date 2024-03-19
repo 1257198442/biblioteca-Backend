@@ -55,15 +55,15 @@ public class AvatarResourceTests {
         //422
         putUpdateAvatarClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"+34123",file1).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
         //200
-//        putUpdateAvatarClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"+34123",file).isEqualTo(HttpStatus.OK);
+        putUpdateAvatarClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"+34123",file).isEqualTo(HttpStatus.OK);
     }
 
     StatusAssertions putUpdateAvatarClient(String token,String telephone,ClassPathResource file) throws IOException {
         return webTestClient.put()
                 .uri("/avatar/"+telephone)
                 .header("Authorization", token)
-                .contentType(MediaType.IMAGE_PNG)
-                .body(BodyInserters.fromMultipartData("file", new FileSystemResource(file.getFile())))
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .body(BodyInserters.fromMultipartData("file", file))
                 .exchange()
                 .expectStatus();
     }

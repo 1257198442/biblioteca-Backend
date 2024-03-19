@@ -6,6 +6,7 @@ import com.example.demo.domain.exceptions.UnprocessableEntityException;
 import com.example.demo.domain.models.Avatar;
 import com.example.demo.domain.models.Role;
 import com.example.demo.domain.service.AvatarService;
+import com.example.demo.domain.service.FileService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +31,14 @@ public class AvatarResource {
     public static final String AVATAR = "/avatar";
     public static final String TELEPHONE = "/{telephone}";
     private final AvatarService avatarService;
+    private final FileService fileService;
     public final List<Role> rootRole= Arrays.asList(Role.ROOT);
 
     @Autowired
-    public AvatarResource(AvatarService avatarService){
+    public AvatarResource(AvatarService avatarService
+            ,FileService fileService){
         this.avatarService = avatarService;
+        this.fileService = fileService;
     }
 
     //PUT
@@ -58,60 +62,17 @@ public class AvatarResource {
     public Avatar saveAvatar(String telephone, MultipartFile file) throws IOException {
         Avatar avatar = this.avatarService.read(telephone);
         if (!file.isEmpty()) {
-            if (this.fileSizeTooLarge(file)){
-                throw new MaxUploadSizeExceededException("Avatar files size cannot be larger than 5MB");
-            }
-            Tika tika = new Tika();
-            String fileContentType = tika.detect(file.getInputStream(), file.getOriginalFilename());
-            if (!isImageType(fileContentType)) {
-                throw new UnprocessableEntityException("File is not an image.");
-            }
-            try {
-                String fileName = "avatar"+ avatar.getTelephone()+"."+getExtension(file);
-                Path path = Paths.get("src/main/resources/static/images/userUpload/" + fileName);
-                System.out.println(fileName);
-                Files.write(path, file.getBytes());
-                Avatar avatar1 = new Avatar(fileName,"https://localhost/images/userUpload/"+ fileName,telephone,LocalDateTime.now());
-                return this.avatarService.update(avatar1);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            this.fileService.fileSizeTooLarge(file,5 * 1024);
+            this.fileService.isImageType(file);
+            String avatarPackage="src/main/resources/static/images/avatar/userUpload/";
+            String fileName = fileService.fileWrite(avatarPackage,"avatar",avatar.getTelephone(),file);
+            avatar.setFileName(fileName);
+            avatar.setUrl("https://localhost/images/userUpload/"+ fileName);
+            avatar.setFileName(fileName);
+            avatar.setUploadTime(LocalDateTime.now());
+            return this.avatarService.update(avatar);
         }
         throw new UnprocessableEntityException("update fault");
-    }
-
-    private String getExtension(MultipartFile file) {
-        if (file == null || file.isEmpty()) {
-            throw new UnprocessableEntityException("File is empty or null");
-        }
-        String fileName = file.getOriginalFilename();
-        int lastDotIndex;
-        if (fileName != null) {
-            lastDotIndex = fileName.lastIndexOf('.');
-        }else {
-            throw new UnprocessableEntityException("File is not an image.");
-        }
-        String extension = lastDotIndex != -1 ? fileName.substring(lastDotIndex + 1) : "";
-        if(isImageExtension(extension)){
-            return extension;
-        }else {
-            throw new UnprocessableEntityException("File is not an image.");
-        }
-    }
-
-    private boolean isImageType(String contentType) {
-        String[] imageTypes = {"image/jpeg", "image/jpg", "image/png", "image/gif",
-                "image/bmp", "image/tiff", "image/webp", "image/svg+xml",
-                "image/x-icon"};
-        return Arrays.asList(imageTypes).contains(contentType);
-    }
-
-    private static final Set<String> COMMON_IMAGE_EXTENSIONS = new HashSet<>(Arrays.asList(
-            "jpeg", "jpg", "png", "gif", "bmp", "tiff", "webp", "svg","ico"
-    ));
-
-    public static boolean isImageExtension(String extension) {
-        return COMMON_IMAGE_EXTENSIONS.contains(extension);
     }
 
     private Role extractRoleClaims() {
@@ -130,9 +91,4 @@ public class AvatarResource {
         return hasRolePermission || isTargetUser;
     }
 
-    private boolean fileSizeTooLarge (MultipartFile file){
-        long maxFileSize = 5 * 1024 * 1024;
-        long fileSize = file.getSize();
-        return fileSize > maxFileSize;
-    }
 }

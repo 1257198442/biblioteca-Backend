@@ -15,8 +15,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @TestConfig
 class JwtServiceTests {
-
-
     private JwtService jwtService;
     private String secret = "666";
     private String issuer = "JIAMING.SHI";

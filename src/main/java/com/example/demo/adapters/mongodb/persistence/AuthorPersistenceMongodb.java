@@ -47,4 +47,21 @@ public class AuthorPersistenceMongodb implements AuthorPersistence {
         return authorData.map(AuthorEntity::toAuthor).orElse(null);
     }
 
+    @Override
+    public Author update(Author author) {
+        AuthorEntity authorEntity = this.authorDao.readByAuthorId(author.getAuthorId())
+                .orElseThrow(()->new NotFoundException("Author: "+author.getAuthorId()+" is not Fount"));
+        BeanUtils.copyProperties(author,authorEntity);
+
+        return this.authorDao.save(authorEntity).toAuthor();
+    }
+
+    @Override
+    public Author delete(String authorId) {
+        return this.authorDao
+                .deleteByAuthorId(authorId)
+                .orElseThrow(()->new NotFoundException("Author: "+authorId+" is not Fount"))
+                .toAuthor();
+    }
+
 }
