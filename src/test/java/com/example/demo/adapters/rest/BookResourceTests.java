@@ -11,6 +11,7 @@ import org.springframework.test.web.reactive.server.StatusAssertions;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @RestTestConfig
 @ActiveProfiles({"test","dev"})
@@ -46,7 +47,8 @@ public class BookResourceTests {
                 .barcode("11223344")
                 .isbn("abcd1234")
                 .deposit(new BigDecimal("99"))
-                .language("English").build();
+                .language("English")
+                .authorId(List.of()).build();
 
         //200
         postCreateClient("Bearer "+jwtService.createToken("+34666000001","administrator","ADMINISTRATOR"),bookUploadDto).isEqualTo(HttpStatus.OK);
@@ -54,6 +56,10 @@ public class BookResourceTests {
         postCreateClient("",bookUploadDto).isEqualTo(HttpStatus.UNAUTHORIZED);
         //403
         postCreateClient("Bearer "+jwtService.createToken("+34666000002","user","CLIENT"),bookUploadDto).isEqualTo(HttpStatus.FORBIDDEN);
+        //404
+        bookUploadDto.setAuthorId(List.of("null"));
+        postCreateClient("Bearer "+jwtService.createToken("+34666000001","administrator","ADMINISTRATOR"),bookUploadDto).isEqualTo(HttpStatus.NOT_FOUND);
+        bookUploadDto.setAuthorId(List.of());
         //422
         bookUploadDto.setLanguage("test");
         postCreateClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),bookUploadDto).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);

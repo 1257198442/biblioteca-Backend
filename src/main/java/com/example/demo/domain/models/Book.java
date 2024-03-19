@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -29,8 +30,9 @@ public class Book {
     private String isbn;
     private String issn;
     private String barcode;
+    private List<String> authorId;
 
     public Book toShowOmit(){
-        return Book.builder().bookID(this.bookID).name(this.name).status(this.status).deposit(this.deposit).imgUrl(this.imgUrl).language(this.language).build();
+        return Book.builder().bookID(this.bookID).name(this.name).status(this.status).deposit(this.deposit).imgUrl(this.imgUrl).language(this.language).authorId(this.authorId).build();
     }
 }

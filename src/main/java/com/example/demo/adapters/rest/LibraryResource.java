@@ -4,7 +4,6 @@ import com.example.demo.adapters.rest.dto.LibraryUpdateDto;
 import com.example.demo.domain.exceptions.ForbiddenException;
 import com.example.demo.domain.models.Library;
 import com.example.demo.domain.models.Role;
-import com.example.demo.domain.service.RoleService;
 import com.example.demo.domain.service.LibraryService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +22,11 @@ import java.util.stream.Collectors;
 public class LibraryResource {
     public static final String LIBRARY = "/library";
     private final LibraryService libraryService;
-    private final RoleService roleService;
+
     public final List<Role> rootRole= List.of(Role.ROOT);
     @Autowired
-    public LibraryResource(LibraryService libraryService, RoleService roleService){
+    public LibraryResource(LibraryService libraryService){
         this.libraryService = libraryService;
-        this.roleService = roleService;
     }
 
     //PUT
@@ -36,7 +34,7 @@ public class LibraryResource {
     @SecurityRequirement(name = "bearerAuth")
     @PutMapping()
     public Library update(@RequestBody LibraryUpdateDto libraryUpdate){
-        if(roleService.isCompetent(rootRole,this.extractRoleClaims())){
+        if(Role.isCompetent(rootRole,this.extractRoleClaims())){
             return this.libraryService.update(libraryUpdate,"BIBLIOTECA");
         }else {
             throw new ForbiddenException("You don't have permission to make this request.");

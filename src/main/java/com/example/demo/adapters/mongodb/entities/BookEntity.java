@@ -14,6 +14,7 @@ import org.springframework.data.annotation.Id;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -36,6 +37,7 @@ public class BookEntity {
     private String isbn;
     private String issn;
     private String barcode;
+    private List<String> authorId;
 
     public Book toBook(){
         Book book = new Book();

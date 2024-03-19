@@ -1,5 +1,6 @@
 package com.example.demo.adapters.mongodb.persistence;
 
+import com.example.demo.adapters.mongodb.daos.AuthorRepository;
 import com.example.demo.adapters.mongodb.daos.BookRepository;
 import com.example.demo.adapters.mongodb.entities.BookEntity;
 import com.example.demo.domain.exceptions.NotFoundException;
@@ -15,11 +16,11 @@ import java.util.stream.Collectors;
 @Repository
 public class BookPersistenceMongodb implements BookPersistence {
     private final BookRepository bookDao;
-
     @Autowired
     public BookPersistenceMongodb(BookRepository bookDao){
         this.bookDao = bookDao;
     }
+
     @Override
     public Book create(Book book) {
        BookEntity bookEntity = new BookEntity();
