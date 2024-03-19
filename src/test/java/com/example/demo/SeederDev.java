@@ -130,10 +130,12 @@ public class SeederDev {
 
         LogManager.getLogger(this.getClass()).warn("-------      Initial Author      -----------");
         AuthorEntity[] authorEntities = {
-                AuthorEntity.builder().authorId("111").imgUrl("https://localhost/images/author/user.png").name("author1").nationality("English").description("test text1").build(),
-                AuthorEntity.builder().authorId("222").imgUrl("https://localhost/images/author/user.png").name("author2").nationality("China").description("test text2").build(),
-                AuthorEntity.builder().authorId("333").imgUrl("https://localhost/images/author/user.png").name("author3-1").nationality("Spain").description("test text3-1").build(),
-                AuthorEntity.builder().authorId("444").imgUrl("https://localhost/images/author/user.png").name("author3-2").nationality("Spain").description("test text3-2").build(),
+                AuthorEntity.builder().authorId("111").imgUrl("https://localhost/images/author/user.png").name("author1").nationality("English").description("test text1").imgFileName("user.png").build(),
+                AuthorEntity.builder().authorId("222").imgUrl("https://localhost/images/author/user.png").name("author2").nationality("China").description("test text2").imgFileName("user.png").build(),
+                AuthorEntity.builder().authorId("333").imgUrl("https://localhost/images/author/user.png").name("author3-1").nationality("Spain").description("test text3-1").imgFileName("user.png").build(),
+                AuthorEntity.builder().authorId("444").imgUrl("https://localhost/images/author/user.png").name("author3-2").nationality("Spain").description("test text3-2").imgFileName("user.png").build(),
+                AuthorEntity.builder().authorId("delete").imgUrl("https://localhost/images/author/user.png").name("author4").nationality("Spain").description("test text4").imgFileName("user.png").build(),
+                AuthorEntity.builder().authorId("update").imgUrl("https://localhost/images/author/user.png").name("author5").nationality("Spain").description("test text5").imgFileName("user.png").build(),
         };
         this.authorDao.saveAll(Arrays.asList(authorEntities));
 

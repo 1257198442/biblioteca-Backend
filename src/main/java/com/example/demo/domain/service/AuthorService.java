@@ -25,6 +25,7 @@ public class AuthorService {
         BeanUtils.copyProperties(authorData,author);
         author.setAuthorId(randomStringService.generateRandomString(12));
         author.setImgUrl("https://localhost/images/author/user.png");
+        author.setImgFileName("user.png");
         return this.authorPersistence.create(author);
     }
 
@@ -40,4 +41,21 @@ public class AuthorService {
         return this.authorPersistence.getAuthorData(authorId);
     }
 
+    public Author update(String authorId, AuthorUploadDto authorData){
+        Author author = new Author();
+        BeanUtils.copyProperties(authorData,author);
+        author.setAuthorId(authorId);
+        return this.authorPersistence.update(author);
+    }
+
+    public Author delete(String authorId){
+        return this.authorPersistence.delete(authorId);
+    }
+
+    public Author uploadImg(String authorId,String url,String fileName){
+        Author author = this.authorPersistence.read(authorId);
+        author.setImgUrl(url+fileName);
+        author.setImgFileName(fileName);
+        return this.authorPersistence.update(author);
+    }
 }

@@ -22,6 +22,7 @@ public class AuthorEntity {
     private String description;
     private String nationality;
     private String imgUrl;
+    private String imgFileName;
     public AuthorEntity(Author author){
         BeanUtils.copyProperties(author,this);
     }

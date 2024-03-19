@@ -9,5 +9,7 @@ public interface AuthorPersistence {
     Author read(String authorId);
     List<Author> readAll();
     Author getAuthorData(String authorId);
+    Author update(Author author);
+    Author delete(String authorId);
 
 }
