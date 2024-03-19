@@ -6,7 +6,6 @@ import com.example.demo.domain.exceptions.UnprocessableEntityException;
 import com.example.demo.domain.models.Avatar;
 import com.example.demo.domain.models.Role;
 import com.example.demo.domain.service.AvatarService;
-import com.example.demo.domain.service.RoleService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;

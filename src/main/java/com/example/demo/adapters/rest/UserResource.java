@@ -6,7 +6,6 @@ import com.example.demo.domain.exceptions.ForbiddenException;
 import com.example.demo.domain.exceptions.UnauthorizedException;
 import com.example.demo.domain.models.Role;
 import com.example.demo.domain.models.User;
-import com.example.demo.domain.service.RoleService;
 import com.example.demo.domain.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -37,7 +36,6 @@ public class UserResource {
     public static final String RESET_PASSWORD = "/resetPassword";
     public static final String ROLE = "/role";
     public final UserService userService;
-    public final RoleService roleService;
     public final List<Role> allRole= Arrays.asList(Role.CLIENT,Role.ADMINISTRATOR,Role.ROOT);
     public final List<Role> adminRole=Arrays.asList(Role.ADMINISTRATOR,Role.ROOT);
     public final List<Role> rootRole= List.of(Role.ROOT);
@@ -45,9 +43,8 @@ public class UserResource {
     @Value("${Reset.password}")
     public   String resetPassword;
     @Autowired
-    public UserResource(UserService userService,RoleService roleService){
+    public UserResource(UserService userService){
         this.userService = userService;
-        this.roleService = roleService;
     }
 
     @SecurityRequirement(name = "basicAuth")
@@ -81,9 +78,9 @@ public class UserResource {
     @SecurityRequirement(name = "bearerAuth")
     @PutMapping(TELEPHONE+ ROLE)
     public User updateRole(@PathVariable String telephone, @RequestBody String role){
-        if(roleService.isCompetent(rootRole,this.extractRoleClaims())){
+        if(Role.isCompetent(rootRole,this.extractRoleClaims())){
             return this.userService.updateRoleROOT(telephone,role);
-        }else if(roleService.isCompetent(adminRole,this.extractRoleClaims())){
+        }else if(Role.isCompetent(adminRole,this.extractRoleClaims())){
             return this.userService.updateRoleADMINISTRATOR(telephone,role);
         }else {
             throw new ForbiddenException("You don't have permission to make this request.");
@@ -94,7 +91,7 @@ public class UserResource {
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping
     public List<User> readAll(){
-        if(roleService.isCompetent(adminRole,this.extractRoleClaims())){
+        if(Role.isCompetent(adminRole,this.extractRoleClaims())){
             return this.userService.readAll();
         }else {
             throw new ForbiddenException("You don't have permission to make this request.");
@@ -142,7 +139,7 @@ public class UserResource {
     @SecurityRequirement(name = "bearerAuth")
     @PutMapping(TELEPHONE+RESET_PASSWORD)
     public User resetPassword(@PathVariable String telephone){
-        if (roleService.isCompetent(rootRole,this.extractRoleClaims())){
+        if (Role.isCompetent(rootRole,this.extractRoleClaims())){
             return this.userService.changePassword(telephone,this.resetPassword);
         }else {
             throw new ForbiddenException("You don't have permission to make this request.");

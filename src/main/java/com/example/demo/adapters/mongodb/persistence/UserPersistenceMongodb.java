@@ -49,13 +49,13 @@ public class UserPersistenceMongodb implements UserPersistence {
 
     @Override
     public User create(User user) {
-        createNeedToBe(user);
+        createNeedToDo(user);
         return this.userRepository
                 .save(new UserEntity(user))
                 .toUser();
     }
 
-    private void createNeedToBe(User user){
+    private void createNeedToDo(User user){
         this.avatarRepository.save(new AvatarEntity("user.png","https://localhost/images/avatar/user.png",user.getTelephone(), LocalDateTime.now()));
         this.walletRepository.save(new WalletEntity(new BigDecimal("0"),user.getTelephone()));
     }

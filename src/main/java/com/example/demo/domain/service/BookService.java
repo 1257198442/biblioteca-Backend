@@ -2,7 +2,7 @@ package com.example.demo.domain.service;
 
 import com.example.demo.adapters.rest.dto.BookUploadDto;
 import com.example.demo.adapters.rest.show.BookByShow;
-import com.example.demo.domain.exceptions.UnprocessableEntityException;
+import com.example.demo.domain.models.Author;
 import com.example.demo.domain.models.Book;
 import com.example.demo.domain.models.BookStatus;
 import com.example.demo.domain.models.Language;
@@ -21,11 +21,15 @@ import java.util.stream.Stream;
 public class BookService {
     private final BookPersistence bookPersistence;
     private final RandomStringService randomStringService;
+    private final AuthorService authorService;
 
     @Autowired
-    public BookService(BookPersistence bookPersistence,RandomStringService randomStringService){
+    public BookService(BookPersistence bookPersistence,
+                       RandomStringService randomStringService,
+                       AuthorService authorService){
         this.bookPersistence = bookPersistence;
         this.randomStringService = randomStringService;
+        this.authorService = authorService;
     }
 
     public Book create(BookUploadDto bookUploadDate){
@@ -36,6 +40,7 @@ public class BookService {
         book.setImgUrl("https://localhost/images/book/default.jpg");
         book.setStatus(BookStatus.DISABLE);
         book.setLanguage(Language.fromString(bookUploadDate.getLanguage()));
+        book.setAuthorId(bookUploadDate.getAuthorId()==null?null:this.getAuthorID(bookUploadDate.getAuthorId()));
         return this.bookPersistence.create(book);
     }
 
@@ -54,6 +59,14 @@ public class BookService {
     public BookByShow bookToBookShow(Book book){
         BookByShow bookReturnData = new BookByShow();
         BeanUtils.copyProperties(book,bookReturnData);
+        if(book.getAuthorId() != null){
+            List<Author> authors = book.getAuthorId().stream()
+                    .map(this.authorService::getAuthorData)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+            bookReturnData.setAuthor(authors);
+        }
+        bookReturnData.setBorrowCount(0);
         return bookReturnData;
     }
 
@@ -61,6 +74,12 @@ public class BookService {
         return books.stream()
                 .map(Book::toShowOmit)
                 .map(this::bookToBookShow);
+    }
+
+    public List<String> getAuthorID(List<String> authors){
+        return authors.stream()
+                .map(authorId->this.authorService.read(authorId).getAuthorId())
+                .collect(Collectors.toList());
     }
 
 }

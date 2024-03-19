@@ -1,5 +1,6 @@
 package com.example.demo.adapters.rest.show;
 
+import com.example.demo.domain.models.Author;
 import com.example.demo.domain.models.BookStatus;
 import com.example.demo.domain.models.Language;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -31,4 +33,5 @@ public class BookByShow {
     private String isbn;
     private String issn;
     private String barcode;
+    private List<Author> author;
 }

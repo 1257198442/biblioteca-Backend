@@ -1,28 +1,18 @@
 package com.example.demo.adapters.rest.dto;
 
-import com.example.demo.domain.models.Author;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class BookUploadDto {
+public class AuthorUploadDto {
     private String name;
     private String description;
-    private String publisher;
-    private BigDecimal deposit;
-    private String language;
-    private String isbn;
-    private String issn;
-    private String barcode;
-    private List<String> authorId;
+    private String nationality;
 }
