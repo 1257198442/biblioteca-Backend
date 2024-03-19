@@ -40,7 +40,7 @@ public class AvatarResourceTests {
     }
 
     @Test
-    public void testUpdateAvatar() throws IOException {
+    public void testUpdateAvatar(){
         ClassPathResource file = new ClassPathResource("static/testImages/img.png");
         ClassPathResource file1 = new ClassPathResource("static/testImages/test.txt");
         ClassPathResource file2 = new ClassPathResource("static/testImages/fileSizeToLager.jpg");
@@ -58,7 +58,7 @@ public class AvatarResourceTests {
         putUpdateAvatarClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"+34123",file).isEqualTo(HttpStatus.OK);
     }
 
-    StatusAssertions putUpdateAvatarClient(String token,String telephone,ClassPathResource file) throws IOException {
+    StatusAssertions putUpdateAvatarClient(String token,String telephone,ClassPathResource file){
         return webTestClient.put()
                 .uri("/avatar/"+telephone)
                 .header("Authorization", token)
