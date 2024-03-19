@@ -1,7 +1,7 @@
 package com.example.demo.adapters.mongodb.persistence;
 
-import com.example.demo.adapters.mongodb.daos.AuthorRepository;
 import com.example.demo.adapters.mongodb.daos.BookRepository;
+import com.example.demo.adapters.mongodb.daos.TypeRepository;
 import com.example.demo.adapters.mongodb.entities.BookEntity;
 import com.example.demo.domain.exceptions.NotFoundException;
 import com.example.demo.domain.models.Book;
@@ -23,10 +23,8 @@ public class BookPersistenceMongodb implements BookPersistence {
 
     @Override
     public Book create(Book book) {
-       BookEntity bookEntity = new BookEntity();
-       BeanUtils.copyProperties(book,bookEntity);
         return this.bookDao
-                .save(bookEntity)
+                .save(new BookEntity(book))
                 .toBook();
     }
 
