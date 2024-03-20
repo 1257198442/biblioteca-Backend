@@ -32,6 +32,8 @@ public class BookResource {
     public static final String All_LANGUAGE = "/all_language";
     public static final String STATUS = "/status";
     public static final String IMG = "/image";
+    public static final String RANDOM = "/random";
+    public static final String SEARCH = "/search";
     private final BookService bookService;
     private final FileService fileService;
     public final List<Role> adminRole= Arrays.asList(Role.ADMINISTRATOR,Role.ROOT);
@@ -137,6 +139,31 @@ public class BookResource {
         }
 
     }
+
+    @GetMapping(RANDOM)
+    public BookByShow randomBook(){
+        return this.bookService.randomBook();
+    }
+
+    @GetMapping(SEARCH)
+    public List<BookByShow> readByNameAndPublisherAndAuthor(@RequestParam(required = false) String name
+            , @RequestParam(required = false)String publisher
+            , @RequestParam(required = false)String authorName
+            , @RequestParam(required = false)String language
+            , @RequestParam(required = false)String type
+            , @RequestParam(required = false)String authorId
+            , @RequestParam(required = false)String barcode
+            , @RequestParam(required = false)String issn
+            , @RequestParam(required = false)String isbn
+    ){
+        if(authorId==null){
+            return this.bookService.searchBook(name,publisher,authorName,language,type,barcode,issn,isbn);
+        }else {
+            return this.bookService.readAllByAuthorId(authorId);
+        }
+
+    }
+
     private Role extractRoleClaims() {
         List< String > roleClaims = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority).collect(Collectors.toList());

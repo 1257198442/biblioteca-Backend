@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -87,6 +88,7 @@ public class BookService {
     public Stream<BookByShow> convertToBookReturnList(List<Book> books) {
         return books.stream()
                 .map(Book::toShowOmit)
+                .distinct()
                 .map(this::bookToBookShow);
     }
 
@@ -147,5 +149,20 @@ public class BookService {
         book.setImgUrl(url+fileName);
         book.setImgFileName(fileName);
         return this.bookPersistence.update(book);
+    }
+
+    public BookByShow randomBook(){
+        List<Book> allBook = this.bookPersistence.readAll();
+        Random random = new Random();
+        return this.bookToBookShow(allBook.get(random.nextInt(allBook.size()))) ;
+    }
+
+    public List<BookByShow> searchBook(String name, String publisher, String authorName, String language, String type,String barcode,String issn,String isbn){
+        return convertToBookReturnList(this.bookPersistence.searchBook(publisher,authorName,name,language,type,barcode,issn,isbn)).collect(Collectors.toList());
+    }
+
+    public List<BookByShow> readAllByAuthorId(String authorId){
+        return this.bookPersistence.readByAuthorId(authorId)
+                .stream().map(this::bookToBookShow).collect(Collectors.toList());
     }
 }

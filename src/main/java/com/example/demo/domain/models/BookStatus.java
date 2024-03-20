@@ -1,6 +1,7 @@
 package com.example.demo.domain.models;
 
 import com.example.demo.domain.exceptions.BadRequestException;
+import com.example.demo.domain.exceptions.UnprocessableEntityException;
 
 public enum BookStatus {
     ENABLE,OCCUPIED,DISABLE;
@@ -9,7 +10,7 @@ public enum BookStatus {
         try {
             return BookStatus.valueOf(status);
         } catch (IllegalArgumentException e) {
-            throw new BadRequestException("The status "+status+" is invalid");
+            throw new UnprocessableEntityException("The status "+status+" is invalid");
         }
     }
 }
