@@ -37,4 +37,17 @@ public class TypeService {
     public Type getType(String name){
         return this.typePersistence.getType(name);
     }
+
+    public Type delete(String name){
+        return this.typePersistence.delete(name);
+    }
+
+    public Type update(String name,String description){
+
+        return this.typePersistence.update(Type
+                .builder()
+                .name(name)
+                .description(description)
+                .build());
+    }
 }

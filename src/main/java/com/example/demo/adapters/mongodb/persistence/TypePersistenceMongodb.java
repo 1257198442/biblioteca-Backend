@@ -54,4 +54,25 @@ public class TypePersistenceMongodb implements TypePersistence {
         return type.map(TypeEntity::toType).orElse(null);
     }
 
+    @Override
+    public Type update(Type type) {
+        TypeEntity typeEntity = this.typeDao
+                .readByName(type.getName())
+                .orElseThrow(()->new NotFoundException("Type: "+type.getName()+" is not Fount"));
+        BeanUtils.copyProperties(type,typeEntity);
+
+        return this.typeDao
+                .save(typeEntity)
+                .toType();
+    }
+
+    @Override
+    public Type delete(String name) {
+
+        return this.typeDao
+                .deleteByName(name)
+                .orElseThrow(()->new NotFoundException("Type: "+name+" is not Fount"))
+                .toType();
+    }
+
 }

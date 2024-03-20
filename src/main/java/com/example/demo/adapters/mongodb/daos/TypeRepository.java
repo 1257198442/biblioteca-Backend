@@ -8,5 +8,6 @@ import java.util.Optional;
 
 public interface TypeRepository extends MongoRepository<TypeEntity,String> {
     Optional<TypeEntity> readByName(String name);
+    Optional<TypeEntity> deleteByName(String name);
 
 }

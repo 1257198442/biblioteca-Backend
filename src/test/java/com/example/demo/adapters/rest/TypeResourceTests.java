@@ -19,7 +19,7 @@ public class TypeResourceTests {
     private JwtService jwtService;
 
     @Test
-    void testCreate(){
+    void testCreateAndDelete(){
         Type type = Type.builder().name("testCreatePoint").description("test text").build();
         Type type1 = Type.builder().name("test").description("test text").build();
         //401
@@ -30,6 +30,14 @@ public class TypeResourceTests {
         postCreateClient("Bearer "+jwtService.createToken("+34666000001","administrator","ADMINISTRATOR"),type1).isEqualTo(HttpStatus.CONFLICT);
         //200
         postCreateClient("Bearer "+jwtService.createToken("+34666000001","administrator","ADMINISTRATOR"),type).isEqualTo(HttpStatus.OK);
+        //401
+        deleteClient("null","testCreatePoint").isEqualTo(HttpStatus.UNAUTHORIZED);
+        //403
+        deleteClient("Bearer "+jwtService.createToken("+34645321068","client","CLIENT"),"testCreatePoint").isEqualTo(HttpStatus.FORBIDDEN);
+        //404
+        deleteClient("Bearer "+jwtService.createToken("+34666000001","administrator","ADMINISTRATOR"),"null").isEqualTo(HttpStatus.NOT_FOUND);
+        //200
+        deleteClient("Bearer "+jwtService.createToken("+34666000001","administrator","ADMINISTRATOR"),"testCreatePoint").isEqualTo(HttpStatus.OK);
     }
 
     @Test
@@ -49,6 +57,18 @@ public class TypeResourceTests {
                 .isEqualTo(HttpStatus.OK);
     }
 
+    @Test
+    void testUpdate(){
+        //401
+        putUpdateClient("null","test4","123").isEqualTo(HttpStatus.UNAUTHORIZED);
+        //403
+        putUpdateClient("Bearer "+jwtService.createToken("+34645321068","client","CLIENT"),"test4","123").isEqualTo(HttpStatus.FORBIDDEN);
+        //404
+        putUpdateClient("Bearer "+jwtService.createToken("+34666000001","administrator","ADMINISTRATOR"),"null","123").isEqualTo(HttpStatus.NOT_FOUND);
+        //200
+        putUpdateClient("Bearer "+jwtService.createToken("+34666000001","administrator","ADMINISTRATOR"),"test4","123").isEqualTo(HttpStatus.OK);
+    }
+
     StatusAssertions postCreateClient(String token, Type type){
         return this.webTestClient.post()
                 .uri("/type")
@@ -62,6 +82,22 @@ public class TypeResourceTests {
     StatusAssertions getReadClient(String id){
         return this.webTestClient.get()
                 .uri("/type/{id}",id)
+                .exchange()
+                .expectStatus();
+    }
+    StatusAssertions deleteClient(String token, String id){
+        return this.webTestClient.delete()
+                .uri("/type/{id}",id)
+                .header("Authorization", token)
+                .exchange()
+                .expectStatus();
+    }
+
+    StatusAssertions putUpdateClient(String token, String id, String description){
+        return this.webTestClient.put()
+                .uri("/type/{id}",id)
+                .header("Authorization", token)
+                .bodyValue(description)
                 .exchange()
                 .expectStatus();
     }

@@ -7,8 +7,6 @@ import com.example.demo.domain.models.Type;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
-
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,7 +16,7 @@ public class TypeServiceTests {
     private TypeService typeService;
 
     @Test
-    void testCreateAndRead(){
+    void testCreateAndReadAndDelete(){
         Type type = Type.builder().name("testCreate").description("test text").build();
         typeService.create(type);
         assertThrows(ConflictException.class,()->typeService.create(type));
@@ -26,6 +24,8 @@ public class TypeServiceTests {
         assertEquals(type.getDescription(),type1.getDescription());
         assertEquals(type.getName(),type1.getName());
         assertThrows(NotFoundException.class,()->typeService.read("null"));
+        assertEquals(type,typeService.delete(type.getName()));
+        assertThrows(NotFoundException.class,()->typeService.delete("null"));
     }
     @Test
     void testReadAll(){
@@ -37,4 +37,12 @@ public class TypeServiceTests {
         assertEquals("1",type.getDescription());
         assertNull(typeService.getType("null"));
     }
+    @Test
+    void testUpdate(){
+        typeService.update("test5","test text updated");
+        Type type = typeService.read("test5");
+        assertEquals("test text updated",type.getDescription());
+        assertThrows(NotFoundException.class,()->typeService.update("null","null"));
+    }
+
 }

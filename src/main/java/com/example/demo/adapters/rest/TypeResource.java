@@ -49,6 +49,28 @@ public class TypeResource {
         return this.typeService.readAll();
     }
 
+    @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT')  or hasRole('CLIENT')" )
+    @SecurityRequirement(name = "bearerAuth")
+    @DeleteMapping(NAME)
+    public Type delete(@PathVariable String name){
+        if(Role.isCompetent(adminRole,this.extractRoleClaims())){
+        return this.typeService.delete(name);
+        }else {
+            throw new ForbiddenException("You don't have permission to make this request.");
+        }
+    }
+
+    @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT')  or hasRole('CLIENT')" )
+    @SecurityRequirement(name = "bearerAuth")
+    @PutMapping(NAME)
+    public Type update(@PathVariable String name,@RequestBody String description){
+        if(Role.isCompetent(adminRole,this.extractRoleClaims())){
+            return this.typeService.update(name,description);
+        }else {
+            throw new ForbiddenException("You don't have permission to make this request.");
+        }
+
+    }
 
     private Role extractRoleClaims() {
         List< String > roleClaims = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()

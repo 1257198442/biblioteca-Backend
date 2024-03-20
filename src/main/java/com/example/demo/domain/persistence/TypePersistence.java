@@ -10,5 +10,6 @@ public interface TypePersistence {
     List<Type> readAll();
     Boolean existName(String name);
     Type getType(String name);
-
+    Type update(Type type);
+    Type delete(String name);
 }
