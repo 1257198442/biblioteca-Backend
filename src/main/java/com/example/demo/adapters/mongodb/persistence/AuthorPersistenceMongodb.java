@@ -20,6 +20,7 @@ public class AuthorPersistenceMongodb implements AuthorPersistence {
     public AuthorPersistenceMongodb(AuthorRepository authorDao){
         this.authorDao = authorDao;
     }
+
     @Override
     public Author create(Author author) {
         return this.authorDao.save(new AuthorEntity(author)).toAuthor();
@@ -52,7 +53,6 @@ public class AuthorPersistenceMongodb implements AuthorPersistence {
         AuthorEntity authorEntity = this.authorDao.readByAuthorId(author.getAuthorId())
                 .orElseThrow(()->new NotFoundException("Author: "+author.getAuthorId()+" is not Fount"));
         BeanUtils.copyProperties(author,authorEntity);
-
         return this.authorDao.save(authorEntity).toAuthor();
     }
 
