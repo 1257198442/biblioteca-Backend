@@ -40,6 +40,7 @@ public class BookEntity {
     private String barcode;
     private List<String> authorId;
     private List<String> bookType;
+    private String imgFileName;
 
     public BookEntity(Book book){
         BeanUtils.copyProperties(book,this);

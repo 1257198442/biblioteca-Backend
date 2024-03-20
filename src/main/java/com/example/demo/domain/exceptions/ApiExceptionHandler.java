@@ -65,7 +65,8 @@ public class ApiExceptionHandler {
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler({
-            ConflictException.class
+            ConflictException.class,
+            LockedResourceException.class
     })
     @ResponseBody
     public ErrorMessage conflict(Exception exception) {

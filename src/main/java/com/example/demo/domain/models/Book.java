@@ -32,6 +32,7 @@ public class Book {
     private String barcode;
     private List<String> authorId;
     private List<String> bookType;
+    private String imgFileName;
 
     public Book toShowOmit(){
         return Book.builder().bookID(this.bookID).name(this.name).status(this.status).deposit(this.deposit).imgUrl(this.imgUrl).language(this.language).authorId(this.authorId).build();

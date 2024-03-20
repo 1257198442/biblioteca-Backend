@@ -1,7 +1,10 @@
 package com.example.demo.domain.service;
 
+import com.example.demo.adapters.rest.dto.BookUpdateDto;
 import com.example.demo.adapters.rest.dto.BookUploadDto;
 import com.example.demo.adapters.rest.show.BookByShow;
+import com.example.demo.domain.exceptions.ForbiddenException;
+import com.example.demo.domain.exceptions.LockedResourceException;
 import com.example.demo.domain.models.*;
 import com.example.demo.domain.persistence.BookPersistence;
 import org.springframework.beans.BeanUtils;
@@ -38,14 +41,17 @@ public class BookService {
         book.setBookID(randomStringService.generateRandomString(12));
         book.setEntryTime(LocalDateTime.now());
         book.setImgUrl("https://localhost/images/book/default.jpg");
+        book.setImgFileName("default.jpg");
         book.setStatus(BookStatus.DISABLE);
         book.setLanguage(Language.fromString(bookUploadDate.getLanguage()));
         book.setAuthorId(bookUploadDate.getAuthorId()==null?null:this.getAuthorID(bookUploadDate.getAuthorId()));
         book.setBookType(bookUploadDate.getBookType()==null?null:this.getTypeID(bookUploadDate.getBookType()));
         return this.bookPersistence.create(book);
     }
-
-    public BookByShow readByBookId(String bookId){
+    public Book read(String id){
+        return this.bookPersistence.read(id);
+    }
+    public BookByShow getBookShow(String bookId){
        return this.bookToBookShow(this.bookPersistence.read(bookId)) ;
     }
 
@@ -72,7 +78,7 @@ public class BookService {
                     .map(this.typeService::getType)
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
-            bookReturnData.setTypes(types);
+            bookReturnData.setBookType(types);
         }
         bookReturnData.setBorrowCount(0);
         return bookReturnData;
@@ -99,4 +105,47 @@ public class BookService {
                 .collect(Collectors.toList());
     }
 
+    public BookByShow update(BookUpdateDto bookDate, String bookId){
+        Book book = this.bookPersistence.read(bookId);
+        BeanUtils.copyProperties(bookDate,book);
+        book.setLanguage(Language.fromString(bookDate.getLanguage()));
+        if(bookDate.getAuthorId()==null){
+            book.setAuthorId(null);
+        }else {
+            book.setAuthorId(this.getAuthorID(bookDate.getAuthorId()));
+        }
+        if(bookDate.getBookType()==null){
+            book.setBookType(null);
+        }else {
+            book.setBookType(this.getTypeID(bookDate.getBookType()));
+        }
+        return this.bookToBookShow(this.bookPersistence.update(book));
+    }
+
+    public Book modifyBookStatusAdmin(String bookId,String bookStatus){
+        Book book = this.bookPersistence.read(bookId);
+        if(book.getStatus()!=BookStatus.OCCUPIED){
+            book.setStatus(BookStatus.fromString(bookStatus));
+            return this.bookPersistence.update(book);
+        }else {
+            throw new LockedResourceException("Book "+bookId+" is occupied You are not authorised to modify its status, this operation can only be performed using the root account.");
+        }
+    }
+
+    public Book modifyBookStatusRoot(String bookId,String bookStatus){
+        Book book = this.bookPersistence.read(bookId);
+        book.setStatus(BookStatus.fromString(bookStatus));
+        return this.bookPersistence.update(book);
+    }
+
+    public Book delete(String bookId){
+        return this.bookPersistence.delete(bookId);
+    }
+
+    public Book uploadImg(String id,String url,String fileName){
+        Book book = this.bookPersistence.read(id);
+        book.setImgUrl(url+fileName);
+        book.setImgFileName(fileName);
+        return this.bookPersistence.update(book);
+    }
 }

@@ -6,8 +6,6 @@ import com.example.demo.domain.models.Language;
 import com.example.demo.domain.models.Type;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -35,5 +33,5 @@ public class BookByShow {
     private String issn;
     private String barcode;
     private List<Author> author;
-    private List<Type> types;
+    private List<Type> bookType;
 }
