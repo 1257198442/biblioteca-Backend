@@ -8,4 +8,6 @@ public interface BookPersistence {
     Book create(Book book);
     Book read(String bookId);
     List<Book> readAll();
+    Book update(Book book);
+    Book delete(String bookId);
 }

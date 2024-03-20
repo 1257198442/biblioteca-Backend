@@ -23,7 +23,7 @@ public class JwtService {
 
     @Autowired
     public JwtService(@Value("666") String secret, @Value("JIAMING.SHI") String issuer,
-                      @Value("600") int expire) {
+                      @Value("3600") int expire) {
         this.secret = secret;
         this.issuer = issuer;
         this.expire = expire;
