@@ -10,4 +10,6 @@ public interface BookPersistence {
     List<Book> readAll();
     Book update(Book book);
     Book delete(String bookId);
+    List<Book> searchBook(String publisher, String authorName, String name, String language, String bookTypeName,String barcode,String issn,String isbn);
+    List<Book> readByAuthorId(String authorId);
 }

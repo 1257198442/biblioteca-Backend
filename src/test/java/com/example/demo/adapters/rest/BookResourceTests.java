@@ -139,10 +139,38 @@ public class BookResourceTests {
         putModifyBookStatus("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"null", "ENABLE").isEqualTo(HttpStatus.NOT_FOUND);
         //409
         putModifyBookStatus("Bearer "+jwtService.createToken("+34666000001","administrator","ADMINISTRATOR"),"3", "ENABLE").isEqualTo(HttpStatus.CONFLICT);
+        //422
+        putModifyBookStatus("Bearer "+jwtService.createToken("+34666000001","administrator","ADMINISTRATOR"),"1", "error").isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
         //200
         putModifyBookStatus("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"3", "ENABLE").isEqualTo(HttpStatus.OK);
         putModifyBookStatus("Bearer "+jwtService.createToken("+34666000001","administrator","ADMINISTRATOR"),"3", "OCCUPIED").isEqualTo(HttpStatus.OK);
 
+    }
+
+    @Test
+    void testRandomBook(){
+        webTestClient.get()
+            .uri("/book/random")
+            .exchange()
+            .expectStatus()
+            .isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    void testReadByNameAndPublisherAndAuthor(){
+        //200
+        getReadByNameAndPublisherAndAuthor("/book/search?name=book").isEqualTo(HttpStatus.OK);
+        //422
+        getReadByNameAndPublisherAndAuthor("/book/search?language=error").isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+        //200
+        getReadByNameAndPublisherAndAuthor("/book/search?authorId=test").isEqualTo(HttpStatus.OK);
+    }
+
+    StatusAssertions getReadByNameAndPublisherAndAuthor(String url){
+        return webTestClient.get()
+                .uri(url)
+                .exchange()
+                .expectStatus();
     }
 
     StatusAssertions postCreateClient(String token, BookUploadDto bookUploadDto){
@@ -200,4 +228,5 @@ public class BookResourceTests {
                 .exchange()
                 .expectStatus();
     }
+
 }

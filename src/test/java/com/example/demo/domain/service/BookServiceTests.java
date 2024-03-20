@@ -81,6 +81,31 @@ public class BookServiceTests {
     }
 
     @Test
+    void testRandomBook(){
+        assertNotNull(bookService.randomBook());
+    }
+
+    @Test
+    void testSearch(){
+        assertNotNull(bookService.searchBook(null,null,null,null,null,null,null,null));
+        assertEquals(1,bookService.searchBook("1",null,null,null,null,null,null,null).size());
+        assertEquals(7,bookService.searchBook(null,"test",null,null,null,null,null,null).size());
+        assertEquals(5,bookService.searchBook(null,null,"author3",null,null,null,null,null).size());
+        assertEquals(6,bookService.searchBook(null,null,null,"English",null,null,null,null).size());
+        assertEquals(4,bookService.searchBook(null,null,null,null,"test5",null,null,null).size());
+        assertEquals(1,bookService.searchBook(null,null,null,null,null,"abc",null,null).size());
+        assertEquals(1,bookService.searchBook(null,null,null,null,null,null,"1111111111",null).size());
+        assertEquals(1,bookService.searchBook(null,null,null,null,null,null,null,"98989777979").size());
+    }
+
+    @Test
+    void testReadAllByAuthorId(){
+        assertEquals(4,bookService.readAllByAuthorId("111").size());
+        assertEquals(5,bookService.readAllByAuthorId("333").size());
+    }
+
+
+    @Test
     void testReadAll(){
         assertNotNull(bookService.readAll());
     }

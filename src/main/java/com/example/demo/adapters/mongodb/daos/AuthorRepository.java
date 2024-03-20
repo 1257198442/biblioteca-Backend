@@ -9,5 +9,5 @@ import java.util.Optional;
 public interface AuthorRepository extends MongoRepository<AuthorEntity,String> {
     Optional<AuthorEntity> readByAuthorId(String authorId);
     Optional<AuthorEntity> deleteByAuthorId(String authorId);
-
+    List<AuthorEntity> readByNameIgnoreCaseRegex(String name);
 }

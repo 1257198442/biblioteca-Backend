@@ -35,6 +35,6 @@ public class Book {
     private String imgFileName;
 
     public Book toShowOmit(){
-        return Book.builder().bookID(this.bookID).name(this.name).status(this.status).deposit(this.deposit).imgUrl(this.imgUrl).language(this.language).authorId(this.authorId).build();
+        return Book.builder().bookID(this.bookID).name(this.name).status(this.status).deposit(this.deposit).imgUrl(this.imgUrl).language(this.language).authorId(this.authorId).bookType(this.bookType).description(this.description).build();
     }
 }
