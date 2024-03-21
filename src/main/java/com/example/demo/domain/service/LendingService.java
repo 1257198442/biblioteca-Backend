@@ -28,17 +28,20 @@ public class LendingService {
     private final UserPersistence userPersistence;
     private final TransactionRecordService transactionRecordService;
     private final RandomStringService randomStringService;
+    private final EmailService emailService;
     @Autowired
     public LendingService(LendingPersistence lendingPersistence,
                           BookPersistence bookPersistence,
                           UserPersistence userPersistence,
                           TransactionRecordService transactionRecordService,
-                          RandomStringService randomStringService){
+                          RandomStringService randomStringService,
+                          EmailService emailService){
         this.lendingPersistence = lendingPersistence;
         this.bookPersistence = bookPersistence;
         this.userPersistence = userPersistence;
         this.transactionRecordService = transactionRecordService;
         this.randomStringService = randomStringService;
+        this.emailService = emailService;
     }
 
     public Lending create(LendingUploadDto lendingData){
@@ -54,7 +57,7 @@ public class LendingService {
                         .purpose("Borrow book(ID:"+book.getBookID()+")")
                         .build());
                 this.bookPersistence.changeStatus(book.getBookID());
-                return this.lendingPersistence.create(Lending.builder()
+                Lending lending = this.lendingPersistence.create(Lending.builder()
                         .user(user)
                         .lendingTime(LocalDateTime.now())
                         .limitTime(LocalDateTime.parse(lendingData.getLimitTime(), formatter))
@@ -62,6 +65,9 @@ public class LendingService {
                         .reference(this.randomStringService.generateRandomString(12))
                         .status(false)
                         .build());
+                this.sendCreatLendingEmail(lending);
+                lending.setUser(lending.getUser().soloShowNameAndTelephone());
+                return lending;
             }else if(book.getStatus().equals(BookStatus.DISABLE)){
                 throw new LockedResourceException("This book["+book.getBookID()+"] is not currently on the shelves");
             }else {
@@ -98,4 +104,36 @@ public class LendingService {
         }
     }
 
+    public void sendCreatLendingEmail(Lending lending){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String emailText = "<!DOCTYPE html>" +
+                "<html>" +
+                "<head>" +
+                "<title>Book Borrowing Order</title>" +
+                "<style>" +
+                "body { font-family: Arial, sans-serif; }" +
+                ".order-details { border: 1px solid #ccc; padding: 20px; width: 500px; }" +
+                "</style>" +
+                "</head>" +
+                "<body>" +
+                "<div class='order-details'>" +
+                "<h2>Borrowing Orders Detail </h2>" +
+                "<p><strong>Reference:</strong> " + lending.getReference() + "</p>" +
+                "<p><strong>Deposit:</strong> " + lending.getBook().getDeposit() + "€</p>" +
+                "<p><strong>BookID:</strong> " + lending.getBook().getBookID()+ "</p>" +
+                "<p><strong>Book Name:</strong> " + lending.getBook().getName() + "</p>" +
+                "<p><strong>User name :</strong> " + lending.getUser().getName() + "</p>" +
+                "<p><strong>Telephone:</strong> " + lending.getUser().getTelephone()+ "</p>" +
+                "<p><strong>borrowing Time:</strong> " + lending.getLendingTime().format(formatter) + "</p>"+
+                "<p><strong>Duration:</strong> " + lending.getLimitTime().format(formatter) + "</p>"+
+                "<p><strong>Please return the book before the return deadline to avoid extra charges for late return.</strong></p>"+
+                "</div>" +
+                "</body>" +
+                "</html>";
+        String to = this.userPersistence.read(lending.getUser().getTelephone()).getEmail();
+        String subject = "Book Borrowing Order Details";
+        if(lending.getUser().getSetting().getEmailWhenOrderIsPaid()){
+            emailService.sendEmail(to,subject,emailText);
+        }
+    }
 }

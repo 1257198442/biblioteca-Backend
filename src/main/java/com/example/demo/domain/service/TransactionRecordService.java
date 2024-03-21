@@ -6,14 +6,11 @@ import com.example.demo.domain.persistence.TransactionRecordPersistence;
 import com.example.demo.domain.persistence.UserPersistence;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @Service
 public class TransactionRecordService {
@@ -40,7 +37,7 @@ public class TransactionRecordService {
         transactionRecord.setReference(randomStringService.generateRandomString(12));
         transactionRecord.setTimestampTime(LocalDateTime.now());
         TransactionRecord transactionRecord1 = this.transactionRecordPersistence.create(transactionRecord);
-        if (this.userPersistence.read(transactionRecordData.getTelephone()).getSetting().getEmailWhenOrderIsGenerated()){
+        if (this.userPersistence.read(transactionRecordData.getTelephone()).getSetting().getEmailWhenSuccessfulTransaction()){
             this.sendEmail(transactionRecord);
         }
         return transactionRecord1;
@@ -50,7 +47,7 @@ public class TransactionRecordService {
         String emailText = "<!DOCTYPE html>" +
                 "<html>" +
                 "<head>" +
-                "<title>Order Detail</title>" +
+                "<title>Transaction Successful Detail</title>" +
                 "<style>" +
                 "body { font-family: Arial, sans-serif; }" +
                 ".order-details { border: 1px solid #ccc; padding: 20px; width: 500px; }" +
@@ -74,7 +71,7 @@ public class TransactionRecordService {
                 "</body>" +
                 "</html>";
         String to = this.userPersistence.read(transactionRecord.telephone).getEmail();
-        String subject = "Order Details";
+        String subject = "Transaction Successful Details";
         emailService.sendEmail(to,subject,emailText);
     }
 

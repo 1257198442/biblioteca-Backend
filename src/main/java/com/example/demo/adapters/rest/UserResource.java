@@ -5,6 +5,7 @@ import com.example.demo.adapters.rest.dto.*;
 import com.example.demo.domain.exceptions.ForbiddenException;
 import com.example.demo.domain.exceptions.UnauthorizedException;
 import com.example.demo.domain.models.Role;
+import com.example.demo.domain.models.Setting;
 import com.example.demo.domain.models.User;
 import com.example.demo.domain.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -111,9 +112,9 @@ public class UserResource {
     @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT') or hasRole('CLIENT')" )
     @SecurityRequirement(name = "bearerAuth")
     @PutMapping(TELEPHONE+SETTING)
-    public User updateSetting(@PathVariable String telephone, @RequestBody SettingUpdateDto settingUpdateDto){
+    public User updateSetting(@PathVariable String telephone, @RequestBody Setting setting){
         if(hasPermission(rootRole,telephone)){
-            return this.userService.updateSetting(telephone,settingUpdateDto);
+            return this.userService.updateSetting(telephone,setting);
         } else {
             throw new ForbiddenException("You don't have permission to make this request.");
         }

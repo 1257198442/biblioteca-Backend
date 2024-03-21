@@ -17,4 +17,5 @@ public class LendingUploadDto {
     private String telephone;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private String limitTime;
+    private String password;
 }

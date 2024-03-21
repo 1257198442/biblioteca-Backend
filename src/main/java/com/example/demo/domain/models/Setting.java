@@ -13,5 +13,6 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Setting {
     private Boolean hideMyProfile;
-    private Boolean emailWhenOrderIsGenerated;
+    private Boolean emailWhenSuccessfulTransaction;
+    private Boolean emailWhenOrderIsPaid;
 }

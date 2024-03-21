@@ -1,7 +1,6 @@
 package com.example.demo.adapters.mongodb.persistence;
 
 import com.example.demo.TestConfig;
-import com.example.demo.adapters.mongodb.entities.UserEntity;
 import com.example.demo.domain.exceptions.NotFoundException;
 import com.example.demo.domain.models.Role;
 import com.example.demo.domain.models.Setting;
@@ -35,8 +34,8 @@ public class UserPersistenceMongodbTests {
     }
     @Test
     void testUpdate(){
-        Setting setting = Setting.builder().hideMyProfile(true).emailWhenOrderIsGenerated(true).build();
-        Setting setting1 = Setting.builder().hideMyProfile(false).emailWhenOrderIsGenerated(true).build();
+        Setting setting = Setting.builder().hideMyProfile(true).emailWhenSuccessfulTransaction(true).build();
+        Setting setting1 = Setting.builder().hideMyProfile(false).emailWhenSuccessfulTransaction(true).build();
         User user = User.builder()
                 .name("Test99")
                 .email("test@test.com")
@@ -87,7 +86,7 @@ public class UserPersistenceMongodbTests {
     }
     @Test
     void testCreate(){
-        Setting setting = Setting.builder().hideMyProfile(true).emailWhenOrderIsGenerated(true).build();
+        Setting setting = Setting.builder().hideMyProfile(true).emailWhenSuccessfulTransaction(true).build();
         User user = User.builder()
                 .name("test")
                 .password("6")

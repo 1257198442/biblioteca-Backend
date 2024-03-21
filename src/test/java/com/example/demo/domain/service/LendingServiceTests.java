@@ -24,6 +24,7 @@ public class LendingServiceTests {
         LendingUploadDto lendingDto = LendingUploadDto.builder()
                 .bookId("9")
                 .limitTime(LocalDateTime.now().plusMonths(2).format(formatter))
+                .password("6")
                 .telephone("+34990099009").build();
         String reference = lendingService.create(lendingDto).getReference();
         Lending lending = lendingService.read(reference);

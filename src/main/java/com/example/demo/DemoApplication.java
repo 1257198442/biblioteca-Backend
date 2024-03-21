@@ -53,7 +53,7 @@ public class DemoApplication extends SpringBootServletInitializer {
             }
             if(userDao.findAll().size()==0){
                 Setting setting = Setting.builder()
-                        .emailWhenOrderIsGenerated(true)
+                        .emailWhenSuccessfulTransaction(true)
                         .hideMyProfile(false).build();
                 UserEntity[] userEntities = {
                         UserEntity.builder().role(Role.ROOT).createTime(LocalDateTime.now()).email("1257198442@qq.com").name("root").password(new BCryptPasswordEncoder().encode("6")).telephone("+34666666666").description("An root").birthdays(LocalDate.of(2000,7,21)).active(true).setting(setting).build(),
