@@ -91,7 +91,7 @@ public class BookServiceTests {
         assertEquals(1,bookService.searchBook("1",null,null,null,null,null,null,null).size());
         assertEquals(7,bookService.searchBook(null,"test",null,null,null,null,null,null).size());
         assertEquals(5,bookService.searchBook(null,null,"author3",null,null,null,null,null).size());
-        assertEquals(6,bookService.searchBook(null,null,null,"English",null,null,null,null).size());
+        assertEquals(9,bookService.searchBook(null,null,null,"English",null,null,null,null).size());
         assertEquals(4,bookService.searchBook(null,null,null,null,"test5",null,null,null).size());
         assertEquals(1,bookService.searchBook(null,null,null,null,null,"abc",null,null).size());
         assertEquals(1,bookService.searchBook(null,null,null,null,null,null,"1111111111",null).size());

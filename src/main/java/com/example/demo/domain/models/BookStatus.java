@@ -1,6 +1,5 @@
 package com.example.demo.domain.models;
 
-import com.example.demo.domain.exceptions.BadRequestException;
 import com.example.demo.domain.exceptions.UnprocessableEntityException;
 
 public enum BookStatus {
@@ -13,4 +12,9 @@ public enum BookStatus {
             throw new UnprocessableEntityException("The status "+status+" is invalid");
         }
     }
+
+    public static BookStatus switchStatus(BookStatus bookStatus){
+        return bookStatus.equals(ENABLE) ?OCCUPIED: ENABLE;
+    }
+
 }

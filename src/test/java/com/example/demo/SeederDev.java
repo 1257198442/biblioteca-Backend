@@ -26,6 +26,7 @@ public class SeederDev {
     private final BookRepository bookDao;
     private final AuthorRepository authorDao;
     private final TypeRepository typeDao;
+    private final LendingRepository lendingDao;
 
     @Autowired
     public SeederDev(UserRepository userDao,
@@ -35,7 +36,8 @@ public class SeederDev {
                      TransactionRecordRepository transactionRecordDao,
                      BookRepository bookDao,
                      AuthorRepository authorDao,
-                     TypeRepository typeDao){
+                     TypeRepository typeDao,
+                     LendingRepository lendingDao){
         this.userDao = userDao;
         this.libraryDao = libraryDao;
         this.avatarDao = avatarDao;
@@ -44,6 +46,7 @@ public class SeederDev {
         this.bookDao = bookDao;
         this.authorDao = authorDao;
         this.typeDao = typeDao;
+        this.lendingDao = lendingDao;
         this.deleteAllAndInitializeAndSeedDataBase();
     }
     public void deleteAllAndInitializeAndSeedDataBase() {
@@ -60,6 +63,7 @@ public class SeederDev {
         this.bookDao.deleteAll();
         this.authorDao.deleteAll();
         this.typeDao.deleteAll();
+        this.lendingDao.deleteAll();
     }
     private void seedDataBase() {
 
@@ -76,6 +80,7 @@ public class SeederDev {
                 UserEntity.builder().role(Role.CLIENT).createTime(LocalDateTime.now()).email("test2@test.com").name("User").password(pass).telephone("+34645321068").active(true).description("An root").birthdays(LocalDate.of(2000,1,5)).setting(setting).build(),
                 UserEntity.builder().role(Role.CLIENT).createTime(LocalDateTime.now()).email("test2@test.com").name("User").password(pass).telephone("+34123").active(true).description("user").birthdays(LocalDate.of(2000,1,6)).setting(setting1).build(),
                 UserEntity.builder().role(Role.CLIENT).createTime(LocalDateTime.now()).email("test2@test.com").name("User").password(pass).telephone("+34321").active(true).description("user").birthdays(LocalDate.of(2000,1,6)).setting(setting1).build(),
+                UserEntity.builder().role(Role.CLIENT).createTime(LocalDateTime.now()).email("test2@test.com").name("User").password(pass).telephone("+34990099009").active(true).description("user").birthdays(LocalDate.of(2000,1,6)).setting(setting1).build(),
         };
         userDao.saveAll(Arrays.asList(userEntities));
 
@@ -116,7 +121,8 @@ public class SeederDev {
                 WalletEntity.builder().telephone("+34666").balance(new BigDecimal("0")).build(),
                 WalletEntity.builder().telephone("+34645321068").balance(new BigDecimal("0")).build(),
                 WalletEntity.builder().telephone("+34123").balance(new BigDecimal("235")).build(),
-                WalletEntity.builder().telephone("+34321").balance(new BigDecimal("1000000")).build()
+                WalletEntity.builder().telephone("+34321").balance(new BigDecimal("1000000")).build(),
+                WalletEntity.builder().telephone("+34990099009").balance(new BigDecimal("1000000")).build()
         };
         this.walletDao.saveAll(Arrays.asList(walletEntities));
 
@@ -163,10 +169,17 @@ public class SeederDev {
                 BookEntity.builder().bookID("5").name("test4").entryTime(LocalDateTime.now()).description("this is a test book4").status(BookStatus.OCCUPIED).imgUrl("https://localhost/images/book/default.jpg").imgFileName("default.jpg").deposit(new BigDecimal("64")).language(Language.English).isbn("98989777979").authorId(List.of(authorEntities[0].getAuthorId(),authorEntities[2].getAuthorId())).bookType(List.of(typeEntities[4].getName())).publisher("test5").barcode("abc1234").build(),
                 BookEntity.builder().bookID("6").name("test5").entryTime(LocalDateTime.now()).description("this is a test book5").status(BookStatus.ENABLE).imgUrl("https://localhost/images/book/default.jpg").imgFileName("default.jpg").deposit(new BigDecimal("64")).language(Language.English).isbn("2222003034002").authorId(List.of(authorEntities[0].getAuthorId(),authorEntities[2].getAuthorId())).bookType(List.of(typeEntities[4].getName())).publisher("test6").barcode("abc123456").build(),
                 BookEntity.builder().bookID("7").name("test6").entryTime(LocalDateTime.now()).description("this is a test book6").status(BookStatus.ENABLE).imgUrl("https://localhost/images/book/default.jpg").imgFileName("default.jpg").deposit(new BigDecimal("64")).language(Language.English).isbn("22222222222").authorId(List.of(authorEntities[0].getAuthorId(),authorEntities[2].getAuthorId())).bookType(List.of(typeEntities[4].getName())).publisher("test7").barcode("abc1234567").build(),
+                BookEntity.builder().bookID("8").name("lending").entryTime(LocalDateTime.now()).description("lending").status(BookStatus.OCCUPIED).imgUrl("https://localhost/images/book/default.jpg").imgFileName("default.jpg").deposit(new BigDecimal("59")).language(Language.English).isbn("sdadadad").authorId(List.of()).bookType(List.of()).publisher("lending").barcode("lending").build(),
+                BookEntity.builder().bookID("9").name("lending").entryTime(LocalDateTime.now()).description("lending").status(BookStatus.ENABLE).imgUrl("https://localhost/images/book/default.jpg").imgFileName("default.jpg").deposit(new BigDecimal("78")).language(Language.English).isbn("sdadad78j").authorId(List.of()).bookType(List.of()).publisher("lending").barcode("lending").build(),
+                BookEntity.builder().bookID("10").name("lending").entryTime(LocalDateTime.now()).description("lending").status(BookStatus.ENABLE).imgUrl("https://localhost/images/book/default.jpg").imgFileName("default.jpg").deposit(new BigDecimal("78")).language(Language.English).isbn("sdadad78j").authorId(List.of()).bookType(List.of()).publisher("lending").barcode("lending").build(),
         };
         this.bookDao.saveAll(Arrays.asList(bookEntities));
 
-
+        LogManager.getLogger(this.getClass()).warn("-------      Initial Lending      -----------");
+        LendingEntity[] lending = {
+                LendingEntity.builder().reference("1").book(bookEntities[7]).user(userEntities[7]).lendingTime(LocalDateTime.now()).limitTime(LocalDateTime.now().plusHours(1)).build(),
+        };
+        this.lendingDao.saveAll(Arrays.asList(lending));
     }
 
 }

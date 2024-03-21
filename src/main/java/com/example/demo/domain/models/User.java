@@ -36,4 +36,11 @@ public class User {
         user.setActive(null);
         return user;
     }
+    public User toShowOmit(){
+        return User.builder().name(this.name).telephone(this.telephone).setting(Setting.builder().hideMyProfile(this.setting.getHideMyProfile()).build()).build();
+    }
+    public User soloShowNameAndTelephone(){
+        return User.builder().name(this.name).telephone(this.telephone).build();
+    }
+
 }

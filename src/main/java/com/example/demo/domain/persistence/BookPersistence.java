@@ -12,4 +12,5 @@ public interface BookPersistence {
     Book delete(String bookId);
     List<Book> searchBook(String publisher, String authorName, String name, String language, String bookTypeName,String barcode,String issn,String isbn);
     List<Book> readByAuthorId(String authorId);
+    Book changeStatus(String bookId);
 }
