@@ -90,14 +90,26 @@ public class BookPersistenceMongodb implements BookPersistence {
                     .collect(Collectors.toList());
         }
     }
+
     @Override
     public List<Book> readByAuthorId(String authorId){
         return this.bookDao.findBooks(null,authorId,null,null,null,null,null,null).stream().map(BookEntity::toBook).collect(Collectors.toList());
     }
+
     private Stream<Book> getBooksBySearch(String publisher, String authorId, String name, Language language, String bookType, String barcode, String issn, String isbn) {
             return this.bookDao.findBooks(publisher,authorId,name,language,barcode,issn,isbn,bookType)
                     .stream()
                     .map(BookEntity::toBook);
+    }
+
+    @Override
+    public Book changeStatus(String bookId) {
+        BookEntity bookEntity = this.bookDao
+                .readByBookID(bookId)
+                .orElseThrow(()->new NotFoundException("BookSum-BookId: "+bookId+" is not Fount"));
+        bookEntity.setStatus(BookStatus.switchStatus(bookEntity.getStatus()));
+
+        return this.bookDao.save(bookEntity).toBook();
     }
 
 }
