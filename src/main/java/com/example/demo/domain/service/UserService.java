@@ -1,6 +1,5 @@
 package com.example.demo.domain.service;
 
-import com.example.demo.adapters.rest.dto.SettingUpdateDto;
 import com.example.demo.adapters.rest.dto.UserUpdateDto;
 import com.example.demo.adapters.rest.dto.UserUploadDto;
 import com.example.demo.domain.exceptions.ConflictException;
@@ -56,7 +55,7 @@ public class UserService {
     }
 
     public User initUser(UserUploadDto userUpload){
-        Setting setting = Setting.builder().hideMyProfile(true).emailWhenOrderIsGenerated(true).build();
+        Setting setting = Setting.builder().hideMyProfile(true).emailWhenSuccessfulTransaction(true).emailWhenOrderIsPaid(true).build();
 
        return User.builder()
                 .name(userUpload.getName())
@@ -112,10 +111,10 @@ public class UserService {
         BeanUtils.copyProperties(userUpdate,user);
         return this.userPersistence.update(user).toShow();
     }
-    public User updateSetting(String telephone, SettingUpdateDto settingUpdateDto){
+    public User updateSetting(String telephone,Setting setting){
         User user = this.userPersistence.read(telephone);
-        Setting setting = new Setting();
-        BeanUtils.copyProperties(settingUpdateDto,setting);
+        Setting setting1 = new Setting();
+        BeanUtils.copyProperties(setting,setting1);
         user.setSetting(setting);
         return this.userPersistence.update(user).toShow();
     }

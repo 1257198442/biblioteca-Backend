@@ -24,9 +24,11 @@ public class LendingResourceTests {
     @Test
     public void testCreate(){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LendingUploadDto lendingUploadDto = LendingUploadDto.builder().bookId("10").limitTime(LocalDateTime.now().plusMonths(2).format(formatter)).telephone("+34990099009").build();
+        LendingUploadDto lendingUploadDto = LendingUploadDto.builder().password("error").bookId("10").limitTime(LocalDateTime.now().plusMonths(2).format(formatter)).telephone("+34990099009").build();
         //401
         postCreateClient("",lendingUploadDto).isEqualTo(HttpStatus.UNAUTHORIZED);
+        postCreateClient("Bearer "+jwtService.createToken("+34990099009","user","CLIENT"),lendingUploadDto).isEqualTo(HttpStatus.UNAUTHORIZED);
+        lendingUploadDto.setPassword("6");
         //403
         lendingUploadDto.setTelephone("+34123");
         postCreateClient("Bearer "+jwtService.createToken("+34666000002","user","CLIENT"),lendingUploadDto).isEqualTo(HttpStatus.FORBIDDEN);

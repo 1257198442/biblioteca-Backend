@@ -70,8 +70,8 @@ public class SeederDev {
         LogManager.getLogger(this.getClass()).warn("------- Initial Load from JAVA -----------");
         LogManager.getLogger(this.getClass()).warn("-------      Initial User      -----------");
         String pass = new BCryptPasswordEncoder().encode("6");
-        Setting setting = Setting.builder().hideMyProfile(true).emailWhenOrderIsGenerated(true).build();
-        Setting setting1 = Setting.builder().hideMyProfile(true).emailWhenOrderIsGenerated(false).build();
+        Setting setting = Setting.builder().hideMyProfile(true).emailWhenSuccessfulTransaction(true).emailWhenOrderIsPaid(true).build();
+        Setting setting1 = Setting.builder().hideMyProfile(true).emailWhenSuccessfulTransaction(false).emailWhenOrderIsPaid(true).build();
         UserEntity[] userEntities = {
                 UserEntity.builder().role(Role.ROOT).createTime(LocalDateTime.now()).email("1257198442@qq.com").name("root").password(pass).telephone("+34666666666").active(true).description("I am is root").birthdays(LocalDate.of(2000,1,1)).setting(setting).build(),
                 UserEntity.builder().role(Role.ADMINISTRATOR).createTime(LocalDateTime.now()).email("1257198442@qq.com").name("Administrator").password(pass).telephone("+34666000001").active(true).description("I am is administrator").birthdays(LocalDate.of(2000,1,2)).setting(setting).build(),

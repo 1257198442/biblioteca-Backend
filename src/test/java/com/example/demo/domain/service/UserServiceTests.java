@@ -1,13 +1,13 @@
 package com.example.demo.domain.service;
 
 import com.example.demo.TestConfig;
-import com.example.demo.adapters.rest.dto.SettingUpdateDto;
 import com.example.demo.adapters.rest.dto.UserUpdateDto;
 import com.example.demo.adapters.rest.dto.UserUploadDto;
 import com.example.demo.domain.exceptions.ConflictException;
 import com.example.demo.domain.exceptions.ForbiddenException;
 import com.example.demo.domain.exceptions.NotFoundException;
 import com.example.demo.domain.models.Role;
+import com.example.demo.domain.models.Setting;
 import com.example.demo.domain.models.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,13 +87,14 @@ public class UserServiceTests {
 
     @Test
     void testUpdateSetting(){
-        SettingUpdateDto settingUpdateDto = new SettingUpdateDto();
-        settingUpdateDto.setHideMyProfile(false);
-        settingUpdateDto.setEmailWhenOrderIsGenerated(true);
-        userService.updateSetting("+34123",settingUpdateDto);
+        Setting setting = new Setting();
+        setting.setHideMyProfile(false);
+        setting.setEmailWhenOrderIsPaid(true);
+        setting.setEmailWhenSuccessfulTransaction(true);
+        userService.updateSetting("+34123",setting);
         assertEquals(userService.read("+34123").getSetting().getHideMyProfile(),false);
-        settingUpdateDto.setHideMyProfile(true);
-        userService.updateSetting("+34123",settingUpdateDto);
+        setting.setHideMyProfile(true);
+        userService.updateSetting("+34123",setting);
         assertEquals(userService.read("+34123").getSetting().getHideMyProfile(),true);
     }
     @Test

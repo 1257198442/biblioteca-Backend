@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 public class UserEntityTests {
     @Test
     void testToUser(){
-        Setting setting = Setting.builder().hideMyProfile(true).emailWhenOrderIsGenerated(true).build();
+        Setting setting = Setting.builder().hideMyProfile(true).emailWhenSuccessfulTransaction(true).build();
         UserEntity userEntity = UserEntity.builder()
                 .name("test")
                 .telephone("+341111111111")
@@ -95,7 +95,7 @@ public class UserEntityTests {
 
     @Test
     void testHashCode() {
-        Setting setting = Setting.builder().hideMyProfile(true).emailWhenOrderIsGenerated(true).build();
+        Setting setting = Setting.builder().hideMyProfile(true).emailWhenSuccessfulTransaction(true).build();
         UserEntity user1 = UserEntity.builder()
                 .name("test")
                 .telephone("+341111111111")

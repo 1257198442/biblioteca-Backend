@@ -3,14 +3,17 @@ package com.example.demo.adapters.rest;
 
 import com.example.demo.adapters.rest.dto.LendingUploadDto;
 import com.example.demo.domain.exceptions.ForbiddenException;
+import com.example.demo.domain.exceptions.UnauthorizedException;
 import com.example.demo.domain.models.Lending;
 import com.example.demo.domain.models.Role;
 import com.example.demo.domain.service.LendingService;
+import com.example.demo.domain.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -24,11 +27,14 @@ public class LendingResource {
     public static final String REFERENCE = "/{reference}";
     public static final String SEARCH = "/search";
     public final LendingService lendingService;
+    public final UserService userService;
     public final List<Role> adminRole= Arrays.asList(Role.ADMINISTRATOR,Role.ROOT);
 
     @Autowired
-    public LendingResource(LendingService lendingService){
+    public LendingResource(LendingService lendingService,
+                           UserService userService){
         this.lendingService = lendingService;
+        this.userService = userService;
     }
 
     //POST
@@ -36,8 +42,11 @@ public class LendingResource {
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping
     public Lending create(@RequestBody LendingUploadDto lendingData){
-        String loggedInUserTelephone = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-        if (lendingData.getTelephone().equals(loggedInUserTelephone)||Role.isCompetent(adminRole,this.extractRoleClaims())) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        if (hasPermission(adminRole,lendingData.getTelephone())) {
+            if(!encoder.matches(lendingData.getPassword(),this.userService.getUserPassword(lendingData.getTelephone()))){
+                throw new UnauthorizedException("The password is wrong.");
+            }
             return this.lendingService.create(lendingData);
         }else {
             throw new ForbiddenException("You don't have permission to make this request.");
