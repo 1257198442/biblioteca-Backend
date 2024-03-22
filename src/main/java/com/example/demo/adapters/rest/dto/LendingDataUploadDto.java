@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class LendingUploadDto {
+public class LendingDataUploadDto {
     private String bookId;
     private String telephone;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

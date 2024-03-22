@@ -103,7 +103,7 @@ public class BookResourceTests {
         //422
         putUpdateImageClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"7",file1).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
         //200
-//        putUpdateImageClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"7",file).isEqualTo(HttpStatus.OK);
+        putUpdateImageClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"7",file).isEqualTo(HttpStatus.OK);
     }
 
     @Test

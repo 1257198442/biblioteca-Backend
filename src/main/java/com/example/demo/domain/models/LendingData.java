@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Lending {
+public class LendingData {
     private String reference;
     private Book book;
     private User user;

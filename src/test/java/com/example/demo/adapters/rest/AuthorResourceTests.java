@@ -93,7 +93,7 @@ public class AuthorResourceTests {
         //422
         putUpdateAuthorImageClient("Bearer "+jwtService.createToken("+34666000001","client","ADMINISTRATOR"),"update",file1).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
         //200
-//        putUpdateAuthorImageClient("Bearer "+jwtService.createToken("+34666000001","client","ADMINISTRATOR"),"update",file).isEqualTo(HttpStatus.OK);
+        putUpdateAuthorImageClient("Bearer "+jwtService.createToken("+34666000001","client","ADMINISTRATOR"),"update",file).isEqualTo(HttpStatus.OK);
 
         deleteClient("Bearer "+jwtService.createToken("+34666000001","client","ADMINISTRATOR"),"update").isEqualTo(HttpStatus.OK);
     }

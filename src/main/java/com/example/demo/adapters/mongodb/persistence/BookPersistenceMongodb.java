@@ -106,7 +106,7 @@ public class BookPersistenceMongodb implements BookPersistence {
     public Book changeStatus(String bookId) {
         BookEntity bookEntity = this.bookDao
                 .readByBookID(bookId)
-                .orElseThrow(()->new NotFoundException("BookSum-BookId: "+bookId+" is not Fount"));
+                .orElseThrow(()->new NotFoundException("BookId: "+bookId+" is not Fount"));
         bookEntity.setStatus(BookStatus.switchStatus(bookEntity.getStatus()));
 
         return this.bookDao.save(bookEntity).toBook();
