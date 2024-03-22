@@ -60,7 +60,6 @@ public class TypePersistenceMongodb implements TypePersistence {
                 .readByName(type.getName())
                 .orElseThrow(()->new NotFoundException("Type: "+type.getName()+" is not Fount"));
         BeanUtils.copyProperties(type,typeEntity);
-
         return this.typeDao
                 .save(typeEntity)
                 .toType();
@@ -68,7 +67,6 @@ public class TypePersistenceMongodb implements TypePersistence {
 
     @Override
     public Type delete(String name) {
-
         return this.typeDao
                 .deleteByName(name)
                 .orElseThrow(()->new NotFoundException("Type: "+name+" is not Fount"))

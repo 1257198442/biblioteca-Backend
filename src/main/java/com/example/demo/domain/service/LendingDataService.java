@@ -1,17 +1,17 @@
 package com.example.demo.domain.service;
 
 
-import com.example.demo.adapters.rest.dto.LendingUploadDto;
+import com.example.demo.adapters.rest.dto.LendingDataUploadDto;
 import com.example.demo.adapters.rest.dto.TransactionRecordDto;
 import com.example.demo.domain.exceptions.ConflictException;
 import com.example.demo.domain.exceptions.LockedResourceException;
 import com.example.demo.domain.exceptions.UnprocessableEntityException;
 import com.example.demo.domain.models.Book;
 import com.example.demo.domain.models.BookStatus;
-import com.example.demo.domain.models.Lending;
+import com.example.demo.domain.models.LendingData;
 import com.example.demo.domain.models.User;
 import com.example.demo.domain.persistence.BookPersistence;
-import com.example.demo.domain.persistence.LendingPersistence;
+import com.example.demo.domain.persistence.LendingDataPersistence;
 import com.example.demo.domain.persistence.UserPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,21 +22,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class LendingService {
-    private final LendingPersistence lendingPersistence;
+public class LendingDataService {
+    private final LendingDataPersistence lendingDataPersistence;
     private final BookPersistence bookPersistence;
     private final UserPersistence userPersistence;
     private final TransactionRecordService transactionRecordService;
     private final RandomStringService randomStringService;
     private final EmailService emailService;
     @Autowired
-    public LendingService(LendingPersistence lendingPersistence,
-                          BookPersistence bookPersistence,
-                          UserPersistence userPersistence,
-                          TransactionRecordService transactionRecordService,
-                          RandomStringService randomStringService,
-                          EmailService emailService){
-        this.lendingPersistence = lendingPersistence;
+    public LendingDataService(LendingDataPersistence lendingDataPersistence,
+                              BookPersistence bookPersistence,
+                              UserPersistence userPersistence,
+                              TransactionRecordService transactionRecordService,
+                              RandomStringService randomStringService,
+                              EmailService emailService){
+        this.lendingDataPersistence = lendingDataPersistence;
         this.bookPersistence = bookPersistence;
         this.userPersistence = userPersistence;
         this.transactionRecordService = transactionRecordService;
@@ -44,7 +44,7 @@ public class LendingService {
         this.emailService = emailService;
     }
 
-    public Lending create(LendingUploadDto lendingData){
+    public LendingData create(LendingDataUploadDto lendingData){
         Book book = this.bookPersistence.read(lendingData.getBookId());
         User user = this.userPersistence.read(lendingData.getTelephone());
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -57,7 +57,7 @@ public class LendingService {
                         .purpose("Borrow book(ID:"+book.getBookID()+")")
                         .build());
                 this.bookPersistence.changeStatus(book.getBookID());
-                Lending lending = this.lendingPersistence.create(Lending.builder()
+                LendingData lending = this.lendingDataPersistence.create(LendingData.builder()
                         .user(user)
                         .lendingTime(LocalDateTime.now())
                         .limitTime(LocalDateTime.parse(lendingData.getLimitTime(), formatter))
@@ -75,25 +75,25 @@ public class LendingService {
             }
     }
 
-    public Lending read(String reference){
-        Lending lending = this.lendingPersistence.read(reference);
+    public LendingData read(String reference){
+        LendingData lending = this.lendingDataPersistence.read(reference);
         lending.setUser(lending.getUser().soloShowNameAndTelephone());
         return lending;
     }
 
-    public List<Lending> readAll(){
-        return this.lendingPersistence.readAll().stream()
+    public List<LendingData> readAll(){
+        return this.lendingDataPersistence.readAll().stream()
                 .map(this::LendingToLendingByShow)
                 .collect(Collectors.toList());
     }
 
-    public Lending LendingToLendingByShow(Lending lending){
+    public LendingData LendingToLendingByShow(LendingData lending){
         lending.setUser(lending.getUser().toShowOmit());
         return lending;
     }
 
-    public List<Lending> readAllByUserTelephone(String telephone){
-        return this.lendingPersistence.readByUserTelephone(telephone).stream()
+    public List<LendingData> readAllByUserTelephone(String telephone){
+        return this.lendingDataPersistence.readByUserTelephone(telephone).stream()
                 .map(this::LendingToLendingByShow)
                 .collect(Collectors.toList());
     }
@@ -104,7 +104,7 @@ public class LendingService {
         }
     }
 
-    public void sendCreatLendingEmail(Lending lending){
+    public void sendCreatLendingEmail(LendingData lending){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String emailText = "<!DOCTYPE html>" +
                 "<html>" +

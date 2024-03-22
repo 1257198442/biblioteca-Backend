@@ -1,6 +1,6 @@
 package com.example.demo.adapters.rest;
 
-import com.example.demo.adapters.rest.dto.LendingUploadDto;
+import com.example.demo.adapters.rest.dto.LendingDataUploadDto;
 import com.example.demo.domain.service.JwtService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter;
 
 @RestTestConfig
 @ActiveProfiles({"test","dev"})
-public class LendingResourceTests {
+public class LendingDataResourceTests {
     @Autowired
     private WebTestClient webTestClient;
     @Autowired
@@ -24,7 +24,7 @@ public class LendingResourceTests {
     @Test
     public void testCreate(){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LendingUploadDto lendingUploadDto = LendingUploadDto.builder().password("error").bookId("10").limitTime(LocalDateTime.now().plusMonths(2).format(formatter)).telephone("+34990099009").build();
+        LendingDataUploadDto lendingUploadDto = LendingDataUploadDto.builder().password("error").bookId("10").limitTime(LocalDateTime.now().plusMonths(2).format(formatter)).telephone("+34990099009").build();
         //401
         postCreateClient("",lendingUploadDto).isEqualTo(HttpStatus.UNAUTHORIZED);
         postCreateClient("Bearer "+jwtService.createToken("+34990099009","user","CLIENT"),lendingUploadDto).isEqualTo(HttpStatus.UNAUTHORIZED);
@@ -79,9 +79,9 @@ public class LendingResourceTests {
         getReadByReferenceClient("Bearer "+jwtService.createToken("+34990099009","user","CLIENT"),"1").isEqualTo(HttpStatus.OK);
     }
 
-    StatusAssertions postCreateClient(String token, LendingUploadDto lendingDto){
+    StatusAssertions postCreateClient(String token, LendingDataUploadDto lendingDto){
         return webTestClient.post()
-                .uri("/lending")
+                .uri("/lendingData")
                 .header("Authorization", token)
                 .accept(MediaType.ALL)
                 .bodyValue(lendingDto)
@@ -91,7 +91,7 @@ public class LendingResourceTests {
 
     StatusAssertions getReadAllClient(String token){
         return webTestClient.get()
-                .uri("/lending")
+                .uri("/lendingData")
                 .header("Authorization", token)
                 .exchange()
                 .expectStatus();
@@ -99,7 +99,7 @@ public class LendingResourceTests {
 
     StatusAssertions getReadByTelephoneClient(String token,String telephone){
         return webTestClient.get()
-                .uri("/lending/search?telephone={telephone}",telephone)
+                .uri("/lendingData/search?telephone={telephone}",telephone)
                 .header("Authorization", token)
                 .exchange()
                 .expectStatus();
@@ -107,7 +107,7 @@ public class LendingResourceTests {
 
     StatusAssertions getReadByReferenceClient(String token,String reference){
         return webTestClient.get()
-                .uri("/lending/{id}",reference)
+                .uri("/lendingData/{id}",reference)
                 .header("Authorization", token)
                 .exchange().expectStatus();
     }

@@ -1,6 +1,6 @@
 package com.example.demo.adapters.mongodb.entities;
 
-import com.example.demo.domain.models.Lending;
+import com.example.demo.domain.models.LendingData;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class LendingEntity {
+public class LendingDataEntity {
     @Id
     private String reference;
     private BookEntity book;
@@ -27,8 +27,8 @@ public class LendingEntity {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime limitTime;
     private Boolean status;
-    public Lending toLending(){
-        Lending lending = new Lending();
+    public LendingData toLending(){
+        LendingData lending = new LendingData();
         BeanUtils.copyProperties(this,lending);
         if(this.book!=null){
             lending.setBook(this.book.toBook());

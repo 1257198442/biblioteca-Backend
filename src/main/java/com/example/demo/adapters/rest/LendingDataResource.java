@@ -1,12 +1,12 @@
 package com.example.demo.adapters.rest;
 
 
-import com.example.demo.adapters.rest.dto.LendingUploadDto;
+import com.example.demo.adapters.rest.dto.LendingDataUploadDto;
 import com.example.demo.domain.exceptions.ForbiddenException;
 import com.example.demo.domain.exceptions.UnauthorizedException;
-import com.example.demo.domain.models.Lending;
+import com.example.demo.domain.models.LendingData;
 import com.example.demo.domain.models.Role;
-import com.example.demo.domain.service.LendingService;
+import com.example.demo.domain.service.LendingDataService;
 import com.example.demo.domain.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,19 +21,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(LendingResource.LENDING)
-public class LendingResource {
-    public static final String LENDING = "/lending";
+@RequestMapping(LendingDataResource.LENDING_DATA)
+public class LendingDataResource {
+    public static final String LENDING_DATA = "/lendingData";
     public static final String REFERENCE = "/{reference}";
     public static final String SEARCH = "/search";
-    public final LendingService lendingService;
+    public final LendingDataService lendingDataService;
     public final UserService userService;
     public final List<Role> adminRole= Arrays.asList(Role.ADMINISTRATOR,Role.ROOT);
 
     @Autowired
-    public LendingResource(LendingService lendingService,
-                           UserService userService){
-        this.lendingService = lendingService;
+    public LendingDataResource(LendingDataService lendingDataService,
+                               UserService userService){
+        this.lendingDataService = lendingDataService;
         this.userService = userService;
     }
 
@@ -41,13 +41,13 @@ public class LendingResource {
     @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT')  or hasRole('CLIENT')" )
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping
-    public Lending create(@RequestBody LendingUploadDto lendingData){
+    public LendingData create(@RequestBody LendingDataUploadDto lendingData){
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         if (hasPermission(adminRole,lendingData.getTelephone())) {
             if(!encoder.matches(lendingData.getPassword(),this.userService.getUserPassword(lendingData.getTelephone()))){
                 throw new UnauthorizedException("The password is wrong.");
             }
-            return this.lendingService.create(lendingData);
+            return this.lendingDataService.create(lendingData);
         }else {
             throw new ForbiddenException("You don't have permission to make this request.");
         }
@@ -57,8 +57,8 @@ public class LendingResource {
     @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT')  or hasRole('CLIENT')" )
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping(REFERENCE)
-    public Lending read(@PathVariable String reference){
-        Lending lending = this.lendingService.read(reference);
+    public LendingData read(@PathVariable String reference){
+        LendingData lending = this.lendingDataService.read(reference);
         if(hasPermission(adminRole,lending.getUser().getTelephone())){
             return lending;
         }else {
@@ -69,9 +69,9 @@ public class LendingResource {
     @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT')  or hasRole('CLIENT')" )
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping(SEARCH)
-    public List<Lending> readByTelephone(@RequestParam String telephone){
+    public List<LendingData> readByTelephone(@RequestParam String telephone){
         if(hasPermission(adminRole,telephone)){
-            return this.lendingService.readAllByUserTelephone(telephone);
+            return this.lendingDataService.readAllByUserTelephone(telephone);
         }else {
             throw new ForbiddenException("You don't have permission to make this request.");
         }
@@ -80,9 +80,9 @@ public class LendingResource {
     @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT')  or hasRole('CLIENT')" )
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping()
-    public List<Lending> raedAll(){
+    public List<LendingData> raedAll(){
         if(Role.isCompetent(adminRole,this.extractRoleClaims())){
-            return this.lendingService.readAll();
+            return this.lendingDataService.readAll();
         }else {
             throw new ForbiddenException("You don't have permission to make this request.");
         }

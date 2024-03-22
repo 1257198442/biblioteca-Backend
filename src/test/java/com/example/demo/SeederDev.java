@@ -26,7 +26,8 @@ public class SeederDev {
     private final BookRepository bookDao;
     private final AuthorRepository authorDao;
     private final TypeRepository typeDao;
-    private final LendingRepository lendingDao;
+    private final LendingDataRepository lendingDataDao;
+    private final ReturnDataRepository returnDataDao;
 
     @Autowired
     public SeederDev(UserRepository userDao,
@@ -37,7 +38,8 @@ public class SeederDev {
                      BookRepository bookDao,
                      AuthorRepository authorDao,
                      TypeRepository typeDao,
-                     LendingRepository lendingDao){
+                     LendingDataRepository lendingDataDao,
+                     ReturnDataRepository returnDataDao){
         this.userDao = userDao;
         this.libraryDao = libraryDao;
         this.avatarDao = avatarDao;
@@ -46,7 +48,8 @@ public class SeederDev {
         this.bookDao = bookDao;
         this.authorDao = authorDao;
         this.typeDao = typeDao;
-        this.lendingDao = lendingDao;
+        this.lendingDataDao = lendingDataDao;
+        this.returnDataDao = returnDataDao;
         this.deleteAllAndInitializeAndSeedDataBase();
     }
     public void deleteAllAndInitializeAndSeedDataBase() {
@@ -63,7 +66,8 @@ public class SeederDev {
         this.bookDao.deleteAll();
         this.authorDao.deleteAll();
         this.typeDao.deleteAll();
-        this.lendingDao.deleteAll();
+        this.lendingDataDao.deleteAll();
+        this.returnDataDao.deleteAll();
     }
     private void seedDataBase() {
 
@@ -80,7 +84,7 @@ public class SeederDev {
                 UserEntity.builder().role(Role.CLIENT).createTime(LocalDateTime.now()).email("test2@test.com").name("User").password(pass).telephone("+34645321068").active(true).description("An root").birthdays(LocalDate.of(2000,1,5)).setting(setting).build(),
                 UserEntity.builder().role(Role.CLIENT).createTime(LocalDateTime.now()).email("test2@test.com").name("User").password(pass).telephone("+34123").active(true).description("user").birthdays(LocalDate.of(2000,1,6)).setting(setting1).build(),
                 UserEntity.builder().role(Role.CLIENT).createTime(LocalDateTime.now()).email("test2@test.com").name("User").password(pass).telephone("+34321").active(true).description("user").birthdays(LocalDate.of(2000,1,6)).setting(setting1).build(),
-                UserEntity.builder().role(Role.CLIENT).createTime(LocalDateTime.now()).email("test2@test.com").name("User").password(pass).telephone("+34990099009").active(true).description("user").birthdays(LocalDate.of(2000,1,6)).setting(setting1).build(),
+                    UserEntity.builder().role(Role.CLIENT).createTime(LocalDateTime.now()).email("test2@test.com").name("User").password(pass).telephone("+34990099009").active(true).description("user").birthdays(LocalDate.of(2000,1,6)).setting(setting1).build(),
         };
         userDao.saveAll(Arrays.asList(userEntities));
 
@@ -175,11 +179,20 @@ public class SeederDev {
         };
         this.bookDao.saveAll(Arrays.asList(bookEntities));
 
-        LogManager.getLogger(this.getClass()).warn("-------      Initial Lending      -----------");
-        LendingEntity[] lending = {
-                LendingEntity.builder().reference("1").book(bookEntities[7]).user(userEntities[7]).lendingTime(LocalDateTime.now()).limitTime(LocalDateTime.now().plusHours(1)).build(),
+        LogManager.getLogger(this.getClass()).warn("-------      Initial LendingData      -----------");
+        LendingDataEntity[] lendingDataEntities = {
+                LendingDataEntity.builder().reference("1").book(bookEntities[7]).user(userEntities[7]).lendingTime(LocalDateTime.now()).limitTime(LocalDateTime.now().plusHours(1)).status(false).build(),
+                LendingDataEntity.builder().reference("2").book(bookEntities[9]).user(userEntities[7]).lendingTime(LocalDateTime.now()).limitTime(LocalDateTime.now().plusHours(1)).status(false).build(),
+                LendingDataEntity.builder().reference("3").book(bookEntities[5]).user(userEntities[7]).lendingTime(LocalDateTime.now()).limitTime(LocalDateTime.now().plusHours(1)).status(false).build(),
+                LendingDataEntity.builder().reference("4").book(bookEntities[8]).user(userEntities[7]).lendingTime(LocalDateTime.now()).limitTime(LocalDateTime.now().plusHours(1)).status(false).build(),
         };
-        this.lendingDao.saveAll(Arrays.asList(lending));
+        this.lendingDataDao.saveAll(Arrays.asList(lendingDataEntities));
+
+        LogManager.getLogger(this.getClass()).warn("-------      Initial ReturnData      -----------");
+        ReturnDataEntity[] returnDataEntities = {
+                ReturnDataEntity.builder().reference("2").limitTime(lendingDataEntities[1].getLimitTime()).lendingTime(lendingDataEntities[1].getLendingTime()).user(lendingDataEntities[1].getUser()).book(lendingDataEntities[1].getBook()).restitutionTime(LocalDateTime.now()).build()
+        };
+        this.returnDataDao.saveAll(Arrays.asList(returnDataEntities));
     }
 
 }
