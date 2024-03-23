@@ -15,7 +15,6 @@ public class PhoneNumberValidator {
     public String validate(String phoneNumber) {
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(phoneNumber);
-
         if (matcher.matches()) {
             return phoneNumber;
         } else {

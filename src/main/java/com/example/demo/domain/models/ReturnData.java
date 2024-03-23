@@ -24,5 +24,6 @@ public class ReturnData {
     private LocalDateTime lendingTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime limitTime;
+    private ReturnStatus returnStatus;
 
 }

@@ -3,7 +3,6 @@ package com.example.demo.domain.service;
 import com.example.demo.adapters.rest.dto.BookUpdateDto;
 import com.example.demo.adapters.rest.dto.BookUploadDto;
 import com.example.demo.adapters.rest.show.BookByShow;
-import com.example.demo.domain.exceptions.ForbiddenException;
 import com.example.demo.domain.exceptions.LockedResourceException;
 import com.example.demo.domain.models.*;
 import com.example.demo.domain.persistence.BookPersistence;
@@ -24,16 +23,19 @@ public class BookService {
     private final RandomStringService randomStringService;
     private final AuthorService authorService;
     private final TypeService typeService;
+    private final ReturnDataService returnDataService;
 
     @Autowired
     public BookService(BookPersistence bookPersistence,
                        RandomStringService randomStringService,
                        AuthorService authorService,
-                       TypeService typeService){
+                       TypeService typeService,
+                       ReturnDataService returnDataService){
         this.bookPersistence = bookPersistence;
         this.randomStringService = randomStringService;
         this.authorService = authorService;
         this.typeService = typeService;
+        this.returnDataService = returnDataService;
     }
 
     public Book create(BookUploadDto bookUploadDate){
@@ -68,20 +70,19 @@ public class BookService {
         BookByShow bookReturnData = new BookByShow();
         BeanUtils.copyProperties(book,bookReturnData);
         if(book.getAuthorId() != null){
-            List<Author> authors = book.getAuthorId().stream()
+            bookReturnData.setAuthor(book.getAuthorId().stream()
                     .map(this.authorService::getAuthorData)
                     .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-            bookReturnData.setAuthor(authors);
+                    .collect(Collectors.toList()));
         }
-        if(book.getBookType()!=null){
-            List<Type> types = book.getBookType().stream()
+        if(book.getBookType() != null){
+            bookReturnData.setBookType(book.getBookType().stream()
                     .map(this.typeService::getType)
                     .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-            bookReturnData.setBookType(types);
+                    .collect(Collectors.toList()));
         }
-        bookReturnData.setBorrowCount(0);
+        bookReturnData.setBorrowCount((int) this.returnDataService.readAll().stream()
+                .filter(returnData -> returnData.getBook().getBookID().equals(book.getBookID())).count());
         return bookReturnData;
     }
 
@@ -111,14 +112,10 @@ public class BookService {
         Book book = this.bookPersistence.read(bookId);
         BeanUtils.copyProperties(bookDate,book);
         book.setLanguage(Language.fromString(bookDate.getLanguage()));
-        if(bookDate.getAuthorId()==null){
-            book.setAuthorId(null);
-        }else {
+        if(bookDate.getAuthorId()!=null){
             book.setAuthorId(this.getAuthorID(bookDate.getAuthorId()));
         }
-        if(bookDate.getBookType()==null){
-            book.setBookType(null);
-        }else {
+        if(bookDate.getBookType()!=null){
             book.setBookType(this.getTypeID(bookDate.getBookType()));
         }
         return this.bookToBookShow(this.bookPersistence.update(book));

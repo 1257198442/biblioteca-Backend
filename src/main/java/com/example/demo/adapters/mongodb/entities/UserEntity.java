@@ -37,6 +37,7 @@ public class UserEntity {
     public UserEntity(User user){
         BeanUtils.copyProperties(user,this);
     }
+
     public User toUser(){
         User user = new User();
         BeanUtils.copyProperties(this,user);

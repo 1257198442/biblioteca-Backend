@@ -28,7 +28,6 @@ public class TransactionRecordService {
         this.randomStringService = randomStringService;
         this.userPersistence = userPersistence;
         this.emailService = emailService;
-
     }
 
     public TransactionRecord create(TransactionRecordDto transactionRecordData){

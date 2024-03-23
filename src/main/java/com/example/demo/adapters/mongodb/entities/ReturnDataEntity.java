@@ -1,6 +1,7 @@
 package com.example.demo.adapters.mongodb.entities;
 
 import com.example.demo.domain.models.ReturnData;
+import com.example.demo.domain.models.ReturnStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,8 @@ public class ReturnDataEntity {
     private LocalDateTime lendingTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime limitTime;
+    private ReturnStatus returnStatus;
+
 
     public ReturnData toRestitution(){
         ReturnData restitution = new ReturnData();

@@ -34,6 +34,7 @@ public class TypeService {
     public List<Type> readAll(){
         return this.typePersistence.readAll();
     }
+
     public Type getType(String name){
         return this.typePersistence.getType(name);
     }
@@ -43,7 +44,6 @@ public class TypeService {
     }
 
     public Type update(String name,String description){
-
         return this.typePersistence.update(Type
                 .builder()
                 .name(name)

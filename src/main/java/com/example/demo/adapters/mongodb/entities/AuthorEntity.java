@@ -26,6 +26,7 @@ public class AuthorEntity {
     public AuthorEntity(Author author){
         BeanUtils.copyProperties(author,this);
     }
+
     public Author toAuthor(){
         Author author = new Author();
         BeanUtils.copyProperties(this,author);

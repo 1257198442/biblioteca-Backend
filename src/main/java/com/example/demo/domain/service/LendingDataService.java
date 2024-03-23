@@ -47,38 +47,37 @@ public class LendingDataService {
     public LendingData create(LendingDataUploadDto lendingData){
         Book book = this.bookPersistence.read(lendingData.getBookId());
         User user = this.userPersistence.read(lendingData.getTelephone());
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            this.limitTimeIsToLong(LocalDateTime.parse(lendingData.getLimitTime(), formatter));
-            if(book.getStatus().equals(BookStatus.ENABLE)){
-                transactionRecordService.create(TransactionRecordDto
-                        .builder()
-                        .telephone(user.getTelephone())
-                        .amount(book.getDeposit().negate())
-                        .purpose("Borrow book(ID:"+book.getBookID()+")")
-                        .build());
-                this.bookPersistence.changeStatus(book.getBookID());
-                LendingData lending = this.lendingDataPersistence.create(LendingData.builder()
-                        .user(user)
-                        .lendingTime(LocalDateTime.now())
-                        .limitTime(LocalDateTime.parse(lendingData.getLimitTime(), formatter))
-                        .book(book)
-                        .reference(this.randomStringService.generateRandomString(12))
-                        .status(false)
-                        .build());
-                this.sendCreatLendingEmail(lending);
-                lending.setUser(lending.getUser().soloShowNameAndTelephone());
-                return lending;
-            }else if(book.getStatus().equals(BookStatus.DISABLE)){
-                throw new LockedResourceException("This book["+book.getBookID()+"] is not currently on the shelves");
-            }else {
-                throw new ConflictException("The: "+book.getBookID()+" has been checked out");
-            }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        this.limitTimeIsToLong(LocalDateTime.parse(lendingData.getLimitTime(), formatter));
+        if(book.getStatus().equals(BookStatus.ENABLE)){
+            transactionRecordService.create(TransactionRecordDto
+                    .builder()
+                    .telephone(user.getTelephone())
+                    .amount(book.getDeposit().negate())
+                    .purpose("Borrow book(ID:"+book.getBookID()+")")
+                    .build());
+            this.bookPersistence.changeStatus(book.getBookID());
+            LendingData lending = this.lendingDataPersistence.create(LendingData.builder()
+                    .user(user)
+                    .lendingTime(LocalDateTime.now())
+                    .limitTime(LocalDateTime.parse(lendingData.getLimitTime(), formatter))
+                    .book(book)
+                    .reference(this.randomStringService.generateRandomString(12))
+                    .status(false)
+                    .build());
+            this.sendCreatLendingEmail(lending);
+            return this.userSoloShowNameAndTelephone(lending);
+        }else if(book.getStatus().equals(BookStatus.DISABLE)){
+            throw new LockedResourceException("This book["+book.getBookID()+"] is not currently on the shelves");
+        }else {
+            throw new ConflictException("The: "+book.getBookID()+" has been checked out");
+        }
     }
 
     public LendingData read(String reference){
-        LendingData lending = this.lendingDataPersistence.read(reference);
-        lending.setUser(lending.getUser().soloShowNameAndTelephone());
-        return lending;
+        LendingData lendingData = this.lendingDataPersistence.read(reference);
+        this.userSoloShowNameAndTelephone(lendingData);
+        return lendingData;
     }
 
     public List<LendingData> readAll(){
@@ -95,6 +94,7 @@ public class LendingDataService {
     public List<LendingData> readAllByUserTelephone(String telephone){
         return this.lendingDataPersistence.readByUserTelephone(telephone).stream()
                 .map(this::LendingToLendingByShow)
+                .map(this::userSoloShowNameAndTelephone)
                 .collect(Collectors.toList());
     }
 
@@ -135,5 +135,10 @@ public class LendingDataService {
         if(lending.getUser().getSetting().getEmailWhenOrderIsPaid()){
             emailService.sendEmail(to,subject,emailText);
         }
+    }
+
+    public LendingData userSoloShowNameAndTelephone(LendingData lendingData){
+        lendingData.setUser(lendingData.getUser().soloShowNameAndTelephone());
+        return lendingData;
     }
 }

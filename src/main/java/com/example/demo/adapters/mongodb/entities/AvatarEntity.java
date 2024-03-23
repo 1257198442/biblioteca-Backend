@@ -27,6 +27,7 @@ public class AvatarEntity {
     public AvatarEntity(Avatar avatar){
         BeanUtils.copyProperties(avatar,this);
     }
+
     public Avatar toAvatar(){
         Avatar avatar = new Avatar();
         BeanUtils.copyProperties(this,avatar);
