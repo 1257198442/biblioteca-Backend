@@ -44,8 +44,8 @@ public class AuthorPersistenceMongodb implements AuthorPersistence {
 
     @Override
     public Author getAuthorData(String authorId) {
-        Optional<AuthorEntity> authorData = this.authorDao.readByAuthorId(authorId);
-        return authorData.map(AuthorEntity::toAuthor).orElse(null);
+        return this.authorDao.readByAuthorId(authorId).map(AuthorEntity::toAuthor)
+                .orElse(null);
     }
 
     @Override

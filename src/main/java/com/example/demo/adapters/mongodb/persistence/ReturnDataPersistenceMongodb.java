@@ -43,9 +43,7 @@ public class ReturnDataPersistenceMongodb implements ReturnDataPersistence {
 
     @Override
     public ReturnData read(String reference) {
-        return this.returnDataDao
-                .readByReference(reference)
-                .orElseThrow(()->new NotFoundException("Return Data Reference: "+reference+" is not Fount"))
+        return this.getReturnData(reference)
                 .toRestitution();
     }
 
@@ -54,6 +52,22 @@ public class ReturnDataPersistenceMongodb implements ReturnDataPersistence {
         return this.returnDataDao
                 .findAll().stream().map(ReturnDataEntity::toRestitution)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public ReturnData update(ReturnData returnData) {
+        ReturnDataEntity returnDataEntity = this.getReturnData(returnData.getReference());
+        BeanUtils.copyProperties(returnData,returnDataEntity);
+        returnDataEntity.setBook(getBook(returnData));
+        returnDataEntity.setUser(getUser(returnData));
+        return this.returnDataDao
+                .save(returnDataEntity)
+                .toRestitution();
+    }
+
+    private ReturnDataEntity getReturnData(String reference){
+        return this.returnDataDao.readByReference(reference)
+                .orElseThrow(()->new NotFoundException("Return Data Reference: "+reference+" is not Fount"));
     }
 
     private BookEntity getBook(ReturnData returnData){

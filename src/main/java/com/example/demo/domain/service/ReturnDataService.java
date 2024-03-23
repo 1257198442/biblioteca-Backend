@@ -32,28 +32,24 @@ public class ReturnDataService {
     }
 
     public ReturnData create(String reference){
-        LendingData lending = this.lendingDataPersistence.read(reference);
-        if(lending.getStatus()){
+        LendingData lendingData = this.lendingDataPersistence.read(reference);
+        if(lendingData.getStatus()){
             throw new LockedResourceException("This books have been returned.");
         }
-        Book book = this.bookPersistence.read(lending.getBook().getBookID());
-        User user = lending.getUser();
-        if(lending.getReference()!=null){
-            lending.setStatus(true);
-            if(book.getStatus().equals(BookStatus.OCCUPIED)){
-                bookPersistence.changeStatus(book.getBookID());
-            }
-            this.lendingDataPersistence.update(lending);
-            createTransactionRecord(lending);
-        }
-        return this.returnDataPersistence.create(ReturnData.builder()
-                .reference(lending.getReference())
+        lendingData.setStatus(true);
+        this.lendingDataPersistence.update(lendingData);
+        createTransactionRecord(lendingData);
+        Book book = this.bookPersistence.read(lendingData.getBook().getBookID());
+        ReturnData returnData = this.returnDataPersistence.create(ReturnData.builder()
+                .reference(lendingData.getReference())
                 .book(book)
-                .user(user)
+                .user(lendingData.getUser())
                 .restitutionTime(LocalDateTime.now())
-                .lendingTime(lending.getLendingTime())
-                .limitTime(lending.getLimitTime())
+                .lendingTime(lendingData.getLendingTime())
+                .limitTime(lendingData.getLimitTime())
                 .build());
+        returnData.setUser(returnData.getUser().soloShowNameAndTelephone());
+        return returnData;
     }
 
     public ReturnData read(String reference){
@@ -61,9 +57,11 @@ public class ReturnDataService {
         restitution.setUser(restitution.getUser().soloShowNameAndTelephone());
         return restitution;
     }
+
     public List<ReturnData> readAll(){return this.returnDataPersistence.readAll().stream()
             .map(this::restitutionToRestitutionByShow)
-            .collect(Collectors.toList());}
+            .collect(Collectors.toList());
+    }
 
     public ReturnData restitutionToRestitutionByShow(ReturnData restitution){
         restitution.setBook(restitution.getBook().toShowOmit());
@@ -79,6 +77,37 @@ public class ReturnDataService {
                         .amount(lending.getBook().getDeposit())
                         .purpose("Borrow book(ID:" + lending.getBook().getBookID() + "). For more information, see Returned receipts.")
                         .build());
+    }
+
+    public ReturnData bookIsReturn(String reference){
+        ReturnData returnData = this.returnDataPersistence.read(reference);
+        if(returnData.getReturnStatus().equals(ReturnStatus.IS_RETURN)){
+            throw new LockedResourceException("bookId"+returnData.getBook().getBookID()+" has been returned.");
+        }
+        returnData.setReturnStatus(ReturnStatus.IS_RETURN);
+        if(this.bookStatusIsOCCUPIED(returnData.getBook().getBookID())){
+            this.bookPersistence.changeStatus(returnData.getBook().getBookID());
+        }
+        return this.returnDataPersistence.update(returnData);
+    }
+
+    public ReturnData bookIsNoReturn(String reference){
+        LendingData lendingData = this.lendingDataPersistence.read(reference);
+        lendingData.setStatus(false);
+        this.lendingDataPersistence.update(lendingData);
+        ReturnData returnData = this.returnDataPersistence.read(reference);
+        returnData.setReturnStatus(ReturnStatus.NO_RETURN);
+        return this.userSoloShowNameAndTelephone(this.returnDataPersistence.update(returnData));
+    }
+
+    public Boolean bookStatusIsOCCUPIED(String bookId){
+        Book bookEnDatabase = this.bookPersistence.read(bookId);
+        return bookEnDatabase.getStatus()==BookStatus.OCCUPIED;
+    }
+
+    public ReturnData userSoloShowNameAndTelephone(ReturnData returnData){
+        returnData.setUser(returnData.getUser().soloShowNameAndTelephone());
+        return returnData;
     }
 
 }

@@ -50,8 +50,9 @@ public class TypePersistenceMongodb implements TypePersistence {
 
     @Override
     public Type getType(String name) {
-        Optional<TypeEntity> type = this.typeDao.readByName(name);
-        return type.map(TypeEntity::toType).orElse(null);
+        return this.typeDao.readByName(name)
+                .map(TypeEntity::toType)
+                .orElse(null);
     }
 
     @Override

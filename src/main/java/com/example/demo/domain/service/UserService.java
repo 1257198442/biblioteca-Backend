@@ -56,8 +56,7 @@ public class UserService {
 
     public User initUser(UserUploadDto userUpload){
         Setting setting = Setting.builder().hideMyProfile(true).emailWhenSuccessfulTransaction(true).emailWhenOrderIsPaid(true).build();
-
-       return User.builder()
+        return User.builder()
                 .name(userUpload.getName())
                 .password(new BCryptPasswordEncoder().encode(userUpload.getPassword()))
                 .telephone(userUpload.getTelephone())

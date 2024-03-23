@@ -43,6 +43,24 @@ public class ReturnDataResourceTests {
         getReadClient("Bearer "+jwtService.createToken("+34990099009","user","CLIENT"),"2").isEqualTo(HttpStatus.OK);
     }
 
+    @Test
+    void testBookIsReturnAndBookNoReturn(){
+        //401
+        putBookIsReturn("","4").isEqualTo(HttpStatus.UNAUTHORIZED);
+        putBookNoReturn("","4").isEqualTo(HttpStatus.UNAUTHORIZED);
+        //403
+        putBookIsReturn("Bearer "+jwtService.createToken("+34990099009","user","CLIENT"),"4").isEqualTo(HttpStatus.FORBIDDEN);
+        putBookNoReturn("Bearer "+jwtService.createToken("+34990099009","user","CLIENT"),"4").isEqualTo(HttpStatus.FORBIDDEN);
+        //404
+        putBookIsReturn("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"null").isEqualTo(HttpStatus.NOT_FOUND);
+        putBookNoReturn("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"null").isEqualTo(HttpStatus.NOT_FOUND);
+        //200
+        putBookNoReturn("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"4").isEqualTo(HttpStatus.OK);
+        putBookIsReturn("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"4").isEqualTo(HttpStatus.OK);
+        //409
+        putBookIsReturn("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"4").isEqualTo(HttpStatus.CONFLICT);
+    }
+
     StatusAssertions postCreateClient(String token,String reference){
         return webTestClient.post()
                 .uri("/returnData")
@@ -58,6 +76,22 @@ public class ReturnDataResourceTests {
                 .uri("/returnData/{reference}",reference)
                 .header("Authorization",token)
                 .accept(MediaType.ALL)
+                .exchange()
+                .expectStatus();
+    }
+
+    StatusAssertions putBookIsReturn(String token,String reference){
+        return webTestClient.put()
+                .uri("/returnData/{reference}/isReturn",reference)
+                .header("Authorization",token)
+                .exchange()
+                .expectStatus();
+    }
+
+    StatusAssertions putBookNoReturn(String token,String reference){
+        return  webTestClient.put()
+                .uri("/returnData/{reference}/noReturn",reference)
+                .header("Authorization",token)
                 .exchange()
                 .expectStatus();
     }

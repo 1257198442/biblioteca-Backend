@@ -22,6 +22,8 @@ import java.util.stream.Collectors;
 public class ReturnDataResource {
     public static final String RETURN_DATA = "/returnData";
     public static final String REFERENCE = "/{reference}";
+    public static final String IS_RETURN = "/isReturn";
+    public static final String NO_RETURN = "/noReturn";
     private final ReturnDataService returnDataService;
     private final LendingDataService lendingDataService;
     public final List<Role> adminRole= Arrays.asList(Role.ADMINISTRATOR,Role.ROOT);
@@ -43,7 +45,6 @@ public class ReturnDataResource {
         }else {
             throw new ForbiddenException("You don't have permission to make this request.");
         }
-
     }
 
     //GET
@@ -54,6 +55,29 @@ public class ReturnDataResource {
         ReturnData restitution = this.returnDataService.read(reference);
         if(hasPermission(adminRole,restitution.getUser().getTelephone())){
         return this.returnDataService.read(reference);
+        }else {
+            throw new ForbiddenException("You don't have permission to make this request.");
+        }
+    }
+
+    //PUT
+    @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT')or hasRole('CLIENT')" )
+    @SecurityRequirement(name = "bearerAuth")
+    @PutMapping(REFERENCE+IS_RETURN)
+    public ReturnData isReturn(@PathVariable String reference){
+        if(Role.isCompetent(adminRole,this.extractRoleClaims())){
+            return this.returnDataService.bookIsReturn(reference);
+        }else {
+            throw new ForbiddenException("You don't have permission to make this request.");
+        }
+
+    }
+    @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT')  or hasRole('CLIENT')" )
+    @SecurityRequirement(name = "bearerAuth")
+    @PutMapping(REFERENCE+NO_RETURN)
+    public ReturnData noReturn(@PathVariable String reference){
+        if(Role.isCompetent(adminRole,this.extractRoleClaims())){
+        return this.returnDataService.bookIsNoReturn(reference);
         }else {
             throw new ForbiddenException("You don't have permission to make this request.");
         }

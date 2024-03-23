@@ -42,9 +42,8 @@ public class AuthorService {
     }
 
     public Author update(String authorId, AuthorUploadDto authorData){
-        Author author = new Author();
+        Author author = authorPersistence.read(authorId);
         BeanUtils.copyProperties(authorData,author);
-        author.setAuthorId(authorId);
         return this.authorPersistence.update(author);
     }
 
