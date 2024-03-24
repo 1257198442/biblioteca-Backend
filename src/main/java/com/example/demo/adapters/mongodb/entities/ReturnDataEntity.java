@@ -1,5 +1,6 @@
 package com.example.demo.adapters.mongodb.entities;
 
+import com.example.demo.domain.models.BookDamageDegree;
 import com.example.demo.domain.models.ReturnData;
 import com.example.demo.domain.models.ReturnStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -24,12 +25,13 @@ public class ReturnDataEntity {
     private BookEntity book;
     private UserEntity user;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime restitutionTime;
+    private LocalDateTime returnTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lendingTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime limitTime;
     private ReturnStatus returnStatus;
+    private BookDamageDegree bookDamageDegree;
 
 
     public ReturnData toRestitution(){

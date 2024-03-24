@@ -1,5 +1,7 @@
 package com.example.demo.adapters.rest;
 
+import com.example.demo.adapters.rest.dto.BookDamageDegreeDto;
+import com.example.demo.domain.models.Degree;
 import com.example.demo.domain.service.JwtService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,20 +47,24 @@ public class ReturnDataResourceTests {
 
     @Test
     void testBookIsReturnAndBookNoReturn(){
+        BookDamageDegreeDto bookDamageDegreeDto = BookDamageDegreeDto.builder().degree("error").addendum("OK").build();
+        //422
+        putBookIsReturn("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"4",bookDamageDegreeDto).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+        bookDamageDegreeDto.setDegree("PERFECT");
         //401
-        putBookIsReturn("","4").isEqualTo(HttpStatus.UNAUTHORIZED);
+        putBookIsReturn("","4",bookDamageDegreeDto).isEqualTo(HttpStatus.UNAUTHORIZED);
         putBookNoReturn("","4").isEqualTo(HttpStatus.UNAUTHORIZED);
         //403
-        putBookIsReturn("Bearer "+jwtService.createToken("+34990099009","user","CLIENT"),"4").isEqualTo(HttpStatus.FORBIDDEN);
+        putBookIsReturn("Bearer "+jwtService.createToken("+34990099009","user","CLIENT"),"4",bookDamageDegreeDto).isEqualTo(HttpStatus.FORBIDDEN);
         putBookNoReturn("Bearer "+jwtService.createToken("+34990099009","user","CLIENT"),"4").isEqualTo(HttpStatus.FORBIDDEN);
         //404
-        putBookIsReturn("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"null").isEqualTo(HttpStatus.NOT_FOUND);
+        putBookIsReturn("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"null",bookDamageDegreeDto).isEqualTo(HttpStatus.NOT_FOUND);
         putBookNoReturn("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"null").isEqualTo(HttpStatus.NOT_FOUND);
         //200
         putBookNoReturn("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"4").isEqualTo(HttpStatus.OK);
-        putBookIsReturn("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"4").isEqualTo(HttpStatus.OK);
+        putBookIsReturn("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"4",bookDamageDegreeDto).isEqualTo(HttpStatus.OK);
         //409
-        putBookIsReturn("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"4").isEqualTo(HttpStatus.CONFLICT);
+        putBookIsReturn("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"4",bookDamageDegreeDto).isEqualTo(HttpStatus.CONFLICT);
     }
 
     StatusAssertions postCreateClient(String token,String reference){
@@ -80,10 +86,12 @@ public class ReturnDataResourceTests {
                 .expectStatus();
     }
 
-    StatusAssertions putBookIsReturn(String token,String reference){
+    StatusAssertions putBookIsReturn(String token, String reference, BookDamageDegreeDto bookDamageDegreeDto){
         return webTestClient.put()
                 .uri("/returnData/{reference}/isReturn",reference)
                 .header("Authorization",token)
+                .accept(MediaType.ALL)
+                .bodyValue(bookDamageDegreeDto)
                 .exchange()
                 .expectStatus();
     }
