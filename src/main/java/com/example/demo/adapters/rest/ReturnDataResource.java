@@ -1,6 +1,8 @@
 package com.example.demo.adapters.rest;
 
+import com.example.demo.adapters.rest.dto.BookDamageDegreeDto;
 import com.example.demo.domain.exceptions.ForbiddenException;
+import com.example.demo.domain.models.BookDamageDegree;
 import com.example.demo.domain.models.LendingData;
 import com.example.demo.domain.models.ReturnData;
 import com.example.demo.domain.models.Role;
@@ -64,9 +66,9 @@ public class ReturnDataResource {
     @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT')or hasRole('CLIENT')" )
     @SecurityRequirement(name = "bearerAuth")
     @PutMapping(REFERENCE+IS_RETURN)
-    public ReturnData isReturn(@PathVariable String reference){
+    public ReturnData isReturn(@PathVariable String reference, @RequestBody BookDamageDegreeDto bookDamageDegreeDto){
         if(Role.isCompetent(adminRole,this.extractRoleClaims())){
-            return this.returnDataService.bookIsReturn(reference);
+            return this.returnDataService.bookIsReturn(reference,bookDamageDegreeDto);
         }else {
             throw new ForbiddenException("You don't have permission to make this request.");
         }

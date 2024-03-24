@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -14,17 +15,11 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ReturnData {
-    private String reference;
-    private Book book;
-    private User user;
+public class BookDamageDegree {
+    private Degree degree;
+    private String addendum;
+    private String detailsDeductions;
+    private BigDecimal returnDeposit;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime returnTime;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime lendingTime;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime limitTime;
-    private ReturnStatus returnStatus;
-    private BookDamageDegree bookDamageDegree;
-
+    private LocalDateTime time;
 }
