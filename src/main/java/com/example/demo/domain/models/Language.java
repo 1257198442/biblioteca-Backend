@@ -1,6 +1,5 @@
 package com.example.demo.domain.models;
 
-import com.example.demo.domain.exceptions.BadRequestException;
 import com.example.demo.domain.exceptions.UnprocessableEntityException;
 
 import java.util.Arrays;

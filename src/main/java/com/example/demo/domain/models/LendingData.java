@@ -23,5 +23,6 @@ public class LendingData {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime limitTime;
     private Boolean status;
+    private ReturnSendEmail returnSendEmail;
 
 }

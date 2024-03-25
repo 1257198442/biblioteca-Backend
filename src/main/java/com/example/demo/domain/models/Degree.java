@@ -1,6 +1,5 @@
 package com.example.demo.domain.models;
 
-import com.example.demo.domain.exceptions.BadRequestException;
 import com.example.demo.domain.exceptions.UnprocessableEntityException;
 
 import java.math.BigDecimal;
@@ -14,6 +13,7 @@ public enum Degree {
             throw new UnprocessableEntityException("The degree is invalid");
         }
     }
+
     public static BigDecimal percentageAppearance(Degree degree) {
         switch (degree) {
             case SLIGHTLY_DAMAGED:

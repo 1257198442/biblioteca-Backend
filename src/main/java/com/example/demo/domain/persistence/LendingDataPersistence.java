@@ -10,4 +10,5 @@ public interface LendingDataPersistence {
     List<LendingData> readByUserTelephone(String telephone);
     List<LendingData> readAll();
     LendingData update(LendingData lending);
+    List<LendingData> readAllByNoReturn();
 }

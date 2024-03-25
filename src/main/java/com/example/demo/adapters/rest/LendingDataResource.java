@@ -4,6 +4,7 @@ package com.example.demo.adapters.rest;
 import com.example.demo.adapters.rest.dto.LendingDataUploadDto;
 import com.example.demo.adapters.rest.show.AdminReturnAndLendingByShow;
 import com.example.demo.adapters.rest.show.ClientReturnAndLendingByShow;
+import com.example.demo.adapters.rest.show.LendingStatisticsShow;
 import com.example.demo.domain.exceptions.ForbiddenException;
 import com.example.demo.domain.exceptions.UnauthorizedException;
 import com.example.demo.domain.models.LendingData;
@@ -32,6 +33,14 @@ public class LendingDataResource {
     public static final String NO_RETURN = "/no_return";
     public static final String CLIENT_RETURN_AND_LENDING = "/client_return_and_lending";
     public static final String ADMIN_RETURN_AND_LENDING = "/admin_return_and_lending";
+    public static final String LENDING_STATISTICS="/lending_statistics";
+    public static final String MONTHLY_COUNTS="/monthly_counts";
+    public static final String WEEk_COUNTS="/weekly_counts";
+    public static final String YEAR_COUNTS="/yearly_counts";
+    public static final String SEND_EMAIL_TO_USER_BY_OVERDUE_MAX_30DAY="/send_email_to_user_by_overdue_max_30day";
+    public static final String READ_LENDING_DATA_BY_OVERDUE_MAX_30DAY="/read_lending_data_by_overdue_max_30day";
+    public static final String SEND_EMAIL_TO_USER_BY_APPROACHING_DATE="/send_email_to_user_by_approaching_date";
+    public static final String SEND_EMAIL_TO_USER_BY_ORDER_OVERDUE="/send_email_to_user_by_order_overdue";
     public final LendingDataService lendingDataService;
     public final ReturnDataService returnDataService;
     public final UserService userService;
@@ -118,6 +127,90 @@ public class LendingDataResource {
     public List<LendingData> readNoReturnByTelephone(@RequestParam String telephone){
         if(hasPermission(adminRole,telephone)){
             return this.lendingDataService.readNoReturnByTelephone(telephone);
+        }else{
+            throw new ForbiddenException("You don't have permission to make this request.");
+        }
+    }
+    @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT')  or hasRole('CLIENT')" )
+    @SecurityRequirement(name = "bearerAuth")
+    @GetMapping(LENDING_STATISTICS)
+    public LendingStatisticsShow readLendingStatistics(){
+        if(Role.isCompetent(adminRole,this.extractRoleClaims())){
+            return this.lendingDataService.getLendingStatistics();
+        }else{
+            throw new ForbiddenException("You don't have permission to make this request.");
+        }
+    }
+    @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT')  or hasRole('CLIENT')" )
+    @SecurityRequirement(name = "bearerAuth")
+    @GetMapping(MONTHLY_COUNTS)
+    public List<Integer> readLendingMonthlyCountsByThisYear(){
+        if(Role.isCompetent(adminRole,this.extractRoleClaims())){
+            return this.lendingDataService.getLendingMonthlyCountsByThisYear();
+        }else{
+            throw new ForbiddenException("You don't have permission to make this request.");
+        }
+    }
+    @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT')  or hasRole('CLIENT')" )
+    @SecurityRequirement(name = "bearerAuth")
+    @GetMapping(WEEk_COUNTS)
+    public List<Integer> readLendingDailyCountsByThisWeek(){
+        if(Role.isCompetent(adminRole,this.extractRoleClaims())){
+            return this.lendingDataService.getLendingDailyCountsByThisWeek();
+        }else{
+            throw new ForbiddenException("You don't have permission to make this request.");
+        }
+    }
+    @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT')  or hasRole('CLIENT')" )
+    @SecurityRequirement(name = "bearerAuth")
+    @GetMapping(YEAR_COUNTS)
+    public List<Integer> readLendingYearlyCounts(){
+        if(Role.isCompetent(adminRole,this.extractRoleClaims())){
+            return this.lendingDataService.getLendingYearlyCounts();
+        }else{
+            throw new ForbiddenException("You don't have permission to make this request.");
+        }
+    }
+
+    @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT') or hasRole('CLIENT')")
+    @SecurityRequirement(name = "bearerAuth")
+    @PostMapping(SEND_EMAIL_TO_USER_BY_OVERDUE_MAX_30DAY)
+    public List<LendingData> banUserByOverdueMax30Days(){
+        if(Role.isCompetent(adminRole,this.extractRoleClaims())){
+            return this.lendingDataService.sendEmailToUserByExtensionBeyond30Days();
+        }else{
+            throw new ForbiddenException("You don't have permission to make this request.");
+        }
+    }
+
+    @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT') or hasRole('CLIENT')")
+    @SecurityRequirement(name = "bearerAuth")
+    @GetMapping(READ_LENDING_DATA_BY_OVERDUE_MAX_30DAY)
+    public List<LendingData> readUserByOverdueMax30Days(){
+        if(Role.isCompetent(adminRole,this.extractRoleClaims())){
+            return this.lendingDataService.readLendingDataByExtensionBeyond30Days().collect(Collectors.toList());
+        }else{
+            throw new ForbiddenException("You don't have permission to make this request.");
+        }
+    }
+
+    @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT') or hasRole('CLIENT')")
+    @SecurityRequirement(name = "bearerAuth")
+    @PostMapping(SEND_EMAIL_TO_USER_BY_APPROACHING_DATE)
+    public List<LendingData> sendEmailToUserByApproachingExpiryDate(){
+        if(Role.isCompetent(adminRole,this.extractRoleClaims())){
+            return this.lendingDataService.sendEmailToUserByApproachingExpiryDate();
+        }else{
+            throw new ForbiddenException("You don't have permission to make this request.");
+        }
+    }
+
+    @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT') or hasRole('CLIENT')")
+    @SecurityRequirement(name = "bearerAuth")
+    @PostMapping(SEND_EMAIL_TO_USER_BY_ORDER_OVERDUE)
+    public List<LendingData> sendEmailToUserByOrderOverdue(){
+        if(Role.isCompetent(adminRole,this.extractRoleClaims())){
+            return this.lendingDataService.sendEmailToUserByOrderOverdue();
         }else{
             throw new ForbiddenException("You don't have permission to make this request.");
         }

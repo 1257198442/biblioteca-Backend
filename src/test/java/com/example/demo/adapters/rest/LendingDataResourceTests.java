@@ -99,6 +99,86 @@ public class LendingDataResourceTests {
         getReadNoReturnByTelephoneClient("Bearer "+jwtService.createToken("+34990099009","user","CLIENT"),"+34990099009").isEqualTo(HttpStatus.OK);
     }
 
+    @Test
+    void  testReadLendingStatistics(){
+        //401
+        getReadLendingStatisticsClient("").isEqualTo(HttpStatus.UNAUTHORIZED);
+        //403
+        getReadLendingStatisticsClient("Bearer "+jwtService.createToken("+34990099009","user","CLIENT")).isEqualTo(HttpStatus.FORBIDDEN);
+        //200
+        getReadLendingStatisticsClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT")).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    void  testReadLendingMonthlyCountsByThisYear(){
+        //401
+        getReadLendingMonthlyCountsByThisYear("").isEqualTo(HttpStatus.UNAUTHORIZED);
+        //403
+        getReadLendingMonthlyCountsByThisYear("Bearer "+jwtService.createToken("+34990099009","user","CLIENT")).isEqualTo(HttpStatus.FORBIDDEN);
+        //200
+        getReadLendingMonthlyCountsByThisYear("Bearer "+jwtService.createToken("+34666666666","root","ROOT")).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    void  testReadLendingDailyCountsByThisWeek(){
+        //401
+        getReadLendingDailyCountsByThisWeek("").isEqualTo(HttpStatus.UNAUTHORIZED);
+        //403
+        getReadLendingDailyCountsByThisWeek("Bearer "+jwtService.createToken("+34990099009","user","CLIENT")).isEqualTo(HttpStatus.FORBIDDEN);
+        //200
+        getReadLendingDailyCountsByThisWeek("Bearer "+jwtService.createToken("+34666666666","root","ROOT")).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    void  testReadLendingYearlyCounts(){
+        //401
+        getReadLendingYearlyCounts("").isEqualTo(HttpStatus.UNAUTHORIZED);
+        //403
+        getReadLendingYearlyCounts("Bearer "+jwtService.createToken("+34990099009","user","CLIENT")).isEqualTo(HttpStatus.FORBIDDEN);
+        //200
+        getReadLendingYearlyCounts("Bearer "+jwtService.createToken("+34666666666","root","ROOT")).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    void  testBanUserByOverdueMax30Days(){
+        //401
+        postBanUserByOverdueMax30Days("").isEqualTo(HttpStatus.UNAUTHORIZED);
+        //403
+        postBanUserByOverdueMax30Days("Bearer "+jwtService.createToken("+34990099009","user","CLIENT")).isEqualTo(HttpStatus.FORBIDDEN);
+        //200
+        postBanUserByOverdueMax30Days("Bearer "+jwtService.createToken("+34666666666","root","ROOT")).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    void  testReadUserByOverdueMax30Days(){
+        //401
+        getReadUserByOverdueMax30Days("").isEqualTo(HttpStatus.UNAUTHORIZED);
+        //403
+        getReadUserByOverdueMax30Days("Bearer "+jwtService.createToken("+34990099009","user","CLIENT")).isEqualTo(HttpStatus.FORBIDDEN);
+        //200
+        getReadUserByOverdueMax30Days("Bearer "+jwtService.createToken("+34666666666","root","ROOT")).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    void  testSendEmailToUserByApproachingExpiryDate(){
+        //401
+        postSendEmailToUserByApproachingExpiryDate("").isEqualTo(HttpStatus.UNAUTHORIZED);
+        //403
+        postSendEmailToUserByApproachingExpiryDate("Bearer "+jwtService.createToken("+34990099009","user","CLIENT")).isEqualTo(HttpStatus.FORBIDDEN);
+        //200
+        postSendEmailToUserByApproachingExpiryDate("Bearer "+jwtService.createToken("+34666666666","root","ROOT")).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    void  testSendEmailToUserByOrderOverdue(){
+        //401
+        postSendEmailToUserByOrderOverdue("").isEqualTo(HttpStatus.UNAUTHORIZED);
+        //403
+        postSendEmailToUserByOrderOverdue("Bearer "+jwtService.createToken("+34990099009","user","CLIENT")).isEqualTo(HttpStatus.FORBIDDEN);
+        //200
+        postSendEmailToUserByOrderOverdue("Bearer "+jwtService.createToken("+34666666666","root","ROOT")).isEqualTo(HttpStatus.OK);
+    }
+
     StatusAssertions postCreateClient(String token, LendingDataUploadDto lendingDto){
         return webTestClient.post()
                 .uri("/lendingData")
@@ -147,4 +227,69 @@ public class LendingDataResourceTests {
                 .exchange()
                 .expectStatus();
     }
+
+    StatusAssertions getReadLendingStatisticsClient(String token){
+        return webTestClient.get()
+                .uri("/lendingData/lending_statistics")
+                .header("Authorization",token)
+                .exchange()
+                .expectStatus();
+    }
+
+    StatusAssertions getReadLendingMonthlyCountsByThisYear(String token){
+        return webTestClient.get()
+                .uri("/lendingData/monthly_counts")
+                .header("Authorization",token)
+                .exchange()
+                .expectStatus();
+    }
+
+    StatusAssertions getReadLendingDailyCountsByThisWeek(String token){
+        return webTestClient.get()
+                .uri("/lendingData/weekly_counts")
+                .header("Authorization",token)
+                .exchange()
+                .expectStatus();
+    }
+
+    StatusAssertions getReadLendingYearlyCounts(String token){
+        return webTestClient.get()
+                .uri("/lendingData/yearly_counts")
+                .header("Authorization",token)
+                .exchange()
+                .expectStatus();
+    }
+
+    StatusAssertions postBanUserByOverdueMax30Days(String token){
+        return webTestClient.post()
+                .uri("/lendingData/send_email_to_user_by_overdue_max_30day")
+                .header("Authorization",token)
+                .exchange()
+                .expectStatus();
+    }
+
+    StatusAssertions getReadUserByOverdueMax30Days(String token){
+        return webTestClient.get()
+                .uri("/lendingData/read_lending_data_by_overdue_max_30day")
+                .header("Authorization",token)
+                .exchange()
+                .expectStatus();
+    }
+
+    StatusAssertions postSendEmailToUserByApproachingExpiryDate(String token){
+        return webTestClient.post()
+                .uri("/lendingData//send_email_to_user_by_approaching_date")
+                .header("Authorization",token)
+                .exchange()
+                .expectStatus();
+    }
+
+    StatusAssertions postSendEmailToUserByOrderOverdue(String token){
+        return webTestClient.post()
+                .uri("/lendingData/send_email_to_user_by_order_overdue")
+                .header("Authorization",token)
+                .exchange()
+                .expectStatus();
+    }
+
 }
