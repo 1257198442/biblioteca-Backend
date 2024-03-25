@@ -43,4 +43,9 @@ public class User {
         return User.builder().name(this.name).telephone(this.telephone).build();
     }
 
+    public User toUser(){
+        User user = new User();
+        BeanUtils.copyProperties(this,user);
+        return user;
+    }
 }

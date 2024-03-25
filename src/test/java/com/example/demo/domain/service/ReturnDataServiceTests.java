@@ -21,9 +21,16 @@ public class ReturnDataServiceTests {
     private BookService bookService;
     @Test
     void testCreateAndRead(){
-        String reference = returnDataService.create("4").getReference();
-        LendingData lending = lendingService.read("4");
+        String reference = returnDataService.create("6").getReference();
+        LendingData lending = lendingService.read(reference);
         ReturnData restitution = returnDataService.read(reference);
+        assertEquals(lending.getLendingTime(),restitution.getLendingTime());
+        assertEquals(lending.getBook(),restitution.getBook());
+        assertEquals(lending.getUser(),restitution.getUser());
+
+        reference = returnDataService.create("4").getReference();
+        lending = lendingService.read(reference);
+        restitution = returnDataService.read(reference);
         assertEquals(lending.getLendingTime(),restitution.getLendingTime());
         assertEquals(lending.getBook(),restitution.getBook());
         assertEquals(lending.getUser(),restitution.getUser());
@@ -56,14 +63,26 @@ public class ReturnDataServiceTests {
         ReturnData returnData = ReturnData.builder()
                 .limitTime(LocalDateTime.now())
                 .returnTime(LocalDateTime.now().minusDays(1)).build();
-        assertEquals(1,returnDataService.getDays(returnData));
+        assertEquals(-1,returnDataService.computationalTime(returnData));
         returnData.setReturnTime(LocalDateTime.now().minusDays(3));
-        assertEquals(3,returnDataService.getDays(returnData));
+        assertEquals(-3,returnDataService.computationalTime(returnData));
     }
+
     @Test
     void testGetPercentagePostponement(){
-        assertEquals(BigDecimal.valueOf(0.05),returnDataService.getPercentagePostponement(1));
-        assertEquals(BigDecimal.valueOf(0.8),returnDataService.getPercentagePostponement(17));
-        assertEquals(BigDecimal.valueOf(1.0),returnDataService.getPercentagePostponement(33));
+        assertEquals(BigDecimal.valueOf(0.05),returnDataService.computationalPercentagePostponement(1));
+        assertEquals(BigDecimal.valueOf(0.8),returnDataService.computationalPercentagePostponement(17));
+        assertEquals(BigDecimal.valueOf(1.0),returnDataService.computationalPercentagePostponement(33));
     }
+
+    @Test
+    void  testReadAllByWaitingForVerification(){
+        assertNotNull(returnDataService.readAllByWaitingForVerification());
+    }
+
+    @Test
+    void testReadByUserTelephone(){
+        assertNotNull(returnDataService.readAllByUserTelephone("+34990099009"));
+    }
+
 }

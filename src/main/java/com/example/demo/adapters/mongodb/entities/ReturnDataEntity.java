@@ -34,7 +34,7 @@ public class ReturnDataEntity {
     private BookDamageDegree bookDamageDegree;
 
 
-    public ReturnData toRestitution(){
+    public ReturnData toReturnData(){
         ReturnData restitution = new ReturnData();
         BeanUtils.copyProperties(this,restitution);
         if(this.book!=null){

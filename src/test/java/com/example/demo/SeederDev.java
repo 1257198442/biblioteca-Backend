@@ -185,6 +185,8 @@ public class SeederDev {
                 LendingDataEntity.builder().reference("2").book(bookEntities[9]).user(userEntities[7]).lendingTime(LocalDateTime.now()).limitTime(LocalDateTime.now().plusHours(1)).status(false).build(),
                 LendingDataEntity.builder().reference("3").book(bookEntities[4]).user(userEntities[7]).lendingTime(LocalDateTime.now()).limitTime(LocalDateTime.now().plusHours(1)).status(false).build(),
                 LendingDataEntity.builder().reference("4").book(bookEntities[8]).user(userEntities[7]).lendingTime(LocalDateTime.now()).limitTime(LocalDateTime.now().plusHours(1)).status(false).build(),
+                LendingDataEntity.builder().reference("5").book(bookEntities[8]).user(userEntities[7]).lendingTime(LocalDateTime.now()).limitTime(LocalDateTime.now().plusHours(1)).status(false).build(),
+                LendingDataEntity.builder().reference("6").book(bookEntities[4]).user(userEntities[7]).lendingTime(LocalDateTime.now()).limitTime(LocalDateTime.now().plusHours(1)).status(false).build(),
         };
         this.lendingDataDao.saveAll(Arrays.asList(lendingDataEntities));
 
@@ -193,6 +195,7 @@ public class SeederDev {
                 ReturnDataEntity.builder().reference("2").limitTime(lendingDataEntities[1].getLimitTime()).lendingTime(lendingDataEntities[1].getLendingTime()).user(lendingDataEntities[1].getUser()).book(lendingDataEntities[1].getBook()).returnTime(LocalDateTime.now()).returnStatus(ReturnStatus.WAITING_FOR_VERIFICATION).build(),
                 ReturnDataEntity.builder().reference("3").limitTime(lendingDataEntities[2].getLimitTime()).lendingTime(lendingDataEntities[2].getLendingTime()).user(lendingDataEntities[2].getUser()).book(lendingDataEntities[2].getBook()).returnTime(LocalDateTime.now()).returnStatus(ReturnStatus.WAITING_FOR_VERIFICATION).build(),
                 ReturnDataEntity.builder().reference("4").limitTime(lendingDataEntities[3].getLimitTime()).lendingTime(lendingDataEntities[3].getLendingTime()).user(lendingDataEntities[3].getUser()).book(lendingDataEntities[3].getBook()).returnTime(LocalDateTime.now().minusDays(2)).returnStatus(ReturnStatus.WAITING_FOR_VERIFICATION).build(),
+                ReturnDataEntity.builder().reference("5").limitTime(lendingDataEntities[3].getLimitTime()).lendingTime(lendingDataEntities[3].getLendingTime()).user(lendingDataEntities[3].getUser()).book(lendingDataEntities[3].getBook()).returnTime(LocalDateTime.now().plusDays(90)).returnStatus(ReturnStatus.WAITING_FOR_VERIFICATION).build(),
         };
         this.returnDataDao.saveAll(Arrays.asList(returnDataEntities));
     }

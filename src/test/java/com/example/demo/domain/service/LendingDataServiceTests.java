@@ -43,4 +43,19 @@ public class LendingDataServiceTests {
     void testReadAll(){
         assertNotNull( lendingDataService.readAll());
     }
+
+    @Test
+    void testReadAllByTelephone(){
+        assertNotNull(lendingDataService.readAllByUserTelephone("+34990099009"));
+    }
+
+    @Test
+    void testReadNoReturnByTelephone(){
+        assertNotNull(lendingDataService.readNoReturnByTelephone("+34990099009"));
+    }
+    @Test
+    void testReadUserByExtensionBeyond30Days(){
+
+    }
+
 }
