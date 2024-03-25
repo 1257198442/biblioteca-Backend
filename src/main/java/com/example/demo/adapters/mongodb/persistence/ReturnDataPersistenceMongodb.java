@@ -32,25 +32,25 @@ public class ReturnDataPersistenceMongodb implements ReturnDataPersistence {
 
     @Override
     public ReturnData create(ReturnData returnData) {
-        ReturnDataEntity restitutionEntity = new ReturnDataEntity();
-        BeanUtils.copyProperties(returnData,restitutionEntity);
-        restitutionEntity.setBook(getBook(returnData));
-        restitutionEntity.setUser(getUser(returnData));
-        return this.returnDataDao
-                .save(restitutionEntity)
-                .toRestitution();
+            ReturnDataEntity restitutionEntity = new ReturnDataEntity();
+            BeanUtils.copyProperties(returnData,restitutionEntity);
+            restitutionEntity.setBook(getBook(returnData));
+            restitutionEntity.setUser(getUser(returnData));
+            return this.returnDataDao
+                    .save(restitutionEntity)
+                    .toReturnData();
     }
 
     @Override
     public ReturnData read(String reference) {
         return this.getReturnData(reference)
-                .toRestitution();
+                .toReturnData();
     }
 
     @Override
     public List<ReturnData> readAll() {
         return this.returnDataDao
-                .findAll().stream().map(ReturnDataEntity::toRestitution)
+                .findAll().stream().map(ReturnDataEntity::toReturnData)
                 .collect(Collectors.toList());
     }
 
@@ -62,7 +62,27 @@ public class ReturnDataPersistenceMongodb implements ReturnDataPersistence {
         returnDataEntity.setUser(getUser(returnData));
         return this.returnDataDao
                 .save(returnDataEntity)
-                .toRestitution();
+                .toReturnData();
+    }
+
+    @Override
+    public List<ReturnData> readByUserTelephone(String telephone) {
+        return this.returnDataDao
+                .readByUser_Telephone(telephone)
+                .stream().map(ReturnDataEntity::toReturnData)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ReturnData> readByBookId(String bookId) {
+        return this.returnDataDao
+                .readByBook_BookID(bookId)
+                .stream().map(ReturnDataEntity::toReturnData)
+                .collect(Collectors.toList());
+    }
+    @Override
+    public Boolean existReference(String reference) {
+        return this.returnDataDao.readByReference(reference).isPresent();
     }
 
     private ReturnDataEntity getReturnData(String reference){

@@ -48,16 +48,6 @@ public class LendingDataResourceTests {
     }
 
     @Test
-    void testReadAll() {
-        //200
-        getReadAllClient("Bearer "+jwtService.createToken("+34666000001","Administrator","ADMINISTRATOR")).isEqualTo(HttpStatus.OK);
-        //401
-        getReadAllClient("").isEqualTo(HttpStatus.UNAUTHORIZED);
-        //403
-        getReadAllClient("Bearer "+jwtService.createToken("+34666000002","user","CLIENT")).isEqualTo(HttpStatus.FORBIDDEN);
-    }
-
-    @Test
     void testReadByTelephone(){
         //401
         getReadByTelephoneClient("","+34990099009").isEqualTo(HttpStatus.UNAUTHORIZED);
@@ -79,20 +69,42 @@ public class LendingDataResourceTests {
         getReadByReferenceClient("Bearer "+jwtService.createToken("+34990099009","user","CLIENT"),"1").isEqualTo(HttpStatus.OK);
     }
 
+    @Test
+    void testReadAdminReturnAndLendingByShow(){
+        //401
+        getReadAdminReturnAndLendingByShowClient("").isEqualTo(HttpStatus.UNAUTHORIZED);
+        //403
+        getReadAdminReturnAndLendingByShowClient("Bearer "+jwtService.createToken("+34666000002","user","CLIENT")).isEqualTo(HttpStatus.FORBIDDEN);
+        //200
+        getReadAdminReturnAndLendingByShowClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT")).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    void testReadClientReturnAndLendingByShow(){
+        //401
+        getReadClientReturnAndLendingByShowClient("","+34990099009").isEqualTo(HttpStatus.UNAUTHORIZED);
+        //403
+        getReadClientReturnAndLendingByShowClient("Bearer "+jwtService.createToken("+34666000002","user","CLIENT"),"+34990099009").isEqualTo(HttpStatus.FORBIDDEN);
+        //200
+        getReadClientReturnAndLendingByShowClient("Bearer "+jwtService.createToken("+34990099009","user","CLIENT"),"+34990099009").isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    void testReadNoReturnByTelephone(){
+        //401
+        getReadNoReturnByTelephoneClient("","+34990099009").isEqualTo(HttpStatus.UNAUTHORIZED);
+        //403
+        getReadNoReturnByTelephoneClient("Bearer "+jwtService.createToken("+34666000002","user","CLIENT"),"+34990099009").isEqualTo(HttpStatus.FORBIDDEN);
+        //200
+        getReadNoReturnByTelephoneClient("Bearer "+jwtService.createToken("+34990099009","user","CLIENT"),"+34990099009").isEqualTo(HttpStatus.OK);
+    }
+
     StatusAssertions postCreateClient(String token, LendingDataUploadDto lendingDto){
         return webTestClient.post()
                 .uri("/lendingData")
                 .header("Authorization", token)
                 .accept(MediaType.ALL)
                 .bodyValue(lendingDto)
-                .exchange()
-                .expectStatus();
-    }
-
-    StatusAssertions getReadAllClient(String token){
-        return webTestClient.get()
-                .uri("/lendingData")
-                .header("Authorization", token)
                 .exchange()
                 .expectStatus();
     }
@@ -110,5 +122,29 @@ public class LendingDataResourceTests {
                 .uri("/lendingData/{id}",reference)
                 .header("Authorization", token)
                 .exchange().expectStatus();
+    }
+
+    StatusAssertions getReadAdminReturnAndLendingByShowClient(String token){
+        return webTestClient.get()
+                .uri("/lendingData/admin_return_and_lending")
+                .header("Authorization", token)
+                .exchange()
+                .expectStatus();
+    }
+
+    StatusAssertions getReadClientReturnAndLendingByShowClient(String token,String telephone){
+        return webTestClient.get()
+                .uri("/lendingData/client_return_and_lending/search?telephone={telephone}",telephone)
+                .header("Authorization", token)
+                .exchange()
+                .expectStatus();
+    }
+
+    StatusAssertions getReadNoReturnByTelephoneClient(String token,String telephone){
+        return webTestClient.get()
+                .uri("/lendingData/no_return/search?telephone={telephone}",telephone)
+                .header("Authorization",token)
+                .exchange()
+                .expectStatus();
     }
 }

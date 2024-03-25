@@ -2,11 +2,14 @@ package com.example.demo.adapters.rest;
 
 
 import com.example.demo.adapters.rest.dto.LendingDataUploadDto;
+import com.example.demo.adapters.rest.show.AdminReturnAndLendingByShow;
+import com.example.demo.adapters.rest.show.ClientReturnAndLendingByShow;
 import com.example.demo.domain.exceptions.ForbiddenException;
 import com.example.demo.domain.exceptions.UnauthorizedException;
 import com.example.demo.domain.models.LendingData;
 import com.example.demo.domain.models.Role;
 import com.example.demo.domain.service.LendingDataService;
+import com.example.demo.domain.service.ReturnDataService;
 import com.example.demo.domain.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,15 +29,21 @@ public class LendingDataResource {
     public static final String LENDING_DATA = "/lendingData";
     public static final String REFERENCE = "/{reference}";
     public static final String SEARCH = "/search";
+    public static final String NO_RETURN = "/no_return";
+    public static final String CLIENT_RETURN_AND_LENDING = "/client_return_and_lending";
+    public static final String ADMIN_RETURN_AND_LENDING = "/admin_return_and_lending";
     public final LendingDataService lendingDataService;
+    public final ReturnDataService returnDataService;
     public final UserService userService;
     public final List<Role> adminRole= Arrays.asList(Role.ADMINISTRATOR,Role.ROOT);
 
     @Autowired
     public LendingDataResource(LendingDataService lendingDataService,
-                               UserService userService){
+                               UserService userService,
+                               ReturnDataService returnDataService){
         this.lendingDataService = lendingDataService;
         this.userService = userService;
+        this.returnDataService = returnDataService;
     }
 
     //POST
@@ -77,15 +86,42 @@ public class LendingDataResource {
         }
     }
 
-    @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT')  or hasRole('CLIENT')" )
+    @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT') or hasRole('CLIENT')" )
     @SecurityRequirement(name = "bearerAuth")
-    @GetMapping()
-    public List<LendingData> raedAll(){
-        if(Role.isCompetent(adminRole,this.extractRoleClaims())){
-            return this.lendingDataService.readAll();
+    @GetMapping(CLIENT_RETURN_AND_LENDING +SEARCH)
+    public ClientReturnAndLendingByShow readClientReturnAndLendingByShow(@RequestParam String telephone){
+        if(hasPermission(adminRole,telephone)){
+            return ClientReturnAndLendingByShow.builder()
+                    .lendingDataList(this.lendingDataService.readAllByUserTelephone(telephone))
+                    .returnDataList(this.returnDataService.readAllByUserTelephone(telephone)).build();
         }else {
             throw new ForbiddenException("You don't have permission to make this request.");
         }
+    }
+
+    @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT')or hasRole('CLIENT')" )
+    @SecurityRequirement(name = "bearerAuth")
+    @GetMapping(ADMIN_RETURN_AND_LENDING)
+    public AdminReturnAndLendingByShow readAdminReturnAndLendingByShow(){
+        if(Role.isCompetent(adminRole,this.extractRoleClaims())){
+            return AdminReturnAndLendingByShow.builder()
+                    .lendingDataList(this.lendingDataService.readAll())
+                    .returnDataList(this.returnDataService.readAll())
+                    .returnBox(this.returnDataService.readAllByWaitingForVerification()).build();
+        }else {
+            throw new ForbiddenException("You don't have permission to make this request.");
+        }
+    }
+    @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT')  or hasRole('CLIENT')" )
+    @SecurityRequirement(name = "bearerAuth")
+    @GetMapping(NO_RETURN+SEARCH)
+    public List<LendingData> readNoReturnByTelephone(@RequestParam String telephone){
+        if(hasPermission(adminRole,telephone)){
+            return this.lendingDataService.readNoReturnByTelephone(telephone);
+        }else{
+            throw new ForbiddenException("You don't have permission to make this request.");
+        }
+
     }
 
     private Role extractRoleClaims() {

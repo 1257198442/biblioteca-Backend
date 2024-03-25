@@ -98,6 +98,13 @@ public class LendingDataService {
                 .collect(Collectors.toList());
     }
 
+    public List<LendingData> readNoReturnByTelephone(String telephone){
+        return this.lendingDataPersistence.readByUserTelephone(telephone).stream()
+                .filter(lending -> !lending.getStatus()).collect(Collectors.toList()).stream()
+                .map(this::LendingToLendingByShow)
+                .collect(Collectors.toList());
+    }
+
     public void limitTimeIsToLong(LocalDateTime time){
         if(time.isAfter(LocalDateTime.now().plusMonths(3))){
             throw new UnprocessableEntityException("LimitTime is over three months.");
@@ -141,4 +148,5 @@ public class LendingDataService {
         lendingData.setUser(lendingData.getUser().soloShowNameAndTelephone());
         return lendingData;
     }
+
 }

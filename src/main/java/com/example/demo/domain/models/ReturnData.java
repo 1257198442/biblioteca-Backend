@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.BeanUtils;
 
 import java.time.LocalDateTime;
 
@@ -26,5 +27,4 @@ public class ReturnData {
     private LocalDateTime limitTime;
     private ReturnStatus returnStatus;
     private BookDamageDegree bookDamageDegree;
-
 }

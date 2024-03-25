@@ -6,6 +6,7 @@ import com.example.demo.adapters.rest.show.BookByShow;
 import com.example.demo.domain.exceptions.LockedResourceException;
 import com.example.demo.domain.models.*;
 import com.example.demo.domain.persistence.BookPersistence;
+import com.example.demo.domain.persistence.ReturnDataPersistence;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,19 +24,19 @@ public class BookService {
     private final RandomStringService randomStringService;
     private final AuthorService authorService;
     private final TypeService typeService;
-    private final ReturnDataService returnDataService;
+    private final ReturnDataPersistence returnDataPersistence;
 
     @Autowired
     public BookService(BookPersistence bookPersistence,
                        RandomStringService randomStringService,
                        AuthorService authorService,
                        TypeService typeService,
-                       ReturnDataService returnDataService){
+                       ReturnDataPersistence returnDataPersistence){
         this.bookPersistence = bookPersistence;
         this.randomStringService = randomStringService;
         this.authorService = authorService;
         this.typeService = typeService;
-        this.returnDataService = returnDataService;
+        this.returnDataPersistence = returnDataPersistence;
     }
 
     public Book create(BookUploadDto bookUploadDate){
@@ -81,8 +82,7 @@ public class BookService {
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList()));
         }
-        bookReturnData.setBorrowCount((int) this.returnDataService.readAll().stream()
-                .filter(returnData -> returnData.getBook().getBookID().equals(book.getBookID())).count());
+        bookReturnData.setBorrowCount(this.returnDataPersistence.readByBookId(book.getBookID()).size());
         return bookReturnData;
     }
 
