@@ -1,6 +1,7 @@
 package com.example.demo.adapters.mongodb.entities;
 
 import com.example.demo.domain.models.LendingData;
+import com.example.demo.domain.models.ReturnSendEmail;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -27,6 +28,7 @@ public class LendingDataEntity {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime limitTime;
     private Boolean status;
+    private ReturnSendEmail returnSendEmail;
     public LendingData toLending(){
         LendingData lending = new LendingData();
         BeanUtils.copyProperties(this,lending);

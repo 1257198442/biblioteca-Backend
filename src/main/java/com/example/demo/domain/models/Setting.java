@@ -15,4 +15,13 @@ public class Setting {
     private Boolean hideMyProfile;
     private Boolean emailWhenSuccessfulTransaction;
     private Boolean emailWhenOrderIsPaid;
+    private Boolean emailWhenOrdersAboutToExpire;
+
+    public Setting init(){
+        return Setting.builder()
+                .hideMyProfile(true)
+                .emailWhenSuccessfulTransaction(true)
+                .emailWhenOrderIsPaid(true)
+                .emailWhenOrdersAboutToExpire(true).build();
+    }
 }

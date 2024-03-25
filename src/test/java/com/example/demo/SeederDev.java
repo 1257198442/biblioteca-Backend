@@ -74,8 +74,8 @@ public class SeederDev {
         LogManager.getLogger(this.getClass()).warn("------- Initial Load from JAVA -----------");
         LogManager.getLogger(this.getClass()).warn("-------      Initial User      -----------");
         String pass = new BCryptPasswordEncoder().encode("6");
-        Setting setting = Setting.builder().hideMyProfile(true).emailWhenSuccessfulTransaction(true).emailWhenOrderIsPaid(true).build();
-        Setting setting1 = Setting.builder().hideMyProfile(true).emailWhenSuccessfulTransaction(false).emailWhenOrderIsPaid(true).build();
+        Setting setting = new Setting().init();
+        Setting setting1 = Setting.builder().hideMyProfile(true).emailWhenSuccessfulTransaction(false).emailWhenOrderIsPaid(true).emailWhenOrdersAboutToExpire(true).build();
         UserEntity[] userEntities = {
                 UserEntity.builder().role(Role.ROOT).createTime(LocalDateTime.now()).email("1257198442@qq.com").name("root").password(pass).telephone("+34666666666").active(true).description("I am is root").birthdays(LocalDate.of(2000,1,1)).setting(setting).build(),
                 UserEntity.builder().role(Role.ADMINISTRATOR).createTime(LocalDateTime.now()).email("1257198442@qq.com").name("Administrator").password(pass).telephone("+34666000001").active(true).description("I am is administrator").birthdays(LocalDate.of(2000,1,2)).setting(setting).build(),
@@ -84,7 +84,9 @@ public class SeederDev {
                 UserEntity.builder().role(Role.CLIENT).createTime(LocalDateTime.now()).email("test2@test.com").name("User").password(pass).telephone("+34645321068").active(true).description("An root").birthdays(LocalDate.of(2000,1,5)).setting(setting).build(),
                 UserEntity.builder().role(Role.CLIENT).createTime(LocalDateTime.now()).email("test2@test.com").name("User").password(pass).telephone("+34123").active(true).description("user").birthdays(LocalDate.of(2000,1,6)).setting(setting1).build(),
                 UserEntity.builder().role(Role.CLIENT).createTime(LocalDateTime.now()).email("test2@test.com").name("User").password(pass).telephone("+34321").active(true).description("user").birthdays(LocalDate.of(2000,1,6)).setting(setting1).build(),
-                    UserEntity.builder().role(Role.CLIENT).createTime(LocalDateTime.now()).email("test2@test.com").name("User").password(pass).telephone("+34990099009").active(true).description("user").birthdays(LocalDate.of(2000,1,6)).setting(setting1).build(),
+                UserEntity.builder().role(Role.CLIENT).createTime(LocalDateTime.now()).email("test2@test.com").name("User").password(pass).telephone("+34990099009").active(true).description("user").birthdays(LocalDate.of(2000,1,6)).setting(setting1).build(),
+                UserEntity.builder().role(Role.CLIENT).createTime(LocalDateTime.now()).email("test2@test.com").name("User").password(pass).telephone("+34333333333").active(true).description("user").birthdays(LocalDate.of(2000,1,6)).setting(setting1).build(),
+
         };
         userDao.saveAll(Arrays.asList(userEntities));
 
@@ -114,6 +116,9 @@ public class SeederDev {
                 AvatarEntity.builder().fileName("user.png").url("https://localhost/images/avatar/user.png").telephone("+34666").uploadTime(LocalDateTime.of(2000,1,1,1,1,1)).build(),
                 AvatarEntity.builder().fileName("user.png").url("https://localhost/images/avatar/user.png").telephone("+34645321068").uploadTime(LocalDateTime.now()).build(),
                 AvatarEntity.builder().fileName("user.png").url("https://localhost/images/avatar/user.png").telephone("+34123").uploadTime(LocalDateTime.now()).build(),
+                AvatarEntity.builder().fileName("user.png").url("https://localhost/images/avatar/user.png").telephone("+34321").uploadTime(LocalDateTime.now()).build(),
+                AvatarEntity.builder().fileName("user.png").url("https://localhost/images/avatar/user.png").telephone("+34990099009").uploadTime(LocalDateTime.now()).build(),
+                AvatarEntity.builder().fileName("user.png").url("https://localhost/images/avatar/user.png").telephone("+34333333333").uploadTime(LocalDateTime.now()).build(),
         };
         this.avatarDao.saveAll(Arrays.asList(avatarEntities));
 
@@ -126,7 +131,8 @@ public class SeederDev {
                 WalletEntity.builder().telephone("+34645321068").balance(new BigDecimal("0")).build(),
                 WalletEntity.builder().telephone("+34123").balance(new BigDecimal("235")).build(),
                 WalletEntity.builder().telephone("+34321").balance(new BigDecimal("1000000")).build(),
-                WalletEntity.builder().telephone("+34990099009").balance(new BigDecimal("1000000")).build()
+                WalletEntity.builder().telephone("+34990099009").balance(new BigDecimal("1000000")).build(),
+                WalletEntity.builder().telephone("+34333333333").balance(new BigDecimal("1000000")).build()
         };
         this.walletDao.saveAll(Arrays.asList(walletEntities));
 
@@ -180,21 +186,24 @@ public class SeederDev {
         this.bookDao.saveAll(Arrays.asList(bookEntities));
 
         LogManager.getLogger(this.getClass()).warn("-------      Initial LendingData      -----------");
+        ReturnSendEmail returnSendEmail = new ReturnSendEmail().init();
         LendingDataEntity[] lendingDataEntities = {
-                LendingDataEntity.builder().reference("1").book(bookEntities[7]).user(userEntities[7]).lendingTime(LocalDateTime.now()).limitTime(LocalDateTime.now().plusHours(1)).status(false).build(),
-                LendingDataEntity.builder().reference("2").book(bookEntities[9]).user(userEntities[7]).lendingTime(LocalDateTime.now()).limitTime(LocalDateTime.now().plusHours(1)).status(false).build(),
-                LendingDataEntity.builder().reference("3").book(bookEntities[4]).user(userEntities[7]).lendingTime(LocalDateTime.now()).limitTime(LocalDateTime.now().plusHours(1)).status(false).build(),
-                LendingDataEntity.builder().reference("4").book(bookEntities[8]).user(userEntities[7]).lendingTime(LocalDateTime.now()).limitTime(LocalDateTime.now().plusHours(1)).status(false).build(),
-                LendingDataEntity.builder().reference("5").book(bookEntities[8]).user(userEntities[7]).lendingTime(LocalDateTime.now()).limitTime(LocalDateTime.now().plusHours(1)).status(false).build(),
-                LendingDataEntity.builder().reference("6").book(bookEntities[4]).user(userEntities[7]).lendingTime(LocalDateTime.now()).limitTime(LocalDateTime.now().plusHours(1)).status(false).build(),
+                LendingDataEntity.builder().reference("1").book(bookEntities[7]).user(userEntities[7]).lendingTime(LocalDateTime.now()).limitTime(LocalDateTime.now().plusHours(1)).status(false).returnSendEmail(returnSendEmail).build(),
+                LendingDataEntity.builder().reference("2").book(bookEntities[9]).user(userEntities[7]).lendingTime(LocalDateTime.now()).limitTime(LocalDateTime.now().plusHours(1)).status(false).returnSendEmail(returnSendEmail).build(),
+                LendingDataEntity.builder().reference("3").book(bookEntities[4]).user(userEntities[7]).lendingTime(LocalDateTime.now()).limitTime(LocalDateTime.now().plusHours(1)).status(true).returnSendEmail(returnSendEmail).build(),
+                LendingDataEntity.builder().reference("4").book(bookEntities[8]).user(userEntities[7]).lendingTime(LocalDateTime.now()).limitTime(LocalDateTime.now().plusHours(1)).status(false).returnSendEmail(returnSendEmail).build(),
+                LendingDataEntity.builder().reference("5").book(bookEntities[8]).user(userEntities[7]).lendingTime(LocalDateTime.now()).limitTime(LocalDateTime.now().plusHours(1)).status(true).returnSendEmail(returnSendEmail).build(),
+                LendingDataEntity.builder().reference("6").book(bookEntities[4]).user(userEntities[7]).lendingTime(LocalDateTime.now().minusDays(10)).limitTime(LocalDateTime.now().plusHours(1)).status(false).returnSendEmail(returnSendEmail).build(),
+                LendingDataEntity.builder().reference("7").book(bookEntities[4]).user(userEntities[8]).lendingTime(LocalDateTime.now().minusDays(33)).limitTime(LocalDateTime.now().minusDays(100)).status(false).returnSendEmail(returnSendEmail).build(),
+                LendingDataEntity.builder().reference("8").book(bookEntities[4]).user(userEntities[8]).lendingTime(LocalDateTime.now().minusDays(400)).limitTime(LocalDateTime.now().plusDays(1)).status(false).returnSendEmail(returnSendEmail).build(),
         };
         this.lendingDataDao.saveAll(Arrays.asList(lendingDataEntities));
 
         LogManager.getLogger(this.getClass()).warn("-------      Initial ReturnData      -----------");
         ReturnDataEntity[] returnDataEntities = {
-                ReturnDataEntity.builder().reference("2").limitTime(lendingDataEntities[1].getLimitTime()).lendingTime(lendingDataEntities[1].getLendingTime()).user(lendingDataEntities[1].getUser()).book(lendingDataEntities[1].getBook()).returnTime(LocalDateTime.now()).returnStatus(ReturnStatus.WAITING_FOR_VERIFICATION).build(),
+                ReturnDataEntity.builder().reference("2").limitTime(lendingDataEntities[1].getLimitTime()).lendingTime(lendingDataEntities[1].getLendingTime()).user(lendingDataEntities[1].getUser()).book(lendingDataEntities[1].getBook()).returnTime(LocalDateTime.now()).returnStatus(ReturnStatus.NO_RETURN).build(),
                 ReturnDataEntity.builder().reference("3").limitTime(lendingDataEntities[2].getLimitTime()).lendingTime(lendingDataEntities[2].getLendingTime()).user(lendingDataEntities[2].getUser()).book(lendingDataEntities[2].getBook()).returnTime(LocalDateTime.now()).returnStatus(ReturnStatus.WAITING_FOR_VERIFICATION).build(),
-                ReturnDataEntity.builder().reference("4").limitTime(lendingDataEntities[3].getLimitTime()).lendingTime(lendingDataEntities[3].getLendingTime()).user(lendingDataEntities[3].getUser()).book(lendingDataEntities[3].getBook()).returnTime(LocalDateTime.now().minusDays(2)).returnStatus(ReturnStatus.WAITING_FOR_VERIFICATION).build(),
+                ReturnDataEntity.builder().reference("4").limitTime(lendingDataEntities[3].getLimitTime()).lendingTime(lendingDataEntities[3].getLendingTime()).user(lendingDataEntities[3].getUser()).book(lendingDataEntities[3].getBook()).returnTime(LocalDateTime.now().minusDays(2)).returnStatus(ReturnStatus.NO_RETURN).build(),
                 ReturnDataEntity.builder().reference("5").limitTime(lendingDataEntities[3].getLimitTime()).lendingTime(lendingDataEntities[3].getLendingTime()).user(lendingDataEntities[3].getUser()).book(lendingDataEntities[3].getBook()).returnTime(LocalDateTime.now().plusDays(90)).returnStatus(ReturnStatus.WAITING_FOR_VERIFICATION).build(),
         };
         this.returnDataDao.saveAll(Arrays.asList(returnDataEntities));

@@ -2,6 +2,7 @@ package com.example.demo.domain.service;
 
 import com.example.demo.TestConfig;
 import com.example.demo.adapters.rest.dto.LendingDataUploadDto;
+import com.example.demo.adapters.rest.show.LendingStatisticsShow;
 import com.example.demo.domain.exceptions.ConflictException;
 import com.example.demo.domain.exceptions.NotFoundException;
 import com.example.demo.domain.models.LendingData;
@@ -54,8 +55,42 @@ public class LendingDataServiceTests {
         assertNotNull(lendingDataService.readNoReturnByTelephone("+34990099009"));
     }
     @Test
-    void testReadUserByExtensionBeyond30Days(){
+    void testSendEmailToUserByExtensionBeyond30Days(){
+        assertNotNull(lendingDataService.sendEmailToUserByExtensionBeyond30Days());
+    }
+    @Test
+    void testSendEmailToUserByOrderOverdue(){
+        assertNotNull(lendingDataService.sendEmailToUserByOrderOverdue());
+    }
 
+    @Test
+    void testSendEmailToUserByApproachingExpiryDate(){
+        assertNotNull(lendingDataService.sendEmailToUserByApproachingExpiryDate());
+    }
+
+    @Test
+    void testGetLendingMonthlyCountsByThisYear(){
+        assertNotNull(lendingDataService.getLendingMonthlyCountsByThisYear());
+    }
+
+    @Test
+    void testGetLendingDailyCountsByThisWeek(){
+        assertNotNull(lendingDataService.getLendingDailyCountsByThisWeek());
+    }
+
+    @Test
+    void testGetLendingYearlyCounts(){
+        assertNotNull(lendingDataService.getLendingYearlyCounts());
+    }
+
+    @Test
+    void testGetLendingStatistics(){
+        LendingStatisticsShow lendingStatisticsShow = lendingDataService.getLendingStatistics();
+        assertEquals(5,lendingStatisticsShow.getToday());
+        assertEquals(5,lendingStatisticsShow.getThisWeek());
+        assertEquals(6,lendingStatisticsShow.getThisMonth());
+        assertEquals(7,lendingStatisticsShow.getThisYear());
+        assertEquals(8,lendingStatisticsShow.getAll());
     }
 
 }

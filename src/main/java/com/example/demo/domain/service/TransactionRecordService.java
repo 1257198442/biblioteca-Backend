@@ -1,6 +1,7 @@
 package com.example.demo.domain.service;
 
 import com.example.demo.adapters.rest.dto.TransactionRecordDto;
+import com.example.demo.domain.models.EmailText;
 import com.example.demo.domain.models.TransactionRecord;
 import com.example.demo.domain.persistence.TransactionRecordPersistence;
 import com.example.demo.domain.persistence.UserPersistence;
@@ -43,32 +44,20 @@ public class TransactionRecordService {
     }
 
     public void sendEmail(TransactionRecord transactionRecord){
-        String emailText = "<!DOCTYPE html>" +
-                "<html>" +
-                "<head>" +
-                "<title>Transaction Successful Detail</title>" +
-                "<style>" +
-                "body { font-family: Arial, sans-serif; }" +
-                ".order-details { border: 1px solid #ccc; padding: 20px; width: 500px; }" +
-                "</style>" +
-                "</head>" +
-                "<body>" +
-                "<div class='order-details'>" +
-                "<h2>Order Detail，</h2>" +
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String content = "<h2>Order Detail，</h2>" +
                 "<p><strong>Reference:</strong> " + transactionRecord.reference + "</p>" +
                 "<p><strong>Telephone:</strong> " + transactionRecord.telephone + "</p>" +
                 "<p><strong>Sum of money:</strong> " + transactionRecord.amount + "€</p>" +
                 "<p><strong>Order name:</strong> " + transactionRecord.purpose + "</p>" ;
         if(transactionRecord.getTransactionDetails()!=null){
-            emailText += "<p><strong>User name :</strong> " + transactionRecord.getTransactionDetails().firstName + transactionRecord.getTransactionDetails().lastName + "</p>" +
+            content += "<p><strong>User name :</strong> " + transactionRecord.getTransactionDetails().firstName + transactionRecord.getTransactionDetails().lastName + "</p>" +
                     "<p><strong>Address:</strong> " + transactionRecord.getTransactionDetails().billingAddress+ "</p>" +
                     "<p><strong>Postcode:</strong> " + transactionRecord.getTransactionDetails().postalCode + "</p>";
         }
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        emailText +="<p><strong>Time:</strong> " + transactionRecord.getTimestampTime().format(formatter) + "</p>"+
-                "</div>" +
-                "</body>" +
-                "</html>";
+        content +="<p><strong>Time:</strong> " + transactionRecord.getTimestampTime().format(formatter) + "</p>";
+        String title = "Transaction Successful Detail";
+        String emailText = EmailText.builder().content(content).title(title).build().getEmailText();
         String to = this.userPersistence.read(transactionRecord.telephone).getEmail();
         String subject = "Transaction Successful Details";
         emailService.sendEmail(to,subject,emailText);

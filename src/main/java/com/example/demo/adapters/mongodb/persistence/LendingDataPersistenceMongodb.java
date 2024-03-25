@@ -76,6 +76,14 @@ public class LendingDataPersistenceMongodb implements LendingDataPersistence {
                 .toLending();
     }
 
+    @Override
+    public List<LendingData> readAllByNoReturn() {
+        return  this.lendingDataDao.findAll().stream()
+                .filter(lendingEntity -> lendingEntity.getStatus().equals(false))
+                .map(LendingDataEntity::toLending)
+                .collect(Collectors.toList());
+    }
+
     private BookEntity getBook(LendingData lendingData){
         return this.bookDao
                 .readByBookID(lendingData.getBook().getBookID())
