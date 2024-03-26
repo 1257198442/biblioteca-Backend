@@ -14,13 +14,15 @@ public class CollectionListServiceTests {
     @Autowired
     private CollectionListService collectionListService;
     @Test
-    void testReadAndAddBookAndReadBookData(){
+    void testReadAndAddBookAndReadBookDataAndRemoveBook(){
         CollectionList collectionList = collectionListService.read("+34990099009");
         assertEquals(List.of(),collectionList.bookId);
         collectionListService.addBook("+34990099009","1");
         assertEquals(List.of("1"),collectionListService.read("+34990099009").getBookId());
         collectionListService.addBook("+34990099009","2");
         assertEquals(2,collectionListService.readBookData("+34990099009").size());
+        collectionListService.removeBook("+34990099009","2");
+        assertEquals(List.of("1"),collectionListService.read("+34990099009").getBookId());
 
 
     }

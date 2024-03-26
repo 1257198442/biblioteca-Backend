@@ -40,7 +40,7 @@ public class CollectionListResourceTests {
         getReadClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"+34990099009").isEqualTo(HttpStatus.OK);
     }
     @Test
-    void testAddBook(){
+    void testAddBookAndRemoveBook(){
         //401
         putAddBookClient("","+34990099009","1").isEqualTo(HttpStatus.UNAUTHORIZED);
         //403
@@ -49,6 +49,14 @@ public class CollectionListResourceTests {
         putAddBookClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"null","1").isEqualTo(HttpStatus.NOT_FOUND);
         //200
         putAddBookClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"+34990099009","1").isEqualTo(HttpStatus.OK);
+        //401
+        putRemoveBookClient("","+34990099009","1").isEqualTo(HttpStatus.UNAUTHORIZED);
+        //403
+        putRemoveBookClient("Bearer "+jwtService.createToken("+34645321068","client","CLIENT"),"+34990099009","1").isEqualTo(HttpStatus.FORBIDDEN);
+        //404
+        putRemoveBookClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"null","1").isEqualTo(HttpStatus.NOT_FOUND);
+        //200
+        putRemoveBookClient("Bearer "+jwtService.createToken("+34666666666","root","ROOT"),"+34990099009","1").isEqualTo(HttpStatus.OK);
     }
 
 
@@ -71,6 +79,15 @@ public class CollectionListResourceTests {
     StatusAssertions putAddBookClient(String token,String telephone,String bookId){
         return webTestClient.put()
                 .uri("/collection_list/{telephone}/add_book",telephone)
+                .header("Authorization",token)
+                .accept(MediaType.ALL)
+                .bodyValue(bookId)
+                .exchange()
+                .expectStatus();
+    }
+    StatusAssertions putRemoveBookClient(String token,String telephone,String bookId){
+        return webTestClient.put()
+                .uri("/collection_list/{telephone}/remove_book",telephone)
                 .header("Authorization",token)
                 .accept(MediaType.ALL)
                 .bodyValue(bookId)

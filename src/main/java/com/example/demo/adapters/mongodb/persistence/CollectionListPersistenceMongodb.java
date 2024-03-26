@@ -22,14 +22,14 @@ public class CollectionListPersistenceMongodb implements CollectionListPersisten
     public CollectionList read(String telephone) {
         return this.wishListDao
                 .readByTelephone(telephone)
-                .orElseThrow(()->new NotFoundException("WishList: "+telephone+" is not Fount"))
+                .orElseThrow(()->new NotFoundException("Collection List: "+telephone+" is not Fount"))
                 .toWishList();
     }
 
     @Override
     public CollectionList update(CollectionList collectionList) {
         CollectionListEntity wishListUpdate = this.wishListDao.readByTelephone(collectionList.telephone)
-                 .orElseThrow(()->new NotFoundException("WishList: "+ collectionList.telephone+" is not Fount"));
+                 .orElseThrow(()->new NotFoundException("Collection List: "+ collectionList.telephone+" is not Fount"));
          BeanUtils.copyProperties(collectionList,wishListUpdate);
 
         return this.wishListDao.save(wishListUpdate)
