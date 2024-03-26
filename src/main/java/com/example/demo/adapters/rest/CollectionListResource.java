@@ -25,6 +25,7 @@ public class CollectionListResource {
     public static final String BOOK = "/book";
     public static final String TELEPHONE = "/{telephone}";
     public static final String ADD_BOOK = "/add_book";
+    public static final String REMOVE_BOOK = "/remove_book";
     public final List<Role> adminRole= Arrays.asList(Role.ROOT,Role.ADMINISTRATOR);
     private final CollectionListService collectionListService;
     private final UserService userService;
@@ -71,6 +72,17 @@ public class CollectionListResource {
     public CollectionList addBook(@PathVariable String telephone, @RequestBody String bookId){
         if(hasPermission(adminRole,telephone)){
             return this.collectionListService.addBook(telephone,bookId);
+        }else {
+            throw new ForbiddenException("You don't have permission to make this request.");
+        }
+    }
+
+    @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('ROOT')  or hasRole('CLIENT')" )
+    @SecurityRequirement(name = "bearerAuth")
+    @PutMapping( TELEPHONE+REMOVE_BOOK)
+    public CollectionList removeBook(@PathVariable String telephone,@RequestBody String bookId){
+        if(hasPermission(adminRole,telephone)){
+            return this.collectionListService.removeBook(telephone,bookId);
         }else {
             throw new ForbiddenException("You don't have permission to make this request.");
         }

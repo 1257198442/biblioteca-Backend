@@ -1,5 +1,6 @@
 package com.example.demo.domain.service;
 
+import com.example.demo.domain.exceptions.ConflictException;
 import com.example.demo.domain.models.Book;
 import com.example.demo.domain.models.CollectionList;
 import com.example.demo.domain.persistence.BookPersistence;
@@ -35,6 +36,17 @@ public class CollectionListService {
         collectionList.bookId.add(bookIdAdd);
         collectionList.bookId = collectionList.bookId.stream().distinct().collect(Collectors.toList());
         return this.collectionListPersistence.update(collectionList);
+    }
+
+    public CollectionList removeBook(String telephone,String bookId){
+        CollectionList collectionList = this.collectionListPersistence.read(telephone);
+        if(collectionList.bookId.contains(bookId)){
+            collectionList.bookId.remove(bookId);
+            return this.collectionListPersistence.update(collectionList);
+        }else {
+            throw new ConflictException("CollectionList no have "+bookId);
+        }
+
     }
 
 }
