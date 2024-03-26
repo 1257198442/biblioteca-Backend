@@ -181,7 +181,7 @@ public class LendingDataResourceTests {
 
     StatusAssertions postCreateClient(String token, LendingDataUploadDto lendingDto){
         return webTestClient.post()
-                .uri("/lendingData")
+                .uri("/lending_data")
                 .header("Authorization", token)
                 .accept(MediaType.ALL)
                 .bodyValue(lendingDto)
@@ -191,7 +191,7 @@ public class LendingDataResourceTests {
 
     StatusAssertions getReadByTelephoneClient(String token,String telephone){
         return webTestClient.get()
-                .uri("/lendingData/search?telephone={telephone}",telephone)
+                .uri("/lending_data/search?telephone={telephone}",telephone)
                 .header("Authorization", token)
                 .exchange()
                 .expectStatus();
@@ -199,14 +199,14 @@ public class LendingDataResourceTests {
 
     StatusAssertions getReadByReferenceClient(String token,String reference){
         return webTestClient.get()
-                .uri("/lendingData/{id}",reference)
+                .uri("/lending_data/{id}",reference)
                 .header("Authorization", token)
                 .exchange().expectStatus();
     }
 
     StatusAssertions getReadAdminReturnAndLendingByShowClient(String token){
         return webTestClient.get()
-                .uri("/lendingData/admin_return_and_lending")
+                .uri("/lending_data/admin_return_and_lending")
                 .header("Authorization", token)
                 .exchange()
                 .expectStatus();
@@ -214,7 +214,7 @@ public class LendingDataResourceTests {
 
     StatusAssertions getReadClientReturnAndLendingByShowClient(String token,String telephone){
         return webTestClient.get()
-                .uri("/lendingData/client_return_and_lending/search?telephone={telephone}",telephone)
+                .uri("/lending_data/client_return_and_lending/search?telephone={telephone}",telephone)
                 .header("Authorization", token)
                 .exchange()
                 .expectStatus();
@@ -222,7 +222,7 @@ public class LendingDataResourceTests {
 
     StatusAssertions getReadNoReturnByTelephoneClient(String token,String telephone){
         return webTestClient.get()
-                .uri("/lendingData/no_return/search?telephone={telephone}",telephone)
+                .uri("/lending_data/no_return/search?telephone={telephone}",telephone)
                 .header("Authorization",token)
                 .exchange()
                 .expectStatus();
@@ -230,7 +230,7 @@ public class LendingDataResourceTests {
 
     StatusAssertions getReadLendingStatisticsClient(String token){
         return webTestClient.get()
-                .uri("/lendingData/lending_statistics")
+                .uri("/lending_data/lending_statistics")
                 .header("Authorization",token)
                 .exchange()
                 .expectStatus();
@@ -238,7 +238,7 @@ public class LendingDataResourceTests {
 
     StatusAssertions getReadLendingMonthlyCountsByThisYear(String token){
         return webTestClient.get()
-                .uri("/lendingData/monthly_counts")
+                .uri("/lending_data/monthly_counts")
                 .header("Authorization",token)
                 .exchange()
                 .expectStatus();
@@ -246,7 +246,7 @@ public class LendingDataResourceTests {
 
     StatusAssertions getReadLendingDailyCountsByThisWeek(String token){
         return webTestClient.get()
-                .uri("/lendingData/weekly_counts")
+                .uri("/lending_data/weekly_counts")
                 .header("Authorization",token)
                 .exchange()
                 .expectStatus();
@@ -254,7 +254,7 @@ public class LendingDataResourceTests {
 
     StatusAssertions getReadLendingYearlyCounts(String token){
         return webTestClient.get()
-                .uri("/lendingData/yearly_counts")
+                .uri("/lending_data/yearly_counts")
                 .header("Authorization",token)
                 .exchange()
                 .expectStatus();
@@ -262,7 +262,7 @@ public class LendingDataResourceTests {
 
     StatusAssertions postBanUserByOverdueMax30Days(String token){
         return webTestClient.post()
-                .uri("/lendingData/send_email_to_user_by_overdue_max_30day")
+                .uri("/lending_data/send_email_to_user_by_overdue_max_30day")
                 .header("Authorization",token)
                 .exchange()
                 .expectStatus();
@@ -270,7 +270,7 @@ public class LendingDataResourceTests {
 
     StatusAssertions getReadUserByOverdueMax30Days(String token){
         return webTestClient.get()
-                .uri("/lendingData/read_lending_data_by_overdue_max_30day")
+                .uri("/lending_data/read_lending_data_by_overdue_max_30day")
                 .header("Authorization",token)
                 .exchange()
                 .expectStatus();
@@ -278,7 +278,7 @@ public class LendingDataResourceTests {
 
     StatusAssertions postSendEmailToUserByApproachingExpiryDate(String token){
         return webTestClient.post()
-                .uri("/lendingData//send_email_to_user_by_approaching_date")
+                .uri("/lending_data//send_email_to_user_by_approaching_date")
                 .header("Authorization",token)
                 .exchange()
                 .expectStatus();
@@ -286,7 +286,7 @@ public class LendingDataResourceTests {
 
     StatusAssertions postSendEmailToUserByOrderOverdue(String token){
         return webTestClient.post()
-                .uri("/lendingData/send_email_to_user_by_order_overdue")
+                .uri("/lending_data/send_email_to_user_by_order_overdue")
                 .header("Authorization",token)
                 .exchange()
                 .expectStatus();

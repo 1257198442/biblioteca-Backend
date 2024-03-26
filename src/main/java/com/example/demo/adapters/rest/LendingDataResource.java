@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(LendingDataResource.LENDING_DATA)
 public class LendingDataResource {
-    public static final String LENDING_DATA = "/lendingData";
+    public static final String LENDING_DATA = "/lending_data";
     public static final String REFERENCE = "/{reference}";
     public static final String SEARCH = "/search";
     public static final String NO_RETURN = "/no_return";

@@ -69,7 +69,7 @@ public class ReturnDataResourceTests {
 
     StatusAssertions postCreateClient(String token,String reference){
         return webTestClient.post()
-                .uri("/returnData")
+                .uri("/return_data")
                 .header("Authorization", token)
                 .accept(MediaType.ALL)
                 .bodyValue(reference)
@@ -79,7 +79,7 @@ public class ReturnDataResourceTests {
 
     StatusAssertions getReadClient(String token,String reference){
         return webTestClient.get()
-                .uri("/returnData/{reference}",reference)
+                .uri("/return_data/{reference}",reference)
                 .header("Authorization",token)
                 .accept(MediaType.ALL)
                 .exchange()
@@ -88,7 +88,7 @@ public class ReturnDataResourceTests {
 
     StatusAssertions putBookIsReturn(String token, String reference, BookDamageDegreeDto bookDamageDegreeDto){
         return webTestClient.put()
-                .uri("/returnData/{reference}/isReturn",reference)
+                .uri("/return_data/{reference}/isReturn",reference)
                 .header("Authorization",token)
                 .accept(MediaType.ALL)
                 .bodyValue(bookDamageDegreeDto)
@@ -98,7 +98,7 @@ public class ReturnDataResourceTests {
 
     StatusAssertions putBookNoReturn(String token,String reference){
         return  webTestClient.put()
-                .uri("/returnData/{reference}/noReturn",reference)
+                .uri("/return_data/{reference}/noReturn",reference)
                 .header("Authorization",token)
                 .exchange()
                 .expectStatus();
