@@ -16,12 +16,14 @@ public class Setting {
     private Boolean emailWhenSuccessfulTransaction;
     private Boolean emailWhenOrderIsPaid;
     private Boolean emailWhenOrdersAboutToExpire;
+    private Boolean hideMyCollectionList;
 
     public Setting init(){
         return Setting.builder()
                 .hideMyProfile(true)
                 .emailWhenSuccessfulTransaction(true)
                 .emailWhenOrderIsPaid(true)
-                .emailWhenOrdersAboutToExpire(true).build();
+                .emailWhenOrdersAboutToExpire(true)
+                .hideMyCollectionList(true).build();
     }
 }

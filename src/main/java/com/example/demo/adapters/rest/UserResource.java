@@ -145,7 +145,6 @@ public class UserResource {
         }else {
             throw new ForbiddenException("You don't have permission to make this request.");
         }
-
     }
 
     private Role extractRoleClaims() {

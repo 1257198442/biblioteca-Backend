@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(ReturnDataResource.RETURN_DATA)
 public class ReturnDataResource {
-    public static final String RETURN_DATA = "/returnData";
+    public static final String RETURN_DATA = "/return_data";
     public static final String REFERENCE = "/{reference}";
     public static final String IS_RETURN = "/isReturn";
     public static final String NO_RETURN = "/noReturn";

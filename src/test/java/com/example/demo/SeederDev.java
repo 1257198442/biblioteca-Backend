@@ -28,6 +28,7 @@ public class SeederDev {
     private final TypeRepository typeDao;
     private final LendingDataRepository lendingDataDao;
     private final ReturnDataRepository returnDataDao;
+    private final CollectionListRepository collectionListDao;
 
     @Autowired
     public SeederDev(UserRepository userDao,
@@ -39,7 +40,8 @@ public class SeederDev {
                      AuthorRepository authorDao,
                      TypeRepository typeDao,
                      LendingDataRepository lendingDataDao,
-                     ReturnDataRepository returnDataDao){
+                     ReturnDataRepository returnDataDao,
+                     CollectionListRepository collectionListDao){
         this.userDao = userDao;
         this.libraryDao = libraryDao;
         this.avatarDao = avatarDao;
@@ -50,6 +52,7 @@ public class SeederDev {
         this.typeDao = typeDao;
         this.lendingDataDao = lendingDataDao;
         this.returnDataDao = returnDataDao;
+        this.collectionListDao = collectionListDao;
         this.deleteAllAndInitializeAndSeedDataBase();
     }
     public void deleteAllAndInitializeAndSeedDataBase() {
@@ -75,7 +78,7 @@ public class SeederDev {
         LogManager.getLogger(this.getClass()).warn("-------      Initial User      -----------");
         String pass = new BCryptPasswordEncoder().encode("6");
         Setting setting = new Setting().init();
-        Setting setting1 = Setting.builder().hideMyProfile(true).emailWhenSuccessfulTransaction(false).emailWhenOrderIsPaid(true).emailWhenOrdersAboutToExpire(true).build();
+        Setting setting1 = Setting.builder().hideMyProfile(true).emailWhenSuccessfulTransaction(false).emailWhenOrderIsPaid(true).emailWhenOrdersAboutToExpire(true).hideMyCollectionList(true).build();
         UserEntity[] userEntities = {
                 UserEntity.builder().role(Role.ROOT).createTime(LocalDateTime.now()).email("1257198442@qq.com").name("root").password(pass).telephone("+34666666666").active(true).description("I am is root").birthdays(LocalDate.of(2000,1,1)).setting(setting).build(),
                 UserEntity.builder().role(Role.ADMINISTRATOR).createTime(LocalDateTime.now()).email("1257198442@qq.com").name("Administrator").password(pass).telephone("+34666000001").active(true).description("I am is administrator").birthdays(LocalDate.of(2000,1,2)).setting(setting).build(),
@@ -207,6 +210,20 @@ public class SeederDev {
                 ReturnDataEntity.builder().reference("5").limitTime(lendingDataEntities[3].getLimitTime()).lendingTime(lendingDataEntities[3].getLendingTime()).user(lendingDataEntities[3].getUser()).book(lendingDataEntities[3].getBook()).returnTime(LocalDateTime.now().plusDays(90)).returnStatus(ReturnStatus.WAITING_FOR_VERIFICATION).build(),
         };
         this.returnDataDao.saveAll(Arrays.asList(returnDataEntities));
+
+        LogManager.getLogger(this.getClass()).warn("-------      Initial CollectionList      -----------");
+        CollectionListEntity[] collectionListEntities = {
+                CollectionListEntity.builder().bookId(List.of(bookEntities[1].getBookID(),bookEntities[2].getBookID())).telephone("+34666666666").build(),
+                CollectionListEntity.builder().bookId(List.of(bookEntities[2].getBookID(),bookEntities[2].getBookID())).telephone("+34666000001").build(),
+                CollectionListEntity.builder().bookId(List.of(bookEntities[3].getBookID(),bookEntities[2].getBookID())).telephone("+34666000002").build(),
+                CollectionListEntity.builder().bookId(List.of(bookEntities[4].getBookID(),bookEntities[2].getBookID())).telephone("+34666"      ).build(),
+                CollectionListEntity.builder().bookId(List.of(bookEntities[5].getBookID(),bookEntities[2].getBookID())).telephone("+34645321068").build(),
+                CollectionListEntity.builder().bookId(List.of(bookEntities[6].getBookID(),bookEntities[2].getBookID())).telephone("+34123"      ).build(),
+                CollectionListEntity.builder().bookId(List.of(bookEntities[7].getBookID(),bookEntities[2].getBookID())).telephone("+34321"      ).build(),
+                CollectionListEntity.builder().bookId(List.of()).telephone("+34990099009").build(),
+                CollectionListEntity.builder().bookId(List.of()).telephone("+34333333333").build(),
+        };
+        this.collectionListDao.saveAll(Arrays.asList(collectionListEntities));
     }
 
 }

@@ -1,14 +1,12 @@
 package com.example.demo.adapters.rest;
 
 import com.example.demo.domain.exceptions.ForbiddenException;
-import com.example.demo.domain.exceptions.MaxUploadSizeExceededException;
 import com.example.demo.domain.exceptions.UnprocessableEntityException;
 import com.example.demo.domain.models.Avatar;
 import com.example.demo.domain.models.Role;
 import com.example.demo.domain.service.AvatarService;
 import com.example.demo.domain.service.FileService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,9 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
